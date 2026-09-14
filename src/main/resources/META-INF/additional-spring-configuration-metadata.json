@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "api-endpoint",
+  "type": "java.lang.String",
+  "description": "Prefix for all REST API endpoints (e.g. api/v1)."
+}]}
