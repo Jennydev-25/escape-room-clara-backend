@@ -38,4 +38,13 @@ class PasswordMatchesValidatorTest {
 
         assertThat(result, is(equalTo(false)));
     }
+
+    @Test
+    void testIsValid_ShouldReturnTrue_WhenPasswordOrConfirmPasswordIsNull() {
+        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", null, null);
+
+        boolean result = validator.isValid(dto, null);
+
+        assertThat(result, is(equalTo(true)));
+    }
 }
