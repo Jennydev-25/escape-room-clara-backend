@@ -3,7 +3,9 @@ package dev.jenny.clara.register.dtos;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import dev.jenny.clara.register.validation.PasswordMatches;
 
+@PasswordMatches
 public record RegisterRequestDTO(
         @NotBlank(message = "El email es obligatorio")
         @Email(message = "El formato del email no es válido")
