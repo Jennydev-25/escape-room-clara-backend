@@ -28,4 +28,20 @@ class SecurityUserTest {
 
         assertThat(result, is(equalTo("clara@pruebas.com")));
     }
+
+    @Test
+    void testGetPassword_ShouldReturnUserPasswordHash() {
+        User user = User.builder()
+                .email("clara@pruebas.com")
+                .passwordHash("hashedPassword")
+                .alias("clara")
+                .role(Role.USER)
+                .createdAt(LocalDateTime.now())
+                .build();
+        SecurityUser securityUser = new SecurityUser(user);
+
+        String result = securityUser.getPassword();
+
+        assertThat(result, is(equalTo("hashedPassword")));
+    }
 }
