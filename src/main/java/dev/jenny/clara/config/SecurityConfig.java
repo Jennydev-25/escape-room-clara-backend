@@ -1,5 +1,7 @@
 package dev.jenny.clara.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +25,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/" + endpoint + "/auth/register").permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .httpBasic(withDefaults());
 
         return http.build();
     }
