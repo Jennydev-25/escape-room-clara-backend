@@ -3,6 +3,7 @@ package dev.jenny.clara.security;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
@@ -44,5 +46,13 @@ class JpaUserDetailsServiceTest {
 
         assertThat(result.getUsername(), is(equalTo("clara@pruebas.com")));
         assertThat(result.getPassword(), is(equalTo("hashedPassword")));
+    }
+
+    @Test
+    void testLoadUserByUsername_ShouldThrowException_WhenUserDoesNotExist() {
+        when(userRepository.findByEmail("noexiste@pruebas.com")).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class,
+                () -> service.loadUserByUsername("noexiste@pruebas.com"));
     }
 }
