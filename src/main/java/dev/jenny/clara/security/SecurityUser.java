@@ -13,4 +13,8 @@ public class SecurityUser {
     public String getUsername() {
         return user.getEmail();
     }
+
+    public String getPassword() {
+        return user.getPasswordHash();
+    }
 }
