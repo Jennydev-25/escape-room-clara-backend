@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
@@ -24,6 +25,7 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
     }
 
     @Override
+    @Transactional
     public RegisterResponseDTO register(RegisterRequestDTO request) {
         userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
             throw new EmailAlreadyExistsException("Email " + request.email() + " is already registered.");
