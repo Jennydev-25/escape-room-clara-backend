@@ -3,6 +3,9 @@ package dev.jenny.clara.register;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
 import dev.jenny.clara.user.UserRepository;
@@ -52,5 +56,17 @@ class RegisterServiceImplTest {
         assertThat(savedUser.getAlias(), is(equalTo("clara")));
         assertThat(savedUser.getRole(), is(equalTo(Role.USER)));
         assertThat(response.message(), is(equalTo("User stored successfully")));
+    }
+
+    @Test
+    void testRegister_ShouldThrowException_WhenEmailAlreadyExists() {
+        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword");
+        User existingUser = User.builder().email("clara@pruebas.com").build();
+
+        when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(existingUser));
+
+        assertThrows(EmailAlreadyExistsException.class, () -> service.register(dtoRequest));
+
+        verify(userRepository, never()).save(any());
     }
 }
