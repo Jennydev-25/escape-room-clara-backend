@@ -1,4 +1,4 @@
-package dev.jenny.clara.common;
+package dev.jenny.clara.globals;
 
 import java.time.LocalDateTime;
 
