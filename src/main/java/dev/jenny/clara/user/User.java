@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth;
+package dev.jenny.clara.user;
 
 import java.time.LocalDateTime;
 
