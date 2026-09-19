@@ -1,13 +1,21 @@
-package dev.jenny.clara.register;
+package dev.jenny.clara.register;import static org.hamcrest.MatcherAssert.assertThat;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.stream.Stream;
+
+import dev.jenny.clara.config.SecurityConfig;
+import dev.jenny.clara.register.dtos.RegisterRequestDTO;
+import dev.jenny.clara.register.dtos.RegisterResponseDTO;
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -16,10 +24,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import dev.jenny.clara.config.SecurityConfig;
-import dev.jenny.clara.register.dtos.RegisterRequestDTO;
-import dev.jenny.clara.register.dtos.RegisterResponseDTO;
-import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = RegisterController.class)
@@ -67,5 +71,25 @@ class RegisterControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isConflict());
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidRegisterRequests")
+    void testRegister_ShouldReturnBadRequest_WhenRequestIsInvalid(RegisterRequestDTO invalidRequest) throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<RegisterRequestDTO> invalidRegisterRequests() {
+        return Stream.of(
+                new RegisterRequestDTO("", "plainPassword", "plainPassword"),
+                new RegisterRequestDTO("not-an-email", "plainPassword", "plainPassword"),
+                new RegisterRequestDTO("clara@pruebas.com", "", ""),
+                new RegisterRequestDTO("clara@pruebas.com", "short1", "short1"),
+                new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "differentPassword"));
     }
 }
