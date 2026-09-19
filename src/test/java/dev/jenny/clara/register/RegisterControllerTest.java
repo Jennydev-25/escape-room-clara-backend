@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = RegisterController.class)
@@ -52,5 +53,19 @@ class RegisterControllerTest {
 
         assertThat(response.getStatus(), is(equalTo(201)));
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    void testRegister_ShouldReturnConflict_WhenEmailAlreadyExists() throws Exception {
+        RegisterRequestDTO requestDto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String errorMessage = "El email ya está registrado.";
+
+        when(service.register(requestDto)).thenThrow(new EmailAlreadyExistsException(errorMessage));
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isConflict());
     }
 }
