@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
 import dev.jenny.clara.user.UserRepository;
@@ -18,15 +19,22 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RecaptchaService recaptchaService;
 
-    public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            RecaptchaService recaptchaService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.recaptchaService = recaptchaService;
     }
 
     @Override
     @Transactional
     public RegisterResponseDTO register(RegisterRequestDTO request) {
+        if (!recaptchaService.verify(request.recaptchaToken())) {
+            throw new InvalidRecaptchaException("Invalid recaptcha token.");
+        }
+
         userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
             throw new EmailAlreadyExistsException("Email " + request.email() + " is already registered.");
         });

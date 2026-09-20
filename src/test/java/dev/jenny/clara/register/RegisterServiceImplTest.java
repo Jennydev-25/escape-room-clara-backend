@@ -47,6 +47,7 @@ class RegisterServiceImplTest {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
                 "valid-captcha-token");
 
+        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
 
@@ -69,6 +70,7 @@ class RegisterServiceImplTest {
                 "valid-captcha-token");
         User existingUser = User.builder().email("clara@pruebas.com").build();
 
+        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(existingUser));
 
         assertThrows(EmailAlreadyExistsException.class, () -> service.register(dtoRequest));
