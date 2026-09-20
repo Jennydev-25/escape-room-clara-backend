@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,5 +17,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorDTO> handleEmailAlreadyExists(EmailAlreadyExistsException exception) {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(InvalidRecaptchaException.class)
+    public ResponseEntity<ApiErrorDTO> handleInvalidRecaptcha(InvalidRecaptchaException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
