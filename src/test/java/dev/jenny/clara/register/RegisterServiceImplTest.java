@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
 import dev.jenny.clara.user.UserRepository;
@@ -37,6 +38,9 @@ class RegisterServiceImplTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private RecaptchaService recaptchaService;
 
     @Test
     void testRegister_ShouldSaveUserAndReturnSuccessResponse() {
@@ -68,6 +72,18 @@ class RegisterServiceImplTest {
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(existingUser));
 
         assertThrows(EmailAlreadyExistsException.class, () -> service.register(dtoRequest));
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void testRegister_ShouldThrowException_WhenRecaptchaIsInvalid() {
+        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "invalid-captcha-token");
+
+        when(recaptchaService.verify("invalid-captcha-token")).thenReturn(false);
+
+        assertThrows(InvalidRecaptchaException.class, () -> service.register(dtoRequest));
 
         verify(userRepository, never()).save(any());
     }
