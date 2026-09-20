@@ -94,6 +94,7 @@ class RegisterControllerTest {
                 new RegisterRequestDTO("clara@pruebas.com", "", "", "valid-captcha-token"),
                 new RegisterRequestDTO("clara@pruebas.com", "short1", "short1", "valid-captcha-token"),
                 new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "differentPassword",
-                        "valid-captcha-token"));
+                        "valid-captcha-token"),
+                new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword", ""));
     }
 }
