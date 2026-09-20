@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
 import dev.jenny.clara.config.SecurityConfig;
-import dev.jenny.clara.globals.JwtService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

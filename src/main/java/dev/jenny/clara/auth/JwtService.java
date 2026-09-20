@@ -1,4 +1,4 @@
-package dev.jenny.clara.globals;
+package dev.jenny.clara.auth;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

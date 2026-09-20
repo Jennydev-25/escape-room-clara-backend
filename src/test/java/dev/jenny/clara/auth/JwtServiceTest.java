@@ -1,4 +1,4 @@
-package dev.jenny.clara.globals;
+package dev.jenny.clara.auth;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
