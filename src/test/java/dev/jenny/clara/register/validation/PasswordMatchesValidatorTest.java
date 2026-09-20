@@ -4,8 +4,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,12 +44,20 @@ class PasswordMatchesValidatorTest {
         assertThat(result, is(equalTo(false)));
     }
 
-    @Test
-    void testIsValid_ShouldReturnTrue_WhenPasswordOrConfirmPasswordIsNull() {
-        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", null, null);
+    @ParameterizedTest
+    @MethodSource("nullPasswordCombinations")
+    void testIsValid_ShouldReturnTrue_WhenPasswordOrConfirmPasswordIsNull(String password, String confirmPassword) {
+        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", password, confirmPassword);
 
         boolean result = validator.isValid(dto, null);
 
         assertThat(result, is(equalTo(true)));
+    }
+
+    private static Stream<Arguments> nullPasswordCombinations() {
+        return Stream.of(
+                Arguments.of(null, null),
+                Arguments.of("plainPassword", null),
+                Arguments.of(null, "plainPassword"));
     }
 }
