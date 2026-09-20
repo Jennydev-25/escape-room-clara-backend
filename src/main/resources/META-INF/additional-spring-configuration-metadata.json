@@ -1,5 +1,19 @@
-{"properties": [{
-  "name": "api-endpoint",
-  "type": "java.lang.String",
-  "description": "Prefix for all REST API endpoints (e.g. api/v1)."
-}]}
+{
+  "properties": [
+    {
+      "name": "api-endpoint",
+      "type": "java.lang.String",
+      "description": "Prefix for all REST API endpoints (e.g. api/v1)."
+    },
+    {
+      "name": "jwt.key",
+      "type": "java.lang.String",
+      "description": "Symmetric secret key (HS512) used to sign and verify JWTs."
+    },
+    {
+      "name": "recaptcha.secret-key",
+      "type": "java.lang.String",
+      "description": "Google reCAPTCHA secret key used to verify tokens with the siteverify endpoint."
+    }
+  ]
+}
