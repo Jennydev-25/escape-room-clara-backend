@@ -70,6 +70,23 @@ class SecurityUserTest {
         assertThat(result, contains(new SimpleGrantedAuthority(expectedAuthority)));
     }
 
+    @Test
+    void testAccountStatusMethods_ShouldAlwaysReturnTrue() {
+        User user = User.builder()
+                .email("clara@pruebas.com")
+                .passwordHash("hashedPassword")
+                .alias("clara")
+                .role(Role.USER)
+                .createdAt(LocalDateTime.now())
+                .build();
+        SecurityUser securityUser = new SecurityUser(user);
+
+        assertThat(securityUser.isAccountNonExpired(), is(equalTo(true)));
+        assertThat(securityUser.isAccountNonLocked(), is(equalTo(true)));
+        assertThat(securityUser.isCredentialsNonExpired(), is(equalTo(true)));
+        assertThat(securityUser.isEnabled(), is(equalTo(true)));
+    }
+
     private static Stream<Arguments> rolesAndExpectedAuthorities() {
         return Stream.of(
                 Arguments.of(Role.USER, "ROLE_USER"),
