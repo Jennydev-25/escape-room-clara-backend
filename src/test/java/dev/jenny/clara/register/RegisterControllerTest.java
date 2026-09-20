@@ -13,6 +13,7 @@ import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,6 +75,21 @@ class RegisterControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void testRegister_ShouldReturnBadRequest_WhenRecaptchaIsInvalid() throws Exception {
+        RegisterRequestDTO requestDto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "invalid-captcha-token");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String errorMessage = "El captcha no es válido.";
+
+        when(service.register(requestDto)).thenThrow(new InvalidRecaptchaException(errorMessage));
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
     }
 
     @ParameterizedTest
