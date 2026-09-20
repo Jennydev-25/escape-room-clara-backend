@@ -27,6 +27,23 @@ class PasswordMatchesValidatorTest {
     private ConstraintValidatorContext context;
 
     @Test
+    void testIsValid_ShouldReturnTrue_WhenRequestIsNull() {
+        boolean result = validator.isValid(null, null);
+
+        assertThat(result, is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("nullPasswordCombinations")
+    void testIsValid_ShouldReturnTrue_WhenPasswordOrConfirmPasswordIsNull(String password, String confirmPassword) {
+        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", password, confirmPassword);
+
+        boolean result = validator.isValid(dto, null);
+
+        assertThat(result, is(equalTo(true)));
+    }
+
+    @Test
     void testIsValid_ShouldReturnTrue_WhenPasswordsMatch() {
         RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
 
@@ -42,16 +59,6 @@ class PasswordMatchesValidatorTest {
         boolean result = validator.isValid(dto, context);
 
         assertThat(result, is(equalTo(false)));
-    }
-
-    @ParameterizedTest
-    @MethodSource("nullPasswordCombinations")
-    void testIsValid_ShouldReturnTrue_WhenPasswordOrConfirmPasswordIsNull(String password, String confirmPassword) {
-        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", password, confirmPassword);
-
-        boolean result = validator.isValid(dto, null);
-
-        assertThat(result, is(equalTo(true)));
     }
 
     private static Stream<Arguments> nullPasswordCombinations() {
