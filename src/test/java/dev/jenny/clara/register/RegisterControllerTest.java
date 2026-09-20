@@ -1,5 +1,6 @@
-package dev.jenny.clara.register;import static org.hamcrest.MatcherAssert.assertThat;
+package dev.jenny.clara.register;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -41,7 +42,8 @@ class RegisterControllerTest {
 
     @Test
     void testRegister_ShouldReturnCreated() throws Exception {
-        RegisterRequestDTO requestDto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
+        RegisterRequestDTO requestDto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "valid-captcha-token");
         RegisterResponseDTO responseDto = new RegisterResponseDTO("Usuario registrado correctamente");
         String requestJson = mapper.writeValueAsString(requestDto);
         String responseJson = mapper.writeValueAsString(responseDto);
@@ -61,7 +63,8 @@ class RegisterControllerTest {
 
     @Test
     void testRegister_ShouldReturnConflict_WhenEmailAlreadyExists() throws Exception {
-        RegisterRequestDTO requestDto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
+        RegisterRequestDTO requestDto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "valid-captcha-token");
         String requestJson = mapper.writeValueAsString(requestDto);
         String errorMessage = "El email ya está registrado.";
 
@@ -86,10 +89,11 @@ class RegisterControllerTest {
 
     private static Stream<RegisterRequestDTO> invalidRegisterRequests() {
         return Stream.of(
-                new RegisterRequestDTO("", "plainPassword", "plainPassword"),
-                new RegisterRequestDTO("not-an-email", "plainPassword", "plainPassword"),
-                new RegisterRequestDTO("clara@pruebas.com", "", ""),
-                new RegisterRequestDTO("clara@pruebas.com", "short1", "short1"),
-                new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "differentPassword"));
+                new RegisterRequestDTO("", "plainPassword", "plainPassword", "valid-captcha-token"),
+                new RegisterRequestDTO("not-an-email", "plainPassword", "plainPassword", "valid-captcha-token"),
+                new RegisterRequestDTO("clara@pruebas.com", "", "", "valid-captcha-token"),
+                new RegisterRequestDTO("clara@pruebas.com", "short1", "short1", "valid-captcha-token"),
+                new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "differentPassword",
+                        "valid-captcha-token"));
     }
 }

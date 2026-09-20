@@ -16,5 +16,8 @@ public record RegisterRequestDTO(
         String password,
 
         @NotBlank(message = "Confirma tu contraseña")
-        String confirmPassword) {
+        String confirmPassword,
+
+        @NotBlank(message = "El captcha es obligatorio")
+        String recaptchaToken) {
 }

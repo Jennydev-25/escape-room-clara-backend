@@ -40,7 +40,8 @@ class RegisterServiceImplTest {
 
     @Test
     void testRegister_ShouldSaveUserAndReturnSuccessResponse() {
-        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
+        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "valid-captcha-token");
 
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
@@ -60,7 +61,8 @@ class RegisterServiceImplTest {
 
     @Test
     void testRegister_ShouldThrowException_WhenEmailAlreadyExists() {
-        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
+        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "valid-captcha-token");
         User existingUser = User.builder().email("clara@pruebas.com").build();
 
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(existingUser));

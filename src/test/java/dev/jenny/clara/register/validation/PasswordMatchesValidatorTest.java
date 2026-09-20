@@ -36,7 +36,8 @@ class PasswordMatchesValidatorTest {
     @ParameterizedTest
     @MethodSource("nullPasswordCombinations")
     void testIsValid_ShouldReturnTrue_WhenPasswordOrConfirmPasswordIsNull(String password, String confirmPassword) {
-        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", password, confirmPassword);
+        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", password, confirmPassword,
+                "valid-captcha-token");
 
         boolean result = validator.isValid(dto, null);
 
@@ -45,7 +46,8 @@ class PasswordMatchesValidatorTest {
 
     @Test
     void testIsValid_ShouldReturnTrue_WhenPasswordsMatch() {
-        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword");
+        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "valid-captcha-token");
 
         boolean result = validator.isValid(dto, null);
 
@@ -54,7 +56,8 @@ class PasswordMatchesValidatorTest {
 
     @Test
     void testIsValid_ShouldReturnFalse_WhenPasswordsDoNotMatch() {
-        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "otherPassword");
+        RegisterRequestDTO dto = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "otherPassword",
+                "valid-captcha-token");
 
         boolean result = validator.isValid(dto, context);
 
