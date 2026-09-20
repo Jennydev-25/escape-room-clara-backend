@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-import dev.jenny.clara.register.dtos.RecaptchaVerifyResponse;
+import dev.jenny.clara.register.dtos.RecaptchaVerifyResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class RecaptchaServiceTest {
@@ -32,9 +32,9 @@ class RecaptchaServiceTest {
 
     @Test
     void testVerify_ShouldReturnTrue_WhenGoogleRespondsSuccess() {
-        RecaptchaVerifyResponse response = new RecaptchaVerifyResponse(true);
+        RecaptchaVerifyResponseDTO response = new RecaptchaVerifyResponseDTO(true);
 
-        when(restTemplate.postForObject(anyString(), any(), eq(RecaptchaVerifyResponse.class), anyString(),
+        when(restTemplate.postForObject(anyString(), any(), eq(RecaptchaVerifyResponseDTO.class), anyString(),
                 anyString()))
                 .thenReturn(response);
 
