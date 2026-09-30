@@ -12,5 +12,7 @@ public record ContactRequestDTO(
 
         @NotNull(message = "El tipo de consulta es obligatorio") ContactType type,
 
-        @NotBlank(message = "El mensaje es obligatorio") String message) {
+        @NotBlank(message = "El mensaje es obligatorio") String message,
+
+        @NotBlank(message = "El captcha es obligatorio") String recaptchaToken) {
 }
