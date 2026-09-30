@@ -20,6 +20,7 @@ import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.recaptcha.RecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
+import dev.jenny.clara.user.User;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceImplTest {
@@ -44,7 +45,7 @@ class ContactServiceImplTest {
 
         when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
 
-        ContactResponseDTO response = service.send(dtoRequest);
+        ContactResponseDTO response = service.send(dtoRequest, null);
 
         ArgumentCaptor<ContactMessage> messageCaptor = ArgumentCaptor.forClass(ContactMessage.class);
         verify(contactRepository).save(messageCaptor.capture());
@@ -69,8 +70,29 @@ class ContactServiceImplTest {
 
         when(recaptchaService.verify("invalid-captcha-token")).thenReturn(false);
 
-        assertThrows(InvalidRecaptchaException.class, () -> service.send(dtoRequest));
+        assertThrows(InvalidRecaptchaException.class, () -> service.send(dtoRequest, null));
 
         verify(contactRepository, never()).save(any());
+    }
+
+    @Test
+    void testSend_ShouldLinkContactMessageToUser_WhenUserIsAuthenticated() {
+        ContactRequestDTO dtoRequest = new ContactRequestDTO(
+                "Jugador de prueba",
+                "jugador@pruebas.com",
+                ContactType.QUESTION,
+                "No encuentro dónde seguir en la carpeta del incendio.",
+                "valid-captcha-token");
+        User loggedInUser = User.builder().id(1L).email("jugador@pruebas.com").build();
+
+        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
+
+        service.send(dtoRequest, loggedInUser);
+
+        ArgumentCaptor<ContactMessage> messageCaptor = ArgumentCaptor.forClass(ContactMessage.class);
+        verify(contactRepository).save(messageCaptor.capture());
+        ContactMessage savedMessage = messageCaptor.getValue();
+
+        assertThat(savedMessage.getUser(), is(equalTo(loggedInUser)));
     }
 }
