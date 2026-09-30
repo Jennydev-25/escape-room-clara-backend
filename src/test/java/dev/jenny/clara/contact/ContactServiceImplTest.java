@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,8 +42,6 @@ class ContactServiceImplTest {
                 ContactType.QUESTION,
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "valid-captcha-token");
-
-        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
 
         ContactResponseDTO response = service.send(dtoRequest, null);
 
@@ -86,8 +83,6 @@ class ContactServiceImplTest {
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "valid-captcha-token");
         User loggedInUser = User.builder().id(1L).email("jugador@pruebas.com").build();
-
-        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
 
         service.send(dtoRequest, loggedInUser);
 
