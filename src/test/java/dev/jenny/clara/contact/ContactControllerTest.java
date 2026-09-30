@@ -9,7 +9,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -87,7 +91,6 @@ class ContactControllerTest {
         verify(service).send(requestDto, loggedInUser);
     }
 
-    
     @Test
     void testSend_ShouldReturnBadRequest_WhenRecaptchaIsInvalid() throws Exception {
         ContactRequestDTO requestDto = new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com",
@@ -102,5 +105,30 @@ class ContactControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidContactRequests")
+    void testSend_ShouldReturnBadRequest_WhenRequestIsInvalid(ContactRequestDTO invalidRequest) throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/api/v1/contact")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<ContactRequestDTO> invalidContactRequests() {
+        return Stream.of(
+                new ContactRequestDTO("", "jugador@pruebas.com", ContactType.QUESTION,
+                        "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token"),
+                new ContactRequestDTO("Jugador de prueba", "not-an-email", ContactType.QUESTION,
+                        "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token"),
+                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", null,
+                        "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token"),
+                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", ContactType.QUESTION, "",
+                        "valid-captcha-token"),
+                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", ContactType.QUESTION,
+                        "No encuentro dónde seguir en la carpeta del incendio.", ""));
     }
 }
