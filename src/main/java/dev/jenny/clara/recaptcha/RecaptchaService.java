@@ -1,10 +1,10 @@
-package dev.jenny.clara.register;
+package dev.jenny.clara.recaptcha;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import dev.jenny.clara.register.dtos.RecaptchaVerifyResponseDTO;
+import dev.jenny.clara.recaptcha.dtos.RecaptchaVerifyResponseDTO;
 
 @Service
 public class RecaptchaService {

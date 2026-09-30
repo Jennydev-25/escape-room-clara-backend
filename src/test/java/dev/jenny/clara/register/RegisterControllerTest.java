@@ -9,12 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.stream.Stream;
 
-import dev.jenny.clara.config.SecurityConfig;
-import dev.jenny.clara.register.dtos.RegisterRequestDTO;
-import dev.jenny.clara.register.dtos.RegisterResponseDTO;
-import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
-import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,6 +20,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import dev.jenny.clara.config.SecurityConfig;
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
+import dev.jenny.clara.register.dtos.RegisterRequestDTO;
+import dev.jenny.clara.register.dtos.RegisterResponseDTO;
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = RegisterController.class)

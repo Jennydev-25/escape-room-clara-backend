@@ -1,4 +1,4 @@
-package dev.jenny.clara.register;
+package dev.jenny.clara.recaptcha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,7 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-import dev.jenny.clara.register.dtos.RecaptchaVerifyResponseDTO;
+import dev.jenny.clara.recaptcha.dtos.RecaptchaVerifyResponseDTO;
 
 @ExtendWith(MockitoExtension.class)
 class RecaptchaServiceTest {

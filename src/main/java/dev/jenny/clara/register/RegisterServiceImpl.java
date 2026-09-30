@@ -6,10 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dev.jenny.clara.recaptcha.RecaptchaService;
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
-import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
 import dev.jenny.clara.user.UserRepository;
