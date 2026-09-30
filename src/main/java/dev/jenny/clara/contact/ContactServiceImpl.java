@@ -8,6 +8,7 @@ import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.recaptcha.RecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
+import dev.jenny.clara.user.User;
 
 @Service
 public class ContactServiceImpl implements InterfaceContactService {
@@ -21,7 +22,7 @@ public class ContactServiceImpl implements InterfaceContactService {
     }
 
     @Override
-    public ContactResponseDTO send(ContactRequestDTO request) {
+    public ContactResponseDTO send(ContactRequestDTO request, User user) {
         if (!recaptchaService.verify(request.recaptchaToken())) {
             throw new InvalidRecaptchaException("Invalid recaptcha token.");
         }
@@ -31,6 +32,7 @@ public class ContactServiceImpl implements InterfaceContactService {
                 .email(request.email())
                 .type(request.type())
                 .message(request.message())
+                .user(user)
                 .createdAt(LocalDateTime.now())
                 .build();
 

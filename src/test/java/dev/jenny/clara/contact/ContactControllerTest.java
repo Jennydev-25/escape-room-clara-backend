@@ -43,7 +43,7 @@ class ContactControllerTest {
         String requestJson = mapper.writeValueAsString(requestDto);
         String responseJson = mapper.writeValueAsString(responseDto);
 
-        when(service.send(requestDto)).thenReturn(responseDto);
+        when(service.send(requestDto, null)).thenReturn(responseDto);
 
         MockHttpServletResponse response = mockMvc.perform(post("/api/v1/contact")
                 .contentType(MediaType.APPLICATION_JSON)
