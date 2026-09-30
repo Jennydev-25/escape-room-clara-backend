@@ -1,5 +1,7 @@
 package dev.jenny.clara.contact;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.contact.dtos.ContactRequestDTO;
@@ -16,6 +18,16 @@ public class ContactServiceImpl implements InterfaceContactService {
 
     @Override
     public ContactResponseDTO send(ContactRequestDTO request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        ContactMessage contactMessage = ContactMessage.builder()
+                .name(request.name())
+                .email(request.email())
+                .type(request.type())
+                .message(request.message())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        contactRepository.save(contactMessage);
+
+        return new ContactResponseDTO("Mensaje recibido correctamente. Tendrás respuesta en menos de 24/48 horas.");
     }
 }
