@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.jenny.clara.recaptcha.RecaptchaService;
-import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
@@ -32,9 +31,7 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
     @Override
     @Transactional
     public RegisterResponseDTO register(RegisterRequestDTO request) {
-        if (!recaptchaService.verify(request.recaptchaToken())) {
-            throw new InvalidRecaptchaException("Invalid recaptcha token.");
-        }
+        recaptchaService.verifyOrThrow(request.recaptchaToken());
 
         userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
             throw new EmailAlreadyExistsException("Email " + request.email() + " is already registered.");
