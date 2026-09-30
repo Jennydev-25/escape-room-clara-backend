@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,7 +69,8 @@ class ContactServiceImplTest {
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "invalid-captcha-token");
 
-        when(recaptchaService.verify("invalid-captcha-token")).thenReturn(false);
+        doThrow(new InvalidRecaptchaException("Invalid recaptcha token."))
+                .when(recaptchaService).verifyOrThrow("invalid-captcha-token");
 
         assertThrows(InvalidRecaptchaException.class, () -> service.send(dtoRequest, null));
 
