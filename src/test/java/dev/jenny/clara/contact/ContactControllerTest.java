@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.security.SecurityUser;
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
@@ -84,5 +85,22 @@ class ContactControllerTest {
                 .andExpect(status().isCreated());
 
         verify(service).send(requestDto, loggedInUser);
+    }
+
+    
+    @Test
+    void testSend_ShouldReturnBadRequest_WhenRecaptchaIsInvalid() throws Exception {
+        ContactRequestDTO requestDto = new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com",
+                ContactType.QUESTION, "No encuentro dónde seguir en la carpeta del incendio.",
+                "invalid-captcha-token");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String errorMessage = "El captcha no es válido.";
+
+        when(service.send(requestDto, null)).thenThrow(new InvalidRecaptchaException(errorMessage));
+
+        mockMvc.perform(post("/api/v1/contact")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
     }
 }
