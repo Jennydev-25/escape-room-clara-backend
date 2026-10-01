@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
-import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

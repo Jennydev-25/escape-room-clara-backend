@@ -1,8 +1,10 @@
-package dev.jenny.clara.register;
+package dev.jenny.clara.recaptcha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,7 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-import dev.jenny.clara.register.dtos.RecaptchaVerifyResponseDTO;
+import dev.jenny.clara.recaptcha.dtos.RecaptchaVerifyResponseDTO;
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 
 @ExtendWith(MockitoExtension.class)
 class RecaptchaServiceTest {
@@ -57,6 +60,28 @@ class RecaptchaServiceTest {
         boolean result = service.verify("some-token");
 
         assertThat(result, is(equalTo(false)));
+    }
+
+    @Test
+    void testVerifyOrThrow_ShouldDoNothing_WhenTokenIsValid() {
+        RecaptchaVerifyResponseDTO response = new RecaptchaVerifyResponseDTO(true);
+
+        when(restTemplate.postForObject(anyString(), any(), eq(RecaptchaVerifyResponseDTO.class), anyString(),
+                anyString()))
+                .thenReturn(response);
+
+        assertDoesNotThrow(() -> service.verifyOrThrow("valid-token"));
+    }
+
+    @Test
+    void testVerifyOrThrow_ShouldThrowInvalidRecaptchaException_WhenTokenIsInvalid() {
+        RecaptchaVerifyResponseDTO response = new RecaptchaVerifyResponseDTO(false);
+
+        when(restTemplate.postForObject(anyString(), any(), eq(RecaptchaVerifyResponseDTO.class), anyString(),
+                anyString()))
+                .thenReturn(response);
+
+        assertThrows(InvalidRecaptchaException.class, () -> service.verifyOrThrow("some-token"));
     }
 
     private static Stream<RecaptchaVerifyResponseDTO> failingResponses() {

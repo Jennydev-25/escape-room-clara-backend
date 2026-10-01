@@ -1,4 +1,4 @@
-package dev.jenny.clara.register.exceptions;
+package dev.jenny.clara.recaptcha.exceptions;
 
 public class InvalidRecaptchaException extends RuntimeException {
 

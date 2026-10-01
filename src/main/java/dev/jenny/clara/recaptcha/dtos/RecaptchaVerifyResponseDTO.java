@@ -1,4 +1,4 @@
-package dev.jenny.clara.register.dtos;
+package dev.jenny.clara.recaptcha.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,10 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import dev.jenny.clara.recaptcha.RecaptchaService;
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
-import dev.jenny.clara.register.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.Role;
 import dev.jenny.clara.user.User;
 import dev.jenny.clara.user.UserRepository;
@@ -47,7 +49,6 @@ class RegisterServiceImplTest {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
                 "valid-captcha-token");
 
-        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
 
@@ -70,7 +71,6 @@ class RegisterServiceImplTest {
                 "valid-captcha-token");
         User existingUser = User.builder().email("clara@pruebas.com").build();
 
-        when(recaptchaService.verify("valid-captcha-token")).thenReturn(true);
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(existingUser));
 
         assertThrows(EmailAlreadyExistsException.class, () -> service.register(dtoRequest));
@@ -83,7 +83,8 @@ class RegisterServiceImplTest {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
                 "invalid-captcha-token");
 
-        when(recaptchaService.verify("invalid-captcha-token")).thenReturn(false);
+        doThrow(new InvalidRecaptchaException("Invalid recaptcha token."))
+                .when(recaptchaService).verifyOrThrow("invalid-captcha-token");
 
         assertThrows(InvalidRecaptchaException.class, () -> service.register(dtoRequest));
 

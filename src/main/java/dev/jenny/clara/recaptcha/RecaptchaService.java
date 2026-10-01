@@ -1,10 +1,11 @@
-package dev.jenny.clara.register;
+package dev.jenny.clara.recaptcha;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import dev.jenny.clara.register.dtos.RecaptchaVerifyResponseDTO;
+import dev.jenny.clara.recaptcha.dtos.RecaptchaVerifyResponseDTO;
+import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 
 @Service
 public class RecaptchaService {
@@ -23,5 +24,11 @@ public class RecaptchaService {
         RecaptchaVerifyResponseDTO response = restTemplate.postForObject(VERIFY_URL, null,
                 RecaptchaVerifyResponseDTO.class, secretKey, token);
         return response != null && response.success();
+    }
+
+    public void verifyOrThrow(String token) {
+        if (!verify(token)) {
+            throw new InvalidRecaptchaException("Invalid recaptcha token.");
+        }
     }
 }
