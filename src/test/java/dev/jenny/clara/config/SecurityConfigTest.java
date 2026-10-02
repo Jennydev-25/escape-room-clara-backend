@@ -32,4 +32,12 @@ class SecurityConfigTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"));
     }
+
+    @Test
+    void testCors_ShouldRejectPreflightRequest_FromUnknownOrigin() throws Exception {
+        mockMvc.perform(options("/api/v1/contact")
+                .header("Origin", "http://evil-site.com")
+                .header("Access-Control-Request-Method", "POST"))
+                .andExpect(status().isForbidden());
+    }
 }
