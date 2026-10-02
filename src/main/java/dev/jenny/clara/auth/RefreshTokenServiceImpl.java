@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.user.User;
 import dev.jenny.clara.user.UserRepository;
 
