@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.user.User;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {
@@ -45,5 +46,26 @@ class AuthServiceImplTest {
         LoginResponseDTO result = service.login(authentication);
 
         assertThat(result, is(equalTo(new LoginResponseDTO(token, refreshToken))));
+    }
+
+    @Test
+    void testRefresh_ShouldReturnNewAccessAndRefreshTokens() {
+        String oldRefreshToken = "old-refresh-token";
+        String newToken = "new.jwt.token";
+        String newRefreshToken = "new-refresh-token";
+
+        User user = mock(User.class);
+        RefreshTokenEntity validToken = mock(RefreshTokenEntity.class);
+        RefreshTokenEntity newRefreshTokenEntity = mock(RefreshTokenEntity.class);
+
+        when(refreshTokenService.findValidToken(oldRefreshToken)).thenReturn(validToken);
+        when(validToken.getUser()).thenReturn(user);
+        when(jwtService.generateToken(user)).thenReturn(newToken);
+        when(refreshTokenService.createRefreshToken(user)).thenReturn(newRefreshTokenEntity);
+        when(newRefreshTokenEntity.getToken()).thenReturn(newRefreshToken);
+
+        LoginResponseDTO result = service.refresh(oldRefreshToken);
+
+        assertThat(result, is(equalTo(new LoginResponseDTO(newToken, newRefreshToken))));
     }
 }
