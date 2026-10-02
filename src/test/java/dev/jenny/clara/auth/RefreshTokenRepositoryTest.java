@@ -13,7 +13,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @DataJpaTest
@@ -28,7 +28,7 @@ class RefreshTokenRepositoryTest {
 
     @Test
     void testSave_ShouldGenerateId() {
-        User user = userRepository.save(User.builder()
+        UserEntity user = userRepository.save(UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashed-password")
                 .alias("clara")

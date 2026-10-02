@@ -2,11 +2,11 @@ package dev.jenny.clara.auth;
 
 import org.springframework.security.core.Authentication;
 
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 public interface InterfaceRefreshTokenService {
 
-    RefreshTokenEntity createRefreshToken(User user);
+    RefreshTokenEntity createRefreshToken(UserEntity user);
 
     RefreshTokenEntity createRefreshToken(Authentication authentication);
 

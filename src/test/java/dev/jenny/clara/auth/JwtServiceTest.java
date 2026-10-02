@@ -27,7 +27,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +49,7 @@ class JwtServiceTest {
     @ParameterizedTest
     @MethodSource("rolesAndExpectedClaim")
     void testGenerateToken_ShouldIncludeUserRoleAsClaim(Role role, String expectedClaim) {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
@@ -77,7 +77,7 @@ class JwtServiceTest {
 
     @Test
     void testGenerateToken_WithUser_ShouldIncludeUserRoleAsClaim() {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")

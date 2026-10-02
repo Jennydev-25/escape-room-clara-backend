@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.recaptcha.RecaptchaService;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 @Service
 public class ContactServiceImpl implements InterfaceContactService {
@@ -21,10 +21,10 @@ public class ContactServiceImpl implements InterfaceContactService {
     }
 
     @Override
-    public ContactResponseDTO send(ContactRequestDTO request, User user) {
+    public ContactResponseDTO send(ContactRequestDTO request, UserEntity user) {
         recaptchaService.verifyOrThrow(request.recaptchaToken());
 
-        ContactMessage contactMessage = ContactMessage.builder()
+        ContactMessageEntity contactMessage = ContactMessageEntity.builder()
                 .name(request.name())
                 .email(request.email())
                 .type(request.type())

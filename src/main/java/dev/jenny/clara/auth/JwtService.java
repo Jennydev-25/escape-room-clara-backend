@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @Service
@@ -30,11 +30,11 @@ public class JwtService {
     }
 
     public String generateToken(Authentication authentication) {
-        User user = userRepository.findByEmail(authentication.getName()).get();
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
         return generateToken(user);
     }
 
-    public String generateToken(User user) {
+    public String generateToken(UserEntity user) {
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()

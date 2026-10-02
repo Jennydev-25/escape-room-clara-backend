@@ -6,17 +6,17 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 public class SecurityUser implements UserDetails {
 
-    private final User user;
+    private final UserEntity user;
 
-    public SecurityUser(User user) {
+    public SecurityUser(UserEntity user) {
         this.user = user;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 

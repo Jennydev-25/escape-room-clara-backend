@@ -30,7 +30,7 @@ import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.security.SecurityUser;
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = ContactController.class)
@@ -74,7 +74,7 @@ class ContactControllerTest {
                 ContactType.QUESTION, "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token");
         ContactResponseDTO responseDto = new ContactResponseDTO(
                 "Mensaje recibido correctamente. Tendrás respuesta en menos de 24/48 horas.");
-        User loggedInUser = User.builder().id(1L).email("jugador@pruebas.com").role(Role.USER).build();
+        UserEntity loggedInUser = UserEntity.builder().id(1L).email("jugador@pruebas.com").role(Role.USER).build();
         SecurityUser securityUser = new SecurityUser(loggedInUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(securityUser, null,
                 securityUser.getAuthorities());

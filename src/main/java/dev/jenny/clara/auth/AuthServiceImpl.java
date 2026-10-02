@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 @Service
 public class AuthServiceImpl implements InterfaceAuthService {
@@ -27,7 +27,7 @@ public class AuthServiceImpl implements InterfaceAuthService {
     @Override
     public LoginResponseDTO refresh(String refreshToken) {
         RefreshTokenEntity validToken = refreshTokenService.findValidToken(refreshToken);
-        User user = validToken.getUser();
+        UserEntity user = validToken.getUser();
 
         String newToken = jwtService.generateToken(user);
         String newRefreshToken = refreshTokenService.createRefreshToken(user).getToken();

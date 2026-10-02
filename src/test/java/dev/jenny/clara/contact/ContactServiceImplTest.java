@@ -20,7 +20,7 @@ import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.recaptcha.RecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceImplTest {
@@ -45,9 +45,9 @@ class ContactServiceImplTest {
 
         ContactResponseDTO response = service.send(dtoRequest, null);
 
-        ArgumentCaptor<ContactMessage> messageCaptor = ArgumentCaptor.forClass(ContactMessage.class);
+        ArgumentCaptor<ContactMessageEntity> messageCaptor = ArgumentCaptor.forClass(ContactMessageEntity.class);
         verify(contactRepository).save(messageCaptor.capture());
-        ContactMessage savedMessage = messageCaptor.getValue();
+        ContactMessageEntity savedMessage = messageCaptor.getValue();
 
         assertThat(savedMessage.getName(), is(equalTo("Jugador de prueba")));
         assertThat(savedMessage.getEmail(), is(equalTo("jugador@pruebas.com")));
@@ -82,13 +82,13 @@ class ContactServiceImplTest {
                 ContactType.QUESTION,
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "valid-captcha-token");
-        User loggedInUser = User.builder().id(1L).email("jugador@pruebas.com").build();
+        UserEntity loggedInUser = UserEntity.builder().id(1L).email("jugador@pruebas.com").build();
 
         service.send(dtoRequest, loggedInUser);
 
-        ArgumentCaptor<ContactMessage> messageCaptor = ArgumentCaptor.forClass(ContactMessage.class);
+        ArgumentCaptor<ContactMessageEntity> messageCaptor = ArgumentCaptor.forClass(ContactMessageEntity.class);
         verify(contactRepository).save(messageCaptor.capture());
-        ContactMessage savedMessage = messageCaptor.getValue();
+        ContactMessageEntity savedMessage = messageCaptor.getValue();
 
         assertThat(savedMessage.getUser(), is(equalTo(loggedInUser)));
     }
