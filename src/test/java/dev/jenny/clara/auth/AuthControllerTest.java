@@ -56,7 +56,6 @@ class AuthControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "clara@pruebas.com")
     void testRefresh_ShouldReturnNewAccessAndRefreshTokens() throws Exception {
         RefreshTokenRequestDTO requestDto = new RefreshTokenRequestDTO("old-refresh-token");
         LoginResponseDTO responseDto = new LoginResponseDTO("new.jwt.token", "new-refresh-token");
@@ -77,7 +76,6 @@ class AuthControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "clara@pruebas.com")
     void testRefresh_ShouldReturnUnauthorized_WhenRefreshTokenIsInvalid() throws Exception {
         RefreshTokenRequestDTO requestDto = new RefreshTokenRequestDTO("invalid-refresh-token");
         String requestJson = mapper.writeValueAsString(requestDto);
