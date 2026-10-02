@@ -16,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -44,7 +45,7 @@ class JwtServiceTest {
     void setUp() {
         service = new JwtService(jwtEncoder, userRepository, 1);
     }
-    
+
     @ParameterizedTest
     @MethodSource("rolesAndExpectedClaim")
     void testGenerateToken_ShouldIncludeUserRoleAsClaim(Role role, String expectedClaim) {
@@ -71,6 +72,30 @@ class JwtServiceTest {
         String role_ = paramsCaptor.getValue().getClaims().getClaim("role");
 
         assertThat(role_, is(equalTo(expectedClaim)));
+        assertThat(result, is(equalTo("fake-token")));
+    }
+
+    @Test
+    void testGenerateToken_WithUser_ShouldIncludeUserRoleAsClaim() {
+        User user = User.builder()
+                .email("clara@pruebas.com")
+                .passwordHash("hashedPassword")
+                .alias("clara")
+                .role(Role.USER)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Jwt fakeJwt = mock(Jwt.class);
+        when(fakeJwt.getTokenValue()).thenReturn("fake-token");
+        when(jwtEncoder.encode(any())).thenReturn(fakeJwt);
+
+        String result = service.generateToken(user);
+
+        ArgumentCaptor<JwtEncoderParameters> paramsCaptor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(paramsCaptor.capture());
+        String role = paramsCaptor.getValue().getClaims().getClaim("role");
+
+        assertThat(role, is(equalTo("USER")));
         assertThat(result, is(equalTo("fake-token")));
     }
 
