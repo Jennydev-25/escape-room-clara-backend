@@ -78,4 +78,18 @@ class RefreshTokenServiceImplTest {
 
         verify(repository).delete(expiredToken);
     }
+
+    @Test
+    void testFindValidToken_ShouldReturnToken_WhenTokenExistsAndIsValid() {
+        RefreshTokenEntity validToken = new RefreshTokenEntity(
+                "valid-token",
+                user,
+                Instant.now().plus(1, ChronoUnit.DAYS));
+
+        when(repository.findByToken("valid-token")).thenReturn(Optional.of(validToken));
+
+        RefreshTokenEntity result = service.findValidToken("valid-token");
+
+        assertThat(result, is(equalTo(validToken)));
+    }
 }
