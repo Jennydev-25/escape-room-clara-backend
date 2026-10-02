@@ -45,9 +45,9 @@ class ContactServiceImplTest {
 
         ContactResponseDTO response = service.send(dtoRequest, null);
 
-        ArgumentCaptor<ContactMessage> messageCaptor = ArgumentCaptor.forClass(ContactMessage.class);
+        ArgumentCaptor<ContactMessageEntity> messageCaptor = ArgumentCaptor.forClass(ContactMessageEntity.class);
         verify(contactRepository).save(messageCaptor.capture());
-        ContactMessage savedMessage = messageCaptor.getValue();
+        ContactMessageEntity savedMessage = messageCaptor.getValue();
 
         assertThat(savedMessage.getName(), is(equalTo("Jugador de prueba")));
         assertThat(savedMessage.getEmail(), is(equalTo("jugador@pruebas.com")));
@@ -86,9 +86,9 @@ class ContactServiceImplTest {
 
         service.send(dtoRequest, loggedInUser);
 
-        ArgumentCaptor<ContactMessage> messageCaptor = ArgumentCaptor.forClass(ContactMessage.class);
+        ArgumentCaptor<ContactMessageEntity> messageCaptor = ArgumentCaptor.forClass(ContactMessageEntity.class);
         verify(contactRepository).save(messageCaptor.capture());
-        ContactMessage savedMessage = messageCaptor.getValue();
+        ContactMessageEntity savedMessage = messageCaptor.getValue();
 
         assertThat(savedMessage.getUser(), is(equalTo(loggedInUser)));
     }

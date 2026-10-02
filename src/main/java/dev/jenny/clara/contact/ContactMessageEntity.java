@@ -26,7 +26,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ContactMessage {
+public class ContactMessageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

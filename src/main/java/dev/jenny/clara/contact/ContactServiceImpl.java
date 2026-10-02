@@ -24,7 +24,7 @@ public class ContactServiceImpl implements InterfaceContactService {
     public ContactResponseDTO send(ContactRequestDTO request, UserEntity user) {
         recaptchaService.verifyOrThrow(request.recaptchaToken());
 
-        ContactMessage contactMessage = ContactMessage.builder()
+        ContactMessageEntity contactMessage = ContactMessageEntity.builder()
                 .name(request.name())
                 .email(request.email())
                 .type(request.type())
