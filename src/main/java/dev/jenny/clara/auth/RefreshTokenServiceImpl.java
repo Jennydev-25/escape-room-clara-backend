@@ -29,4 +29,14 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
         return repository.save(refreshToken);
     }
 
+    @Override
+    public RefreshTokenEntity verifyExpiration(RefreshTokenEntity token) {
+        if (token.getExpiryDate().isBefore(Instant.now())) {
+            repository.delete(token);
+            throw new InvalidRefreshTokenException("El refresh token ha caducado");
+        }
+
+        return token;
+    }
+
 }

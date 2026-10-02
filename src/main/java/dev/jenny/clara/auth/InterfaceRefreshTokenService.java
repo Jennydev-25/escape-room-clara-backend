@@ -6,4 +6,6 @@ public interface InterfaceRefreshTokenService {
 
     RefreshTokenEntity createRefreshToken(User user);
 
+    RefreshTokenEntity verifyExpiration(RefreshTokenEntity token);
+
 }
