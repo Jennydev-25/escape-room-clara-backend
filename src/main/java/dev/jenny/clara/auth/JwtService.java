@@ -3,6 +3,7 @@ package dev.jenny.clara.auth;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
@@ -19,22 +20,28 @@ public class JwtService {
 
     private final JwtEncoder jwtEncoder;
     private final UserRepository userRepository;
+    private final long accessTokenExpirationHours;
 
-    public JwtService(JwtEncoder jwtEncoder, UserRepository userRepository) {
+    public JwtService(JwtEncoder jwtEncoder, UserRepository userRepository,
+            @Value("${jwt.access-token.expiration-hours}") long accessTokenExpirationHours) {
         this.jwtEncoder = jwtEncoder;
         this.userRepository = userRepository;
+        this.accessTokenExpirationHours = accessTokenExpirationHours;
     }
 
     public String generateToken(Authentication authentication) {
-        Instant now = Instant.now();
-
         User user = userRepository.findByEmail(authentication.getName()).get();
+        return generateToken(user);
+    }
+
+    public String generateToken(User user) {
+        Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .subject(authentication.getName())
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .subject(user.getEmail())
+                .expiresAt(now.plus(accessTokenExpirationHours, ChronoUnit.HOURS))
                 .claim("role", user.getRole().name())
                 .build();
 
