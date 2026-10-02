@@ -92,4 +92,11 @@ class RefreshTokenServiceImplTest {
 
         assertThat(result, is(equalTo(validToken)));
     }
+
+    @Test
+    void testFindValidToken_ShouldThrowException_WhenTokenDoesNotExist() {
+        when(repository.findByToken("invalid-token")).thenReturn(Optional.empty());
+
+        assertThrows(InvalidRefreshTokenException.class, () -> service.findValidToken("invalid-token"));
+    }
 }
