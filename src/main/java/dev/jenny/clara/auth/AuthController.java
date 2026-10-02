@@ -11,15 +11,14 @@ import dev.jenny.clara.auth.dtos.LoginResponseDTO;
 @RequestMapping(path = "${api-endpoint}/auth")
 public class AuthController {
 
-    private final JwtService jwtService;
+    private final InterfaceAuthService authService;
 
-    public AuthController(JwtService jwtService) {
-        this.jwtService = jwtService;
+    public AuthController(InterfaceAuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
     public LoginResponseDTO login(Authentication authentication) {
-        String token = jwtService.generateToken(authentication);
-        return new LoginResponseDTO(token);
+        return authService.login(authentication);
     }
 }

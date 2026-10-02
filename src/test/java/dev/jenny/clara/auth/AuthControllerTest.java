@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,19 +31,18 @@ class AuthControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private JwtService jwtService;
+    private InterfaceAuthService authService;
 
     @Autowired
     private ObjectMapper mapper;
 
     @Test
     @WithMockUser(username = "clara@pruebas.com")
-    void testLogin_ShouldReturnToken() throws Exception {
-        String token = "fake.jwt.token";
-        LoginResponseDTO responseDto = new LoginResponseDTO(token);
+    void testLogin_ShouldReturnAccessAndRefreshTokens() throws Exception {
+        LoginResponseDTO responseDto = new LoginResponseDTO("fake.jwt.token", "fake.refresh.token");
         String responseJson = mapper.writeValueAsString(responseDto);
 
-        when(jwtService.generateToken(any())).thenReturn(token);
+        when(authService.login(any(Authentication.class))).thenReturn(responseDto);
 
         MockHttpServletResponse response = mockMvc.perform(post("/api/v1/auth/login"))
                 .andExpect(status().isOk())
