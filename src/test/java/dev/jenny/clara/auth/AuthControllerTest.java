@@ -8,19 +8,20 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import dev.jenny.clara.auth.dtos.LoginResponseDTO;
-import dev.jenny.clara.config.SecurityConfig;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.auth.dtos.RefreshTokenRequestDTO;
+import dev.jenny.clara.config.SecurityConfig;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = AuthController.class)
@@ -45,6 +46,27 @@ class AuthControllerTest {
         when(authService.login(any(Authentication.class))).thenReturn(responseDto);
 
         MockHttpServletResponse response = mockMvc.perform(post("/api/v1/auth/login"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testRefresh_ShouldReturnNewAccessAndRefreshTokens() throws Exception {
+        RefreshTokenRequestDTO requestDto = new RefreshTokenRequestDTO("old-refresh-token");
+        LoginResponseDTO responseDto = new LoginResponseDTO("new.jwt.token", "new-refresh-token");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(authService.refresh("old-refresh-token")).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/api/v1/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
