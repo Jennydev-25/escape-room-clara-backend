@@ -35,6 +35,9 @@ public class SecurityConfig {
     @Value("${api-endpoint}")
     private String endpoint;
 
+    @Value("${cors.allowed-origin}")
+    private String corsAllowedOrigin;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -66,7 +69,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfiguration() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList(corsAllowedOrigin));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
