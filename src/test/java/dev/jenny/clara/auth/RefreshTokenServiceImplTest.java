@@ -40,7 +40,7 @@ class RefreshTokenServiceImplTest {
     @BeforeEach
     void setUp() {
         user = User.builder().email("clara@example.com").build();
-        service = new RefreshTokenServiceImpl(repository, 365);
+        service = new RefreshTokenServiceImpl(repository, userRepository, 365);
     }
 
     @Test

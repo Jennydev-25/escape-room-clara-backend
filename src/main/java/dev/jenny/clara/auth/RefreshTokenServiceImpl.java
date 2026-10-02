@@ -5,19 +5,23 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserRepository;
 
 @Service
 public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
 
     private final RefreshTokenRepository repository;
+    private final UserRepository userRepository;
     private final long expirationDays;
 
-    public RefreshTokenServiceImpl(RefreshTokenRepository repository,
+    public RefreshTokenServiceImpl(RefreshTokenRepository repository, UserRepository userRepository,
             @Value("${jwt.refresh-token.expiration-days}") long expirationDays) {
         this.repository = repository;
+        this.userRepository = userRepository;
         this.expirationDays = expirationDays;
     }
 
@@ -31,6 +35,12 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
                 Instant.now().plus(expirationDays, ChronoUnit.DAYS));
 
         return repository.save(refreshToken);
+    }
+
+    @Override
+    public RefreshTokenEntity createRefreshToken(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).get();
+        return createRefreshToken(user);
     }
 
     @Override
