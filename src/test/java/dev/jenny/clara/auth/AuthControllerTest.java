@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
 import dev.jenny.clara.auth.dtos.RefreshTokenRequestDTO;
+import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.config.SecurityConfig;
 import tools.jackson.databind.ObjectMapper;
 
@@ -73,5 +74,20 @@ class AuthControllerTest {
 
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testRefresh_ShouldReturnUnauthorized_WhenRefreshTokenIsInvalid() throws Exception {
+        RefreshTokenRequestDTO requestDto = new RefreshTokenRequestDTO("invalid-refresh-token");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String errorMessage = "El refresh token no existe";
+
+        when(authService.refresh("invalid-refresh-token")).thenThrow(new InvalidRefreshTokenException(errorMessage));
+
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isUnauthorized());
     }
 }
