@@ -4,9 +4,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,4 +48,15 @@ class RefreshTokenServiceImplTest {
         assertThat(result.getUser(), is(equalTo(user)));
     }
 
+    @Test
+    void testVerifyExpiration_ShouldThrowException_WhenTokenExpired() {
+        RefreshTokenEntity expiredToken = new RefreshTokenEntity(
+                "some-token",
+                user,
+                Instant.now().minus(1, ChronoUnit.DAYS));
+
+        assertThrows(InvalidRefreshTokenException.class, () -> service.verifyExpiration(expiredToken));
+
+        verify(repository).delete(expiredToken);
+    }
 }
