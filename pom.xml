@@ -12,20 +12,20 @@
 	<groupId>dev.jenny</groupId>
 	<artifactId>escape-room-clara-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name />
-	<description />
-	<url />
-	<licenses>
-		<license />
-	</licenses>
+	<name>escape-room-clara-backend</name>
+	<description>Backend REST API for "El Último Archivo de Clara", a narrative investigation escape-room game</description>
+	<url>https://github.com/Jennydev-25/escape-room-clara-backend</url>
 	<developers>
-		<developer />
+		<developer>
+			<name>Jenny Sánchez Requejo</name>
+			<url>https://github.com/Jennydev-25</url>
+		</developer>
 	</developers>
 	<scm>
-		<connection />
-		<developerConnection />
-		<tag />
-		<url />
+		<connection>scm:git:git://github.com/Jennydev-25/escape-room-clara-backend.git</connection>
+		<developerConnection>scm:git:ssh://github.com:Jennydev-25/escape-room-clara-backend.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/Jennydev-25/escape-room-clara-backend</url>
 	</scm>
 	<properties>
 		<java.version>21</java.version>
