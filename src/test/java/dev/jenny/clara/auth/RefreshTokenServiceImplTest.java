@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,11 +36,11 @@ class RefreshTokenServiceImplTest {
 
     private RefreshTokenServiceImpl service;
 
-    private User user;
+    private UserEntity user;
 
     @BeforeEach
     void setUp() {
-        user = User.builder().email("clara@example.com").build();
+        user = UserEntity.builder().email("clara@example.com").build();
         service = new RefreshTokenServiceImpl(repository, userRepository, 365);
     }
 

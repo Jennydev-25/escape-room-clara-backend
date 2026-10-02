@@ -26,7 +26,7 @@ import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,9 +54,9 @@ class RegisterServiceImplTest {
 
         RegisterResponseDTO response = service.register(dtoRequest);
 
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserEntity> userCaptor = ArgumentCaptor.forClass(UserEntity.class);
         verify(userRepository).save(userCaptor.capture());
-        User savedUser = userCaptor.getValue();
+        UserEntity savedUser = userCaptor.getValue();
 
         assertThat(savedUser.getEmail(), is(equalTo("clara@pruebas.com")));
         assertThat(savedUser.getPasswordHash(), is(equalTo("hashedPassword")));
@@ -69,7 +69,7 @@ class RegisterServiceImplTest {
     void testRegister_ShouldThrowException_WhenEmailAlreadyExists() {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
                 "valid-captcha-token");
-        User existingUser = User.builder().email("clara@pruebas.com").build();
+        UserEntity existingUser = UserEntity.builder().email("clara@pruebas.com").build();
 
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(existingUser));
 

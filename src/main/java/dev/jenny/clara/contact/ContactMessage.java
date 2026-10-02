@@ -2,7 +2,7 @@ package dev.jenny.clara.contact;
 
 import java.time.LocalDateTime;
 
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,5 +46,5 @@ public class ContactMessage {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User user;
+    private UserEntity user;
 }

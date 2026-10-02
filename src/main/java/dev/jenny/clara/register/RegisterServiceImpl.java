@@ -11,7 +11,7 @@ import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @Service
@@ -40,7 +40,7 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
         String hashedPassword = passwordEncoder.encode(request.password());
         String alias = request.email().split("@")[0];
 
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email(request.email())
                 .passwordHash(hashedPassword)
                 .alias(alias)

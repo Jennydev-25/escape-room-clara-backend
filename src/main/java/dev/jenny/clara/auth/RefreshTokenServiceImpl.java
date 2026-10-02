@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @Service
@@ -27,7 +27,7 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
     }
 
     @Override
-    public RefreshTokenEntity createRefreshToken(User user) {
+    public RefreshTokenEntity createRefreshToken(UserEntity user) {
         repository.deleteByUser(user);
 
         RefreshTokenEntity refreshToken = new RefreshTokenEntity(
@@ -40,7 +40,7 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
 
     @Override
     public RefreshTokenEntity createRefreshToken(Authentication authentication) {
-        User user = userRepository.findByEmail(authentication.getName()).get();
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
         return createRefreshToken(user);
     }
 

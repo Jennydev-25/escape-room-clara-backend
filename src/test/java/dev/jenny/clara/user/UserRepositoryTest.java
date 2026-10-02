@@ -21,7 +21,7 @@ class UserRepositoryTest {
 
     @Test
     void testFindByEmail() {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashed-password")
                 .alias("clara")
@@ -30,7 +30,7 @@ class UserRepositoryTest {
                 .build();
         userRepository.save(user);
 
-        Optional<User> found = userRepository.findByEmail("clara@pruebas.com");
+        Optional<UserEntity> found = userRepository.findByEmail("clara@pruebas.com");
 
         assertThat(found.isPresent(), is(true));
         assertThat(found.get().getEmail(), is(equalTo("clara@pruebas.com")));

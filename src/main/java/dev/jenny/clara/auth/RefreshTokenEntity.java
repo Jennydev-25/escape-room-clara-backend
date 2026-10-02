@@ -2,7 +2,7 @@ package dev.jenny.clara.auth;
 
 import java.time.Instant;
 
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,14 +23,14 @@ public class RefreshTokenEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User user;
+    private UserEntity user;
 
     private Instant expiryDate;
 
     public RefreshTokenEntity() {
     }
 
-    public RefreshTokenEntity(String token, User user, Instant expiryDate) {
+    public RefreshTokenEntity(String token, UserEntity user, Instant expiryDate) {
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
@@ -44,7 +44,7 @@ public class RefreshTokenEntity {
         return token;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 

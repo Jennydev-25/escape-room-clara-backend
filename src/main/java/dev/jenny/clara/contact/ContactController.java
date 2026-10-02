@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.security.SecurityUser;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import jakarta.validation.Valid;
 
 @RestController
@@ -26,7 +26,7 @@ public class ContactController {
     @PostMapping
     public ResponseEntity<ContactResponseDTO> send(@Valid @RequestBody ContactRequestDTO dto,
             @AuthenticationPrincipal SecurityUser securityUser) {
-        User user = securityUser != null ? securityUser.getUser() : null;
+        UserEntity user = securityUser != null ? securityUser.getUser() : null;
         ContactResponseDTO responseDto = service.send(dto, user);
         return ResponseEntity.status(201).body(responseDto);
     }

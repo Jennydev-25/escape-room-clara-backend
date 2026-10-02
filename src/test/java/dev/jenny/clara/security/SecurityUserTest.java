@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +23,7 @@ class SecurityUserTest {
 
     @Test
     void testGetUsername_ShouldReturnUserEmail() {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
@@ -39,7 +39,7 @@ class SecurityUserTest {
 
     @Test
     void testGetPassword_ShouldReturnUserPasswordHash() {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
@@ -56,7 +56,7 @@ class SecurityUserTest {
     @ParameterizedTest
     @MethodSource("rolesAndExpectedAuthorities")
     void testGetAuthorities_ShouldReturnRoleWithPrefix(Role role, String expectedAuthority) {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
@@ -72,7 +72,7 @@ class SecurityUserTest {
 
     @Test
     void testAccountStatusMethods_ShouldAlwaysReturnTrue() {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")

@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {
@@ -54,7 +54,7 @@ class AuthServiceImplTest {
         String newToken = "new.jwt.token";
         String newRefreshToken = "new-refresh-token";
 
-        User user = mock(User.class);
+        UserEntity user = mock(UserEntity.class);
         RefreshTokenEntity validToken = mock(RefreshTokenEntity.class);
         RefreshTokenEntity newRefreshTokenEntity = mock(RefreshTokenEntity.class);
 

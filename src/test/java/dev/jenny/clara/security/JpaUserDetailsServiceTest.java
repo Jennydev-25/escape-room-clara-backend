@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import dev.jenny.clara.user.Role;
-import dev.jenny.clara.user.User;
+import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +32,7 @@ class JpaUserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsername_ShouldReturnSecurityUser_WhenUserExists() {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
