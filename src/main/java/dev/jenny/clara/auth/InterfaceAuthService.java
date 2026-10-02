@@ -8,4 +8,6 @@ public interface InterfaceAuthService {
 
     LoginResponseDTO login(Authentication authentication);
 
+    LoginResponseDTO refresh(String refreshToken);
+
 }
