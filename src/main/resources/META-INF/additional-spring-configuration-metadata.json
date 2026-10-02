@@ -6,9 +6,24 @@
       "description": "Prefix for all REST API endpoints (e.g. api/v1)."
     },
     {
+      "name": "cors.allowed-origin",
+      "type": "java.lang.String",
+      "description": "Origin allowed to make cross-origin requests to the API (e.g. the frontend dev server)."
+    },
+    {
+      "name": "jwt.access-token.expiration-hours",
+      "type": "java.lang.Long",
+      "description": "Number of hours an access JWT remains valid after being issued."
+    },
+    {
       "name": "jwt.key",
       "type": "java.lang.String",
       "description": "Symmetric secret key (HS512) used to sign and verify JWTs."
+    },
+    {
+      "name": "jwt.refresh-token.expiration-days",
+      "type": "java.lang.Long",
+      "description": "Number of days a refresh token remains valid after being issued."
     },
     {
       "name": "recaptcha.secret-key",

@@ -15,9 +15,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
@@ -32,7 +32,6 @@ import dev.jenny.clara.user.UserRepository;
 @ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
 
-    @InjectMocks
     private JwtService service;
 
     @Mock
@@ -41,6 +40,11 @@ class JwtServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @BeforeEach
+    void setUp() {
+        service = new JwtService(jwtEncoder, userRepository, 1);
+    }
+    
     @ParameterizedTest
     @MethodSource("rolesAndExpectedClaim")
     void testGenerateToken_ShouldIncludeUserRoleAsClaim(Role role, String expectedClaim) {

@@ -15,7 +15,6 @@ import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -27,7 +26,6 @@ class RefreshTokenServiceImplTest {
     @Mock
     private RefreshTokenRepository repository;
 
-    @InjectMocks
     private RefreshTokenServiceImpl service;
 
     private User user;
@@ -35,6 +33,7 @@ class RefreshTokenServiceImplTest {
     @BeforeEach
     void setUp() {
         user = User.builder().email("clara@example.com").build();
+        service = new RefreshTokenServiceImpl(repository, 365);
     }
 
     @Test
