@@ -30,14 +30,17 @@ public class JwtService {
     }
 
     public String generateToken(Authentication authentication) {
-        Instant now = Instant.now();
-
         User user = userRepository.findByEmail(authentication.getName()).get();
+        return generateToken(user);
+    }
+
+    public String generateToken(User user) {
+        Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .subject(authentication.getName())
+                .subject(user.getEmail())
                 .expiresAt(now.plus(accessTokenExpirationHours, ChronoUnit.HOURS))
                 .claim("role", user.getRole().name())
                 .build();
