@@ -3,6 +3,7 @@ package dev.jenny.clara.user;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -51,5 +53,14 @@ class UserServiceImplTest {
         assertThat(result.alias(), is(equalTo(TEST_ALIAS)));
         assertThat(result.email(), is(equalTo(TEST_EMAIL)));
         assertThat(result.avatarId(), is(equalTo(TEST_AVATAR_ID)));
+    }
+
+    @Test
+    void testGetProfile_ShouldThrowUserNotFoundException_WhenUserDoesNotExist() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.getProfile(authentication));
     }
 }
