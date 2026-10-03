@@ -33,6 +33,9 @@ class ProgressServiceImplTest {
     private static final long TEST_SECONDS = 300L;
     private static final String TEST_NOTE = "nota";
     private static final LocalDateTime TEST_UPDATED_AT = LocalDateTime.of(2026, 1, 1, 12, 0);
+    private static final int DEFAULT_CHAPTER = 1;
+    private static final String DEFAULT_HUD = "";
+    private static final long DEFAULT_SECONDS = 0L;
 
     @Mock
     private ProgressRepository progressRepository;
@@ -75,5 +78,22 @@ class ProgressServiceImplTest {
         assertThat(result.timeSpentSeconds(), is(equalTo(TEST_SECONDS)));
         assertThat(result.freeNote(), is(equalTo(TEST_NOTE)));
         verify(progressRepository, never()).save(any(ProgressEntity.class));
+    }
+
+    @Test
+    void testGetOrCreateProgress_ShouldCreateDefaultProgress_WhenNoneExists() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(progressRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.empty());
+        when(progressRepository.save(any(ProgressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProgressResponseDTO result = service.getOrCreateProgress(authentication);
+
+        assertThat(result.currentChapter(), is(equalTo(DEFAULT_CHAPTER)));
+        assertThat(result.hudLetters(), is(equalTo(DEFAULT_HUD)));
+        assertThat(result.investigationSubmitted(), is(false));
+        assertThat(result.timeSpentSeconds(), is(equalTo(DEFAULT_SECONDS)));
+        verify(progressRepository).save(any(ProgressEntity.class));
     }
 }
