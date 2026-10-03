@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,5 +33,11 @@ public class GlobalExceptionHandler {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.UNAUTHORIZED.value(),
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiErrorDTO> handleUserNotFound(UserNotFoundException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }
