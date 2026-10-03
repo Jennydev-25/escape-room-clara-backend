@@ -133,4 +133,22 @@ class ProgressControllerTest {
                 new AccumulateTimeRequestDTO(-10L),
                 new AccumulateTimeRequestDTO(0L));
     }
+
+    @ParameterizedTest
+    @MethodSource("invalidUpdateNoteRequests")
+    @WithMockUser(username = "clara@pruebas.com")
+    void testUpdateNote_ShouldReturnBadRequest_WhenRequestIsInvalid(UpdateNoteRequestDTO invalidRequest)
+            throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(patch("/api/v1/progress/note")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<UpdateNoteRequestDTO> invalidUpdateNoteRequests() {
+        return Stream.of(
+                new UpdateNoteRequestDTO(null));
+    }
 }
