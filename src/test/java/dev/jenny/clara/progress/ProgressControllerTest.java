@@ -4,8 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -21,6 +24,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
+import dev.jenny.clara.progress.dtos.AccumulateTimeRequestDTO;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import tools.jackson.databind.ObjectMapper;
 
@@ -54,6 +58,28 @@ class ProgressControllerTest {
         when(progressService.getOrCreateProgress(any(Authentication.class))).thenReturn(responseDto);
 
         MockHttpServletResponse response = mockMvc.perform(get("/api/v1/progress"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testAccumulateTime_ShouldReturnUpdatedProgress() throws Exception {
+        AccumulateTimeRequestDTO requestDto = new AccumulateTimeRequestDTO(60L);
+        ProgressResponseDTO responseDto = new ProgressResponseDTO(
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(progressService.accumulateTime(any(Authentication.class), eq(requestDto))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(patch("/api/v1/progress/time")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
