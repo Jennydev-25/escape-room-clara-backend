@@ -4,7 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
@@ -41,5 +44,15 @@ class ProgressMapperTest {
         assertThat(dto.timeSpentSeconds(), is(equalTo(entity.getTimeSpentSeconds())));
         assertThat(dto.freeNote(), is(equalTo(entity.getFreeNote())));
         assertThat(dto.updatedAt(), is(equalTo(entity.getUpdatedAt())));
+    }
+
+    @Test
+    void testConstructor_ShouldThrowException_WhenInstantiatedViaReflection() throws Exception {
+        Constructor<ProgressMapper> constructor = ProgressMapper.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+
+        assertThat(exception.getCause(), isA(UnsupportedOperationException.class));
     }
 }
