@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.jenny.clara.progress.dtos.AccumulateTimeRequestDTO;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
+import dev.jenny.clara.progress.dtos.UpdateNoteRequestDTO;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,5 +31,10 @@ public class ProgressController {
     public ProgressResponseDTO accumulateTime(Authentication authentication,
             @Valid @RequestBody AccumulateTimeRequestDTO dto) {
         return progressService.accumulateTime(authentication, dto);
+    }
+
+    @PatchMapping("/note")
+    public ProgressResponseDTO updateNote(Authentication authentication, @Valid @RequestBody UpdateNoteRequestDTO dto) {
+        return progressService.updateNote(authentication, dto);
     }
 }
