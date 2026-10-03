@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.user.exceptions.UserNotFoundException;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = UserController.class)
@@ -54,5 +55,15 @@ class UserControllerTest {
 
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
+    void testGetProfile_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+        when(userService.getProfile(any(Authentication.class)))
+                .thenThrow(new UserNotFoundException("No se encontró ningún usuario con ese email"));
+
+        mockMvc.perform(get("/api/v1/users/me"))
+                .andExpect(status().isNotFound());
     }
 }
