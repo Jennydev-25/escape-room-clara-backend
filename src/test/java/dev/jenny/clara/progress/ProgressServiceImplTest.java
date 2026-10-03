@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
+import dev.jenny.clara.progress.dtos.AccumulateTimeRequestDTO;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
@@ -36,6 +37,8 @@ class ProgressServiceImplTest {
     private static final int DEFAULT_CHAPTER = 1;
     private static final String DEFAULT_HUD = "";
     private static final long DEFAULT_SECONDS = 0L;
+    private static final long ADD_SECONDS = 50L;
+    private static final long EXPECTED_TOTAL_SECONDS = TEST_SECONDS + ADD_SECONDS;
 
     @Mock
     private ProgressRepository progressRepository;
@@ -94,6 +97,33 @@ class ProgressServiceImplTest {
         assertThat(result.hudLetters(), is(equalTo(DEFAULT_HUD)));
         assertThat(result.investigationSubmitted(), is(false));
         assertThat(result.timeSpentSeconds(), is(equalTo(DEFAULT_SECONDS)));
+        verify(progressRepository).save(any(ProgressEntity.class));
+    }
+
+    @Test
+    void testAccumulateTime_ShouldAddSecondsToExistingProgress() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        ProgressEntity existingProgress = ProgressEntity.builder()
+                .user(user)
+                .currentChapter(TEST_CHAPTER)
+                .hudLetters(TEST_HUD)
+                .investigationSubmitted(false)
+                .timeSpentSeconds(TEST_SECONDS)
+                .freeNote(TEST_NOTE)
+                .updatedAt(TEST_UPDATED_AT)
+                .build();
+
+        when(progressRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.of(existingProgress));
+        when(progressRepository.save(any(ProgressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AccumulateTimeRequestDTO dto = new AccumulateTimeRequestDTO(ADD_SECONDS);
+
+        ProgressResponseDTO result = service.accumulateTime(authentication, dto);
+
+        assertThat(result.timeSpentSeconds(), is(equalTo(EXPECTED_TOTAL_SECONDS)));
         verify(progressRepository).save(any(ProgressEntity.class));
     }
 }
