@@ -11,8 +11,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -109,5 +112,25 @@ class ProgressControllerTest {
 
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidAccumulateTimeRequests")
+    @WithMockUser(username = "clara@pruebas.com")
+    void testAccumulateTime_ShouldReturnBadRequest_WhenRequestIsInvalid(AccumulateTimeRequestDTO invalidRequest)
+            throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(patch("/api/v1/progress/time")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<AccumulateTimeRequestDTO> invalidAccumulateTimeRequests() {
+        return Stream.of(
+                new AccumulateTimeRequestDTO(null),
+                new AccumulateTimeRequestDTO(-10L),
+                new AccumulateTimeRequestDTO(0L));
     }
 }
