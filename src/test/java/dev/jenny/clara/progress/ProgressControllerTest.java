@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.progress.dtos.AccumulateTimeRequestDTO;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
+import dev.jenny.clara.progress.dtos.UpdateNoteRequestDTO;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = ProgressController.class)
@@ -78,6 +79,28 @@ class ProgressControllerTest {
         when(progressService.accumulateTime(any(Authentication.class), eq(requestDto))).thenReturn(responseDto);
 
         MockHttpServletResponse response = mockMvc.perform(patch("/api/v1/progress/time")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testUpdateNote_ShouldReturnUpdatedProgress() throws Exception {
+        UpdateNoteRequestDTO requestDto = new UpdateNoteRequestDTO("mi nota actualizada");
+        ProgressResponseDTO responseDto = new ProgressResponseDTO(
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(progressService.updateNote(any(Authentication.class), eq(requestDto))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(patch("/api/v1/progress/note")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
