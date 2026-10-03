@@ -27,6 +27,7 @@ class ProgressRepositoryTest {
     private static final long FAST_TIME_SECONDS = 200L;
     private static final long SLOW_TIME_SECONDS = 500L;
     private static final int EXPECTED_SUBMITTED_COUNT = 2;
+    private static final long EXPECTED_SUBMITTED_TOTAL = 2L;
 
     @Autowired
     private ProgressRepository progressRepository;
@@ -98,5 +99,40 @@ class ProgressRepositoryTest {
         assertThat(result.size(), is(EXPECTED_SUBMITTED_COUNT));
         assertThat(result.get(0).getUser().getEmail(), is("fast@pruebas.com"));
         assertThat(result.get(1).getUser().getEmail(), is("slow@pruebas.com"));
+    }
+
+    @Test
+    void testCountByInvestigationSubmittedTrue_ShouldCountOnlySubmitted() {
+        UserEntity userSubmittedOne = createUser("submitted1@pruebas.com");
+        UserEntity userSubmittedTwo = createUser("submitted2@pruebas.com");
+        UserEntity userPending = createUser("pending2@pruebas.com");
+
+        progressRepository.save(ProgressEntity.builder()
+                .user(userSubmittedOne)
+                .currentChapter(INITIAL_CHAPTER)
+                .hudLetters(EMPTY_HUD)
+                .investigationSubmitted(true)
+                .timeSpentSeconds(ZERO_SECONDS)
+                .build());
+
+        progressRepository.save(ProgressEntity.builder()
+                .user(userSubmittedTwo)
+                .currentChapter(INITIAL_CHAPTER)
+                .hudLetters(EMPTY_HUD)
+                .investigationSubmitted(true)
+                .timeSpentSeconds(ZERO_SECONDS)
+                .build());
+
+        progressRepository.save(ProgressEntity.builder()
+                .user(userPending)
+                .currentChapter(INITIAL_CHAPTER)
+                .hudLetters(EMPTY_HUD)
+                .investigationSubmitted(false)
+                .timeSpentSeconds(ZERO_SECONDS)
+                .build());
+
+        long result = progressRepository.countByInvestigationSubmittedTrue();
+
+        assertThat(result, is(EXPECTED_SUBMITTED_TOTAL));
     }
 }
