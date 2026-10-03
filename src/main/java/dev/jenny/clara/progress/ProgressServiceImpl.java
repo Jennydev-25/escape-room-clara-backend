@@ -33,10 +33,12 @@ public class ProgressServiceImpl implements InterfaceProgressService {
     public ProgressResponseDTO getOrCreateProgress(Authentication authentication) {
         UserEntity user = userRepository.findByEmail(authentication.getName()).get();
 
-        ProgressEntity progress = repository.findByUserId(user.getId())
-                .orElseGet(() -> repository.save(createDefaultProgress(user)));
+        return ProgressMapper.toDTO(findOrCreateProgress(user));
+    }
 
-        return ProgressMapper.toDTO(progress);
+    private ProgressEntity findOrCreateProgress(UserEntity user) {
+        return repository.findByUserId(user.getId())
+                .orElseGet(() -> repository.save(createDefaultProgress(user)));
     }
 
     private ProgressEntity createDefaultProgress(UserEntity user) {
