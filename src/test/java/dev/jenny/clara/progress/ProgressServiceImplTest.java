@@ -14,12 +14,15 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.progress.dtos.AccumulateTimeRequestDTO;
+import dev.jenny.clara.progress.dtos.UpdateNoteRequestDTO;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
@@ -39,6 +42,7 @@ class ProgressServiceImplTest {
     private static final long DEFAULT_SECONDS = 0L;
     private static final long ADD_SECONDS = 50L;
     private static final long EXPECTED_TOTAL_SECONDS = TEST_SECONDS + ADD_SECONDS;
+    private static final String UPDATED_NOTE = "nota actualizada";
 
     @Mock
     private ProgressRepository progressRepository;
@@ -124,6 +128,34 @@ class ProgressServiceImplTest {
         ProgressResponseDTO result = service.accumulateTime(authentication, dto);
 
         assertThat(result.timeSpentSeconds(), is(equalTo(EXPECTED_TOTAL_SECONDS)));
+        verify(progressRepository).save(any(ProgressEntity.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { UPDATED_NOTE, "" })
+    void testUpdateNote_ShouldReplaceFreeNoteOnExistingProgress(String newNote) {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        ProgressEntity existingProgress = ProgressEntity.builder()
+                .user(user)
+                .currentChapter(TEST_CHAPTER)
+                .hudLetters(TEST_HUD)
+                .investigationSubmitted(false)
+                .timeSpentSeconds(TEST_SECONDS)
+                .freeNote(TEST_NOTE)
+                .updatedAt(TEST_UPDATED_AT)
+                .build();
+
+        when(progressRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.of(existingProgress));
+        when(progressRepository.save(any(ProgressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UpdateNoteRequestDTO dto = new UpdateNoteRequestDTO(newNote);
+
+        ProgressResponseDTO result = service.updateNote(authentication, dto);
+
+        assertThat(result.freeNote(), is(equalTo(newNote)));
         verify(progressRepository).save(any(ProgressEntity.class));
     }
 }
