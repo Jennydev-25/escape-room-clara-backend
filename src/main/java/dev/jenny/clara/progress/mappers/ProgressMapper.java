@@ -5,6 +5,10 @@ import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 
 public class ProgressMapper {
 
+    private ProgressMapper() {
+        throw new UnsupportedOperationException("No se puede instanciar esta clase de utilidad");
+    }
+
     public static ProgressResponseDTO toDTO(ProgressEntity entity) {
         return new ProgressResponseDTO(
                 entity.getCurrentChapter(),
