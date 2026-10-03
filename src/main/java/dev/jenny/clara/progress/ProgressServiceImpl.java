@@ -66,6 +66,12 @@ public class ProgressServiceImpl implements InterfaceProgressService {
 
     @Override
     public ProgressResponseDTO updateNote(Authentication authentication, UpdateNoteRequestDTO dto) {
-        throw new UnsupportedOperationException("Método no implementado todavía");
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+        ProgressEntity progress = findOrCreateProgress(user);
+
+        progress.setFreeNote(dto.freeNote());
+        progress.setUpdatedAt(LocalDateTime.now());
+
+        return ProgressMapper.toDTO(repository.save(progress));
     }
 }
