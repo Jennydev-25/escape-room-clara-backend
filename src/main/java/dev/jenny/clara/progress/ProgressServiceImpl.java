@@ -55,7 +55,13 @@ public class ProgressServiceImpl implements InterfaceProgressService {
 
     @Override
     public ProgressResponseDTO accumulateTime(Authentication authentication, AccumulateTimeRequestDTO dto) {
-        throw new UnsupportedOperationException("Método no implementado todavía");
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+        ProgressEntity progress = findOrCreateProgress(user);
+
+        progress.setTimeSpentSeconds(progress.getTimeSpentSeconds() + dto.secondsToAdd());
+        progress.setUpdatedAt(LocalDateTime.now());
+
+        return ProgressMapper.toDTO(repository.save(progress));
     }
 
     @Override
