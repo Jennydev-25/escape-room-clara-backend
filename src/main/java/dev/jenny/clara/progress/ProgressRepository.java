@@ -10,4 +10,6 @@ public interface ProgressRepository extends JpaRepository<ProgressEntity, Long> 
     Optional<ProgressEntity> findByUserId(Long userId);
 
     List<ProgressEntity> findByInvestigationSubmittedTrueOrderByTimeSpentSecondsAsc();
+
+    long countByInvestigationSubmittedTrue();
 }
