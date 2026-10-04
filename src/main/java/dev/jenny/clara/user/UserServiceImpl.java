@@ -34,7 +34,7 @@ public class UserServiceImpl implements InterfaceUserService {
 
         if (!request.email().equals(user.getEmail())) {
             userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
-                throw new EmailAlreadyExistsException("Email " + request.email() + " is already registered.");
+                throw new EmailAlreadyExistsException("El email " + request.email() + " ya está registrado.");
             });
         }
 
