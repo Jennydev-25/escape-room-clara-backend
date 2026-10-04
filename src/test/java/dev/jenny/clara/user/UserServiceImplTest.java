@@ -107,4 +107,16 @@ class UserServiceImplTest {
 
         assertThrows(EmailAlreadyExistsException.class, () -> userService.updateProfile(authentication, request));
     }
+
+    @Test
+    void testUpdateProfile_ShouldThrowUserNotFoundException_WhenUserDoesNotExist() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+
+        UpdateProfileRequestDTO request = new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, TEST_EMAIL,
+                TEST_AVATAR_ID);
+
+        assertThrows(UserNotFoundException.class, () -> userService.updateProfile(authentication, request));
+    }
 }
