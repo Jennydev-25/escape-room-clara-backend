@@ -92,4 +92,20 @@ class UserControllerTest {
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
     }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
+    void testUpdateProfile_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+        UpdateProfileRequestDTO requestDto = new UpdateProfileRequestDTO("nuevo_alias", TEST_EMAIL, TEST_EMAIL,
+                TEST_AVATAR_ID);
+        String requestJson = mapper.writeValueAsString(requestDto);
+
+        when(userService.updateProfile(any(Authentication.class), eq(requestDto)))
+                .thenThrow(new UserNotFoundException("No se encontró ningún usuario con ese email"));
+
+        mockMvc.perform(put("/api/v1/users/me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isNotFound());
+    }
 }
