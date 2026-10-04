@@ -44,4 +44,14 @@ class EmailMatchesValidatorTest {
                 Arguments.of("marta@example.com", null),
                 Arguments.of(null, "marta@example.com"));
     }
+
+    @Test
+    void testIsValid_ShouldReturnTrue_WhenEmailsMatch() {
+        UpdateProfileRequestDTO dto = new UpdateProfileRequestDTO(TEST_ALIAS, "marta@example.com", "marta@example.com",
+                TEST_AVATAR_ID);
+
+        boolean result = validator.isValid(dto, null);
+
+        assertThat(result, is(equalTo(true)));
+    }
 }
