@@ -8,6 +8,26 @@ public class EmailMatchesValidator implements ConstraintValidator<EmailMatches, 
 
     @Override
     public boolean isValid(UpdateProfileRequestDTO request, ConstraintValidatorContext context) {
-        return true;
+        if (request == null) {
+            return true;
+        }
+
+        String email = request.email();
+        String emailConfirmation = request.emailConfirmation();
+
+        if (email == null || emailConfirmation == null) {
+            return true;
+        }
+
+        boolean matches = email.equals(emailConfirmation);
+
+        if (!matches) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                    .addPropertyNode("emailConfirmation")
+                    .addConstraintViolation();
+        }
+
+        return matches;
     }
 }
