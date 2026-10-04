@@ -8,6 +8,26 @@ public class NewPasswordMatchesValidator implements ConstraintValidator<NewPassw
 
     @Override
     public boolean isValid(ChangePasswordRequestDTO request, ConstraintValidatorContext context) {
-        throw new UnsupportedOperationException("Todavía no implementado");
+        if (request == null) {
+            return true;
+        }
+
+        String newPassword = request.newPassword();
+        String newPasswordConfirmation = request.newPasswordConfirmation();
+
+        if (newPassword == null || newPasswordConfirmation == null) {
+            return true;
+        }
+
+        boolean matches = newPassword.equals(newPasswordConfirmation);
+
+        if (!matches) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                    .addPropertyNode("newPasswordConfirmation")
+                    .addConstraintViolation();
+        }
+
+        return matches;
     }
 }
