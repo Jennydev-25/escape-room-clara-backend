@@ -119,4 +119,26 @@ class UserServiceImplTest {
 
         assertThrows(UserNotFoundException.class, () -> userService.updateProfile(authentication, request));
     }
+
+    @Test
+    void testUpdateProfile_ShouldReturnUpdatedProfile_WhenEmailChangesToAvailableEmail() {
+        UserEntity user = UserEntity.builder()
+                .email(TEST_EMAIL)
+                .alias(TEST_ALIAS)
+                .avatarId(TEST_AVATAR_ID)
+                .build();
+
+        String newEmail = "nuevo@example.com";
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(newEmail)).thenReturn(Optional.empty());
+
+        UpdateProfileRequestDTO request = new UpdateProfileRequestDTO(TEST_ALIAS, newEmail, newEmail, TEST_AVATAR_ID);
+
+        UserProfileResponseDTO result = userService.updateProfile(authentication, request);
+
+        assertThat(result.email(), is(equalTo(newEmail)));
+    }
 }
