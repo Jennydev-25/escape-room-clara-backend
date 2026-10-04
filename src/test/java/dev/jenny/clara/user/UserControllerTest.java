@@ -10,7 +10,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -22,6 +27,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
@@ -93,19 +99,29 @@ class UserControllerTest {
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
     }
 
-    @Test
     @WithMockUser(username = "marta@pruebas.com")
-    void testUpdateProfile_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+    @ParameterizedTest(name = "{2} -> {1}")
+    @MethodSource("updateProfileErrorCases")
+    void testUpdateProfile_ShouldReturnErrorStatus_WhenServiceThrowsException(RuntimeException exception,
+            int expectedStatus, String description) throws Exception {
         UpdateProfileRequestDTO requestDto = new UpdateProfileRequestDTO("nuevo_alias", TEST_EMAIL, TEST_EMAIL,
                 TEST_AVATAR_ID);
         String requestJson = mapper.writeValueAsString(requestDto);
 
-        when(userService.updateProfile(any(Authentication.class), eq(requestDto)))
-                .thenThrow(new UserNotFoundException("No se encontró ningún usuario con ese email"));
+        when(userService.updateProfile(any(Authentication.class), eq(requestDto))).thenThrow(exception);
 
         mockMvc.perform(put("/api/v1/users/me")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
-                .andExpect(status().isNotFound());
+                .andExpect(status().is(expectedStatus));
     }
+
+    private static Stream<Arguments> updateProfileErrorCases() {
+        return Stream.of(
+                Arguments.of(new UserNotFoundException("No se encontró ningún usuario con ese email"), 404,
+                        "usuario no encontrado"),
+                Arguments.of(new EmailAlreadyExistsException("El email otro@pruebas.com ya está registrado."), 409,
+                        "email ya registrado"));
+    }
+
 }
