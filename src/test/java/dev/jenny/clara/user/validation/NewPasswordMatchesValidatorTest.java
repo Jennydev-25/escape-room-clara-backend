@@ -51,4 +51,14 @@ class NewPasswordMatchesValidatorTest {
                 Arguments.of("newPass123", null),
                 Arguments.of(null, "newPass123"));
     }
+    
+    @Test
+    void testIsValid_ShouldReturnTrue_WhenNewPasswordsMatch() {
+        ChangePasswordRequestDTO dto = new ChangePasswordRequestDTO(TEST_CURRENT_PASSWORD, "newPass123",
+                "newPass123");
+
+        boolean result = validator.isValid(dto, null);
+
+        assertThat(result, is(equalTo(true)));
+    }
 }
