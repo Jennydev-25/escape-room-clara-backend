@@ -124,4 +124,26 @@ class UserControllerTest {
                         "email ya registrado"));
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidUpdateProfileRequests")
+    @WithMockUser(username = "marta@pruebas.com")
+    void testUpdateProfile_ShouldReturnBadRequest_WhenRequestIsInvalid(UpdateProfileRequestDTO invalidRequest)
+            throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(put("/api/v1/users/me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<UpdateProfileRequestDTO> invalidUpdateProfileRequests() {
+        return Stream.of(
+                new UpdateProfileRequestDTO("", TEST_EMAIL, TEST_EMAIL, TEST_AVATAR_ID),
+                new UpdateProfileRequestDTO(TEST_ALIAS, "not-an-email", "not-an-email", TEST_AVATAR_ID),
+                new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, "", TEST_AVATAR_ID),
+                new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, "otro@pruebas.com", TEST_AVATAR_ID),
+                new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, TEST_EMAIL, null));
+    }
+
 }
