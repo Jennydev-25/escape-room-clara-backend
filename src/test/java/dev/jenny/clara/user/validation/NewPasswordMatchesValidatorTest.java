@@ -61,4 +61,14 @@ class NewPasswordMatchesValidatorTest {
 
         assertThat(result, is(equalTo(true)));
     }
+
+    @Test
+    void testIsValid_ShouldReturnFalse_WhenNewPasswordsDoNotMatch() {
+        ChangePasswordRequestDTO dto = new ChangePasswordRequestDTO(TEST_CURRENT_PASSWORD, "newPass123",
+                "otherPass456");
+
+        boolean result = validator.isValid(dto, context);
+
+        assertThat(result, is(equalTo(false)));
+    }
 }
