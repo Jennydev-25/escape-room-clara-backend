@@ -16,8 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
-import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
+import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -84,5 +85,26 @@ class UserServiceImplTest {
         assertThat(result.alias(), is(equalTo("nuevo_alias")));
         assertThat(result.email(), is(equalTo(TEST_EMAIL)));
         assertThat(result.avatarId(), is(equalTo(5)));
+    }
+
+    @Test
+    void testUpdateProfile_ShouldThrowEmailAlreadyExistsException_WhenNewEmailBelongsToAnotherUser() {
+        UserEntity user = UserEntity.builder()
+                .email(TEST_EMAIL)
+                .alias(TEST_ALIAS)
+                .avatarId(TEST_AVATAR_ID)
+                .build();
+
+        String otherEmail = "otro@example.com";
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(otherEmail)).thenReturn(Optional.of(mock(UserEntity.class)));
+
+        UpdateProfileRequestDTO request = new UpdateProfileRequestDTO(TEST_ALIAS, otherEmail, otherEmail,
+                TEST_AVATAR_ID);
+
+        assertThrows(EmailAlreadyExistsException.class, () -> userService.updateProfile(authentication, request));
     }
 }
