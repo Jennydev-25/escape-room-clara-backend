@@ -3,6 +3,7 @@ package dev.jenny.clara.user;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
@@ -30,6 +31,12 @@ public class UserServiceImpl implements InterfaceUserService {
         UserEntity user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException(
                         "No se encontró ningún usuario con ese email " + authentication.getName()));
+
+        if (!request.email().equals(user.getEmail())) {
+            userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
+                throw new EmailAlreadyExistsException("Email " + request.email() + " is already registered.");
+            });
+        }
 
         user.setAlias(request.alias());
         user.setEmail(request.email());
