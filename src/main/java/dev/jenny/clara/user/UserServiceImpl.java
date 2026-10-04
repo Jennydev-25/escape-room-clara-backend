@@ -32,10 +32,9 @@ public class UserServiceImpl implements InterfaceUserService {
                 .orElseThrow(() -> new UserNotFoundException(
                         "No se encontró ningún usuario con ese email " + authentication.getName()));
 
-        if (!request.email().equals(user.getEmail())) {
-            userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
-                throw new EmailAlreadyExistsException("El email " + request.email() + " ya está registrado.");
-            });
+        if (!request.email().equals(user.getEmail())
+                && userRepository.findByEmail(request.email()).isPresent()) {
+            throw new EmailAlreadyExistsException("El email " + request.email() + " ya está registrado.");
         }
 
         user.setAlias(request.alias());
