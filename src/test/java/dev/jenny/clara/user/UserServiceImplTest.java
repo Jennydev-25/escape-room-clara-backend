@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,5 +63,26 @@ class UserServiceImplTest {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> userService.getProfile(authentication));
+    }
+
+    @Test
+    void testUpdateProfile_ShouldReturnUpdatedProfile_WhenUserExists() {
+        UserEntity user = UserEntity.builder()
+                .email(TEST_EMAIL)
+                .alias(TEST_ALIAS)
+                .avatarId(TEST_AVATAR_ID)
+                .build();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        UpdateProfileRequestDTO request = new UpdateProfileRequestDTO("nuevo_alias", TEST_EMAIL, TEST_EMAIL, 5);
+
+        UserProfileResponseDTO result = userService.updateProfile(authentication, request);
+
+        assertThat(result.alias(), is(equalTo("nuevo_alias")));
+        assertThat(result.email(), is(equalTo(TEST_EMAIL)));
+        assertThat(result.avatarId(), is(equalTo(5)));
     }
 }
