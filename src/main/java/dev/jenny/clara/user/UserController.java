@@ -12,7 +12,7 @@ import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/users")
+@RequestMapping(path = "${api-endpoint}/users/me")
 public class UserController {
 
     private final InterfaceUserService userService;
@@ -21,12 +21,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/me")
+    @GetMapping
     public UserProfileResponseDTO getProfile(Authentication authentication) {
         return userService.getProfile(authentication);
     }
 
-    @PutMapping("/me")
+    @PutMapping
     public UserProfileResponseDTO updateProfile(Authentication authentication, @Valid @RequestBody UpdateProfileRequestDTO dto) {
         return userService.updateProfile(authentication, dto);
     }
