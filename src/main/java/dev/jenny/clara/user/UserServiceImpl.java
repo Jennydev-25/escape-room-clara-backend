@@ -8,6 +8,7 @@ import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
 import dev.jenny.clara.user.mappers.UserMapper;
 
@@ -55,6 +56,10 @@ public class UserServiceImpl implements InterfaceUserService {
         UserEntity user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException(
                         "No se encontró ningún usuario con ese email " + authentication.getName()));
+
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new InvalidCurrentPasswordException("La contraseña actual no es correcta");
+        }
     }
 
 }
