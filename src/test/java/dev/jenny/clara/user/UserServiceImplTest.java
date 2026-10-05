@@ -21,6 +21,7 @@ import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -156,5 +157,22 @@ class UserServiceImplTest {
         ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("oldPass123", "newPass123", "newPass123");
 
         assertThrows(UserNotFoundException.class, () -> userService.changePassword(authentication, request));
+    }
+
+    @Test
+    void testChangePassword_ShouldThrowInvalidCurrentPasswordException_WhenCurrentPasswordIsIncorrect() {
+        UserEntity user = UserEntity.builder()
+                .email(TEST_EMAIL)
+                .passwordHash("hashedPassword")
+                .build();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("wrongPass123", "hashedPassword")).thenReturn(false);
+
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("wrongPass123", "newPass123", "newPass123");
+
+        assertThrows(InvalidCurrentPasswordException.class, () -> userService.changePassword(authentication, request));
     }
 }
