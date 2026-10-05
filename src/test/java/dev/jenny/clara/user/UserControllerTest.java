@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
@@ -97,6 +98,18 @@ class UserControllerTest {
 
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
+    void testChangePassword_ShouldReturnNoContent() throws Exception {
+        ChangePasswordRequestDTO requestDto = new ChangePasswordRequestDTO("oldPass123", "newPass123", "newPass123");
+        String requestJson = mapper.writeValueAsString(requestDto);
+
+        mockMvc.perform(put("/api/v1/users/me/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isNoContent());
     }
 
     @WithMockUser(username = "marta@pruebas.com")
