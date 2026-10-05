@@ -52,7 +52,9 @@ public class UserServiceImpl implements InterfaceUserService {
 
     @Override
     public void changePassword(Authentication authentication, ChangePasswordRequestDTO request) {
-        throw new UnsupportedOperationException("Todavía no implementado");
+        UserEntity user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException(
+                        "No se encontró ningún usuario con ese email " + authentication.getName()));
     }
 
 }
