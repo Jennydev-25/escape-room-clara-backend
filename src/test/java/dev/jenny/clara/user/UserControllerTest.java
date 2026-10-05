@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -31,6 +32,7 @@ import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
+import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -110,6 +112,21 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
+    void testChangePassword_ShouldReturnBadRequest_WhenCurrentPasswordIsInvalid() throws Exception {
+        ChangePasswordRequestDTO requestDto = new ChangePasswordRequestDTO("wrongPass", "newPass123", "newPass123");
+        String requestJson = mapper.writeValueAsString(requestDto);
+
+        doThrow(new InvalidCurrentPasswordException("La contraseña actual no es correcta"))
+                .when(userService).changePassword(any(Authentication.class), eq(requestDto));
+
+        mockMvc.perform(put("/api/v1/users/me/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
     }
 
     @WithMockUser(username = "marta@pruebas.com")
