@@ -60,6 +60,9 @@ public class UserServiceImpl implements InterfaceUserService {
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
             throw new InvalidCurrentPasswordException("La contraseña actual no es correcta");
         }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
     }
 
 }
