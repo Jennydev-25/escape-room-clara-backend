@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -174,5 +175,26 @@ class UserServiceImplTest {
         ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("wrongPass123", "newPass123", "newPass123");
 
         assertThrows(InvalidCurrentPasswordException.class, () -> userService.changePassword(authentication, request));
+    }
+
+    @Test
+    void testChangePassword_ShouldUpdatePassword_WhenCurrentPasswordIsCorrect() {
+        UserEntity user = UserEntity.builder()
+                .email(TEST_EMAIL)
+                .passwordHash("hashedOldPassword")
+                .build();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("oldPass123", "hashedOldPassword")).thenReturn(true);
+        when(passwordEncoder.encode("newPass123")).thenReturn("hashedNewPassword");
+
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("oldPass123", "newPass123", "newPass123");
+
+        userService.changePassword(authentication, request);
+
+        assertThat(user.getPasswordHash(), is(equalTo("hashedNewPassword")));
+        verify(userRepository).save(user);
     }
 }
