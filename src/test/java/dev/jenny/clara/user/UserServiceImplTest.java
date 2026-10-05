@@ -15,8 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
@@ -31,11 +33,14 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
-        userService = new UserServiceImpl(userRepository);
+        userService = new UserServiceImpl(userRepository, passwordEncoder);
     }
 
     @Test
@@ -140,5 +145,16 @@ class UserServiceImplTest {
         UserProfileResponseDTO result = userService.updateProfile(authentication, request);
 
         assertThat(result.email(), is(equalTo(newEmail)));
+    }
+
+    @Test
+    void testChangePassword_ShouldThrowUserNotFoundException_WhenUserDoesNotExist() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("oldPass123", "newPass123", "newPass123");
+
+        assertThrows(UserNotFoundException.class, () -> userService.changePassword(authentication, request));
     }
 }

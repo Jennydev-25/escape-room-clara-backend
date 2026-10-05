@@ -1,9 +1,11 @@
 package dev.jenny.clara.user;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
+import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;
@@ -13,9 +15,11 @@ import dev.jenny.clara.user.mappers.UserMapper;
 public class UserServiceImpl implements InterfaceUserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,6 +48,11 @@ public class UserServiceImpl implements InterfaceUserService {
         userRepository.save(user);
 
         return UserMapper.toDTO(user);
+    }
+
+    @Override
+    public void changePassword(Authentication authentication, ChangePasswordRequestDTO request) {
+        throw new UnsupportedOperationException("Todavía no implementado");
     }
 
 }
