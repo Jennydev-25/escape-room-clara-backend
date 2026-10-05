@@ -34,7 +34,7 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
         recaptchaService.verifyOrThrow(request.recaptchaToken());
 
         userRepository.findByEmail(request.email()).ifPresent(existingUser -> {
-            throw new EmailAlreadyExistsException("Email " + request.email() + " is already registered.");
+            throw new EmailAlreadyExistsException("El email " + request.email() + " ya está registrado.");
         });
 
         String hashedPassword = passwordEncoder.encode(request.password());

@@ -40,4 +40,5 @@ public class UserEntity {
     private Role role;
 
     private LocalDateTime createdAt;
+    private Integer avatarId;
 }
