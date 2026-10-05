@@ -1,7 +1,5 @@
 package dev.jenny.clara.register;
 
-import java.time.LocalDateTime;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +8,7 @@ import dev.jenny.clara.recaptcha.RecaptchaService;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.register.mappers.RegisterMapper;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -40,13 +38,7 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
         String hashedPassword = passwordEncoder.encode(request.password());
         String alias = request.email().split("@")[0];
 
-        UserEntity user = UserEntity.builder()
-                .email(request.email())
-                .passwordHash(hashedPassword)
-                .alias(alias)
-                .role(Role.USER)
-                .createdAt(LocalDateTime.now())
-                .build();
+        UserEntity user = RegisterMapper.toEntity(request, hashedPassword, alias);
 
         userRepository.save(user);
 
