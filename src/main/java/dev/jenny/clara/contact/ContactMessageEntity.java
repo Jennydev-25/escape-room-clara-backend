@@ -2,11 +2,10 @@ package dev.jenny.clara.contact;
 
 import java.time.LocalDateTime;
 
+import dev.jenny.clara.contacttype.ContactTypeEntity;
 import dev.jenny.clara.user.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,8 +35,9 @@ public class ContactMessageEntity {
     private String name;
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private ContactType type;
+    @ManyToOne
+    @JoinColumn(name = "id_contact_type")
+    private ContactTypeEntity type;
 
     @Column(columnDefinition = "TEXT")
     private String message;

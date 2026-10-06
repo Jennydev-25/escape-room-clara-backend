@@ -13,8 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 
 import dev.jenny.clara.contact.ContactMessageEntity;
-import dev.jenny.clara.contact.ContactType;
 import dev.jenny.clara.contact.dtos.ContactRequestDTO;
+import dev.jenny.clara.contacttype.ContactTypeEntity;
 import dev.jenny.clara.user.UserEntity;
 
 class ContactMessageMapperTest {
@@ -36,16 +36,17 @@ class ContactMessageMapperTest {
 
     @Test
     void testToEntity_ShouldMapRequestFieldsToContactMessageEntity() {
-        ContactRequestDTO request = new ContactRequestDTO(TEST_NAME, TEST_EMAIL, ContactType.QUESTION, TEST_MESSAGE,
+        ContactRequestDTO request = new ContactRequestDTO(TEST_NAME, TEST_EMAIL, "QUESTION", TEST_MESSAGE,
                 "recaptcha-token");
         UserEntity user = UserEntity.builder().email(TEST_EMAIL).build();
+        ContactTypeEntity type = ContactTypeEntity.builder().name("QUESTION").build();
 
-        ContactMessageEntity entity = ContactMessageMapper.toEntity(request, user);
+        ContactMessageEntity entity = ContactMessageMapper.toEntity(request, user, type);
 
         assertThat(entity, instanceOf(ContactMessageEntity.class));
         assertThat(entity.getName(), is(equalTo(request.name())));
         assertThat(entity.getEmail(), is(equalTo(request.email())));
-        assertThat(entity.getType(), is(equalTo(request.type())));
+        assertThat(entity.getType(), is(equalTo(type)));
         assertThat(entity.getMessage(), is(equalTo(request.message())));
         assertThat(entity.getUser(), is(equalTo(user)));
         assertThat(entity.getCreatedAt(), is(notNullValue()));

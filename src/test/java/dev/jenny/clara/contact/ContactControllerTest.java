@@ -49,7 +49,7 @@ class ContactControllerTest {
     @Test
     void testSend_ShouldReturnCreated() throws Exception {
         ContactRequestDTO requestDto = new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com",
-                ContactType.QUESTION, "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token");
+                "QUESTION", "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token");
         ContactResponseDTO responseDto = new ContactResponseDTO(
                 "Mensaje recibido correctamente. Tendrás respuesta en menos de 24/48 horas.");
         String requestJson = mapper.writeValueAsString(requestDto);
@@ -71,7 +71,7 @@ class ContactControllerTest {
     @Test
     void testSend_ShouldPassAuthenticatedUserToService_WhenUserIsLoggedIn() throws Exception {
         ContactRequestDTO requestDto = new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com",
-                ContactType.QUESTION, "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token");
+                "QUESTION", "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token");
         ContactResponseDTO responseDto = new ContactResponseDTO(
                 "Mensaje recibido correctamente. Tendrás respuesta en menos de 24/48 horas.");
         UserEntity loggedInUser = UserEntity.builder().id(1L).email("jugador@pruebas.com").role(RoleEntity.builder().name("USER").build()).build();
@@ -94,7 +94,7 @@ class ContactControllerTest {
     @Test
     void testSend_ShouldReturnBadRequest_WhenRecaptchaIsInvalid() throws Exception {
         ContactRequestDTO requestDto = new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com",
-                ContactType.QUESTION, "No encuentro dónde seguir en la carpeta del incendio.",
+                "QUESTION", "No encuentro dónde seguir en la carpeta del incendio.",
                 "invalid-captcha-token");
         String requestJson = mapper.writeValueAsString(requestDto);
         String errorMessage = "El captcha no es válido.";
@@ -120,15 +120,15 @@ class ContactControllerTest {
 
     private static Stream<ContactRequestDTO> invalidContactRequests() {
         return Stream.of(
-                new ContactRequestDTO("", "jugador@pruebas.com", ContactType.QUESTION,
+                new ContactRequestDTO("", "jugador@pruebas.com", "QUESTION",
                         "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token"),
-                new ContactRequestDTO("Jugador de prueba", "not-an-email", ContactType.QUESTION,
+                new ContactRequestDTO("Jugador de prueba", "not-an-email", "QUESTION",
                         "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token"),
                 new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", null,
                         "No encuentro dónde seguir en la carpeta del incendio.", "valid-captcha-token"),
-                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", ContactType.QUESTION, "",
+                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", "QUESTION", "",
                         "valid-captcha-token"),
-                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", ContactType.QUESTION,
+                new ContactRequestDTO("Jugador de prueba", "jugador@pruebas.com", "QUESTION",
                         "No encuentro dónde seguir en la carpeta del incendio.", ""));
     }
 }

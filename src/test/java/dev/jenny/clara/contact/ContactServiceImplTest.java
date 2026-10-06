@@ -8,6 +8,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
+import dev.jenny.clara.contacttype.ContactTypeEntity;
+import dev.jenny.clara.contacttype.ContactTypeRepository;
 import dev.jenny.clara.recaptcha.RecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.UserEntity;
@@ -34,14 +39,19 @@ class ContactServiceImplTest {
     @Mock
     private RecaptchaService recaptchaService;
 
+    @Mock
+    private ContactTypeRepository contactTypeRepository;
+
     @Test
     void testSend_ShouldSaveContactMessageAndReturnConfirmation() {
         ContactRequestDTO dtoRequest = new ContactRequestDTO(
                 "Jugador de prueba",
                 "jugador@pruebas.com",
-                ContactType.QUESTION,
+                "QUESTION",
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "valid-captcha-token");
+        ContactTypeEntity type = ContactTypeEntity.builder().name("QUESTION").build();
+        when(contactTypeRepository.findByName("QUESTION")).thenReturn(Optional.of(type));
 
         ContactResponseDTO response = service.send(dtoRequest, null);
 
@@ -51,7 +61,7 @@ class ContactServiceImplTest {
 
         assertThat(savedMessage.getName(), is(equalTo("Jugador de prueba")));
         assertThat(savedMessage.getEmail(), is(equalTo("jugador@pruebas.com")));
-        assertThat(savedMessage.getType(), is(equalTo(ContactType.QUESTION)));
+        assertThat(savedMessage.getType(), is(equalTo(type)));
         assertThat(savedMessage.getMessage(), is(equalTo("No encuentro dónde seguir en la carpeta del incendio.")));
         assertThat(response.message(),
                 is(equalTo("Mensaje recibido correctamente. Tendrás respuesta en menos de 24/48 horas.")));
@@ -62,7 +72,7 @@ class ContactServiceImplTest {
         ContactRequestDTO dtoRequest = new ContactRequestDTO(
                 "Jugador de prueba",
                 "jugador@pruebas.com",
-                ContactType.QUESTION,
+                "QUESTION",
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "invalid-captcha-token");
 
@@ -79,9 +89,11 @@ class ContactServiceImplTest {
         ContactRequestDTO dtoRequest = new ContactRequestDTO(
                 "Jugador de prueba",
                 "jugador@pruebas.com",
-                ContactType.QUESTION,
+                "QUESTION",
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "valid-captcha-token");
+        when(contactTypeRepository.findByName("QUESTION"))
+                .thenReturn(Optional.of(ContactTypeEntity.builder().name("QUESTION").build()));
         UserEntity loggedInUser = UserEntity.builder().id(1L).email("jugador@pruebas.com").build();
 
         service.send(dtoRequest, loggedInUser);
