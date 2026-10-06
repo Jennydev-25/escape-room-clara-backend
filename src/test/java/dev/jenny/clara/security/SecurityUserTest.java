@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.role.RoleEntity;
 import dev.jenny.clara.user.UserEntity;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class SecurityUserTest {
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
-                .role(Role.USER)
+                .role(RoleEntity.builder().name("USER").build())
                 .createdAt(LocalDateTime.now())
                 .build();
         SecurityUser securityUser = new SecurityUser(user);
@@ -43,7 +43,7 @@ class SecurityUserTest {
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
-                .role(Role.USER)
+                .role(RoleEntity.builder().name("USER").build())
                 .createdAt(LocalDateTime.now())
                 .build();
         SecurityUser securityUser = new SecurityUser(user);
@@ -55,7 +55,7 @@ class SecurityUserTest {
 
     @ParameterizedTest
     @MethodSource("rolesAndExpectedAuthorities")
-    void testGetAuthorities_ShouldReturnRoleWithPrefix(Role role, String expectedAuthority) {
+    void testGetAuthorities_ShouldReturnRoleWithPrefix(RoleEntity role, String expectedAuthority) {
         UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
@@ -76,7 +76,7 @@ class SecurityUserTest {
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
-                .role(Role.USER)
+                .role(RoleEntity.builder().name("USER").build())
                 .createdAt(LocalDateTime.now())
                 .build();
         SecurityUser securityUser = new SecurityUser(user);
@@ -89,7 +89,7 @@ class SecurityUserTest {
 
     private static Stream<Arguments> rolesAndExpectedAuthorities() {
         return Stream.of(
-                Arguments.of(Role.USER, "ROLE_USER"),
-                Arguments.of(Role.ADMIN, "ROLE_ADMIN"));
+                Arguments.of(RoleEntity.builder().name("USER").build(), "ROLE_USER"),
+                Arguments.of(RoleEntity.builder().name("ADMIN").build(), "ROLE_ADMIN"));
     }
 }

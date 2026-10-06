@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.role.RoleEntity;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -36,7 +36,7 @@ class JpaUserDetailsServiceTest {
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
-                .role(Role.USER)
+                .role(RoleEntity.builder().name("USER").build())
                 .createdAt(LocalDateTime.now())
                 .build();
 

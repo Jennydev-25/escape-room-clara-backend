@@ -25,7 +25,8 @@ import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.role.InterfaceRoleService;
+import dev.jenny.clara.role.RoleEntity;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -44,13 +45,18 @@ class RegisterServiceImplTest {
     @Mock
     private RecaptchaService recaptchaService;
 
+    @Mock
+    private InterfaceRoleService roleService;
+
     @Test
     void testRegister_ShouldSaveUserAndReturnSuccessResponse() {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
                 "valid-captcha-token");
+        RoleEntity role = RoleEntity.builder().name("USER").build();
 
         when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
+        when(roleService.assignDefaultRole()).thenReturn(role);
 
         RegisterResponseDTO response = service.register(dtoRequest);
 
@@ -61,7 +67,7 @@ class RegisterServiceImplTest {
         assertThat(savedUser.getEmail(), is(equalTo("clara@pruebas.com")));
         assertThat(savedUser.getPasswordHash(), is(equalTo("hashedPassword")));
         assertThat(savedUser.getAlias(), is(equalTo("clara")));
-        assertThat(savedUser.getRole(), is(equalTo(Role.USER)));
+        assertThat(savedUser.getRole(), is(equalTo(role)));
         assertThat(response.message(), is(equalTo("User stored successfully")));
     }
 
