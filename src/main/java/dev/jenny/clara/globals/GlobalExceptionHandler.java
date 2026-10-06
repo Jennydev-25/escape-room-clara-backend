@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.contacttype.exceptions.InvalidContactTypeException;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
+import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
 import dev.jenny.clara.user.exceptions.UserNotFoundException;

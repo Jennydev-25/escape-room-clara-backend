@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
-import dev.jenny.clara.auth.dtos.RefreshTokenRequestDTO;
+import dev.jenny.clara.refreshtoken.dtos.RefreshTokenRequestDTO;
 import jakarta.validation.Valid;
 
 @RestController

@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth;
+package dev.jenny.clara.refreshtoken;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -41,10 +41,11 @@ class RefreshTokenRepositoryTest {
                 .role(role)
                 .build());
 
-        RefreshTokenEntity token = repository.save(new RefreshTokenEntity(
-                "some-token",
-                user,
-                Instant.now().plus(1, ChronoUnit.DAYS)));
+        RefreshTokenEntity token = repository.save(RefreshTokenEntity.builder()
+                .token("some-token")
+                .user(user)
+                .expiryDate(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build());
 
         assertThat(token.getId(), is(notNullValue()));
     }

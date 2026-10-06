@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.refreshtoken.InterfaceRefreshTokenService;
+import dev.jenny.clara.refreshtoken.RefreshTokenEntity;
 import dev.jenny.clara.user.UserEntity;
 
 @ExtendWith(MockitoExtension.class)

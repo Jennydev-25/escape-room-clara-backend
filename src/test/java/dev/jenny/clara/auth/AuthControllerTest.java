@@ -20,9 +20,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
-import dev.jenny.clara.auth.dtos.RefreshTokenRequestDTO;
-import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.config.SecurityConfig;
+import dev.jenny.clara.refreshtoken.dtos.RefreshTokenRequestDTO;
+import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = AuthController.class)
