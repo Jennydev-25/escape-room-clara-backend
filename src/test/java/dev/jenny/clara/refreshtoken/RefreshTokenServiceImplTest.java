@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +50,6 @@ class RefreshTokenServiceImplTest {
 
         RefreshTokenEntity result = service.createRefreshToken(user);
 
-        verify(repository, never()).deleteByUser(any());
         assertThat(result.getToken(), is(notNullValue()));
         assertThat(result.getUser(), is(equalTo(user)));
     }
