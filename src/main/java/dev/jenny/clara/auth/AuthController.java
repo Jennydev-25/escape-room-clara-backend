@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.auth.dtos.LogoutRequestDTO;
+import dev.jenny.clara.auth.dtos.LogoutResponseDTO;
 import dev.jenny.clara.refreshtoken.dtos.RefreshTokenRequestDTO;
 import jakarta.validation.Valid;
 
@@ -28,5 +30,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public LoginResponseDTO refresh(@Valid @RequestBody RefreshTokenRequestDTO dto) {
         return authService.refresh(dto.refreshToken());
+    }
+
+    @PostMapping("/logout")
+    public LogoutResponseDTO logout(Authentication authentication, @Valid @RequestBody LogoutRequestDTO dto) {
+        return authService.logout(authentication, dto.refreshToken());
     }
 }
