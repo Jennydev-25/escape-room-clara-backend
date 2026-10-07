@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/" + endpoint + "/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/" + endpoint + "/contact").permitAll()
                         .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.decoder(jwtDecoder())))
                 .httpBasic(withDefaults());
 
         return http.build();
