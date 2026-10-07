@@ -62,4 +62,11 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
         return verifyExpiration(refreshToken);
     }
 
+    @Override
+    public void revokeRefreshToken(String refreshToken, Authentication authentication) {
+        RefreshTokenEntity token = repository.findByToken(refreshToken)
+                .orElseThrow(() -> new InvalidRefreshTokenException("El refresh token no existe"));
+
+        repository.delete(token);
+    }
 }
