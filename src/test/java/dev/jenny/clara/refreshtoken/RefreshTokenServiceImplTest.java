@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth;
+package dev.jenny.clara.refreshtoken;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
-import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
+import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -69,10 +69,11 @@ class RefreshTokenServiceImplTest {
 
     @Test
     void testVerifyExpiration_ShouldThrowException_WhenTokenExpired() {
-        RefreshTokenEntity expiredToken = new RefreshTokenEntity(
-                "some-token",
-                user,
-                Instant.now().minus(1, ChronoUnit.DAYS));
+        RefreshTokenEntity expiredToken = RefreshTokenEntity.builder()
+                .token("some-token")
+                .user(user)
+                .expiryDate(Instant.now().minus(1, ChronoUnit.DAYS))
+                .build();
 
         assertThrows(InvalidRefreshTokenException.class, () -> service.verifyExpiration(expiredToken));
 
@@ -81,10 +82,11 @@ class RefreshTokenServiceImplTest {
 
     @Test
     void testFindValidToken_ShouldReturnToken_WhenTokenExistsAndIsValid() {
-        RefreshTokenEntity validToken = new RefreshTokenEntity(
-                "valid-token",
-                user,
-                Instant.now().plus(1, ChronoUnit.DAYS));
+        RefreshTokenEntity validToken = RefreshTokenEntity.builder()
+                .token("valid-token")
+                .user(user)
+                .expiryDate(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build();
 
         when(repository.findByToken("valid-token")).thenReturn(Optional.of(validToken));
 

@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth.exceptions;
+package dev.jenny.clara.refreshtoken.exceptions;
 
 public class InvalidRefreshTokenException extends RuntimeException {
 

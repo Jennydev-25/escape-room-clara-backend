@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth.dtos;
+package dev.jenny.clara.refreshtoken.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 

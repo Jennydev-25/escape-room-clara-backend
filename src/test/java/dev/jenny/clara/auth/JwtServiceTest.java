@@ -26,7 +26,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.role.RoleEntity;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -48,7 +48,7 @@ class JwtServiceTest {
 
     @ParameterizedTest
     @MethodSource("rolesAndExpectedClaim")
-    void testGenerateToken_ShouldIncludeUserRoleAsClaim(Role role, String expectedClaim) {
+    void testGenerateToken_ShouldIncludeUserRoleAsClaim(RoleEntity role, String expectedClaim) {
         UserEntity user = UserEntity.builder()
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
@@ -81,7 +81,7 @@ class JwtServiceTest {
                 .email("clara@pruebas.com")
                 .passwordHash("hashedPassword")
                 .alias("clara")
-                .role(Role.USER)
+                .role(RoleEntity.builder().name("USER").build())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -101,7 +101,7 @@ class JwtServiceTest {
 
     private static Stream<Arguments> rolesAndExpectedClaim() {
         return Stream.of(
-                Arguments.of(Role.USER, "USER"),
-                Arguments.of(Role.ADMIN, "ADMIN"));
+                Arguments.of(RoleEntity.builder().name("USER").build(), "USER"),
+                Arguments.of(RoleEntity.builder().name("ADMIN").build(), "ADMIN"));
     }
 }

@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth;
+package dev.jenny.clara.refreshtoken;
 
 import java.time.Instant;
 
@@ -10,9 +10,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "refresh_tokens")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class RefreshTokenEntity {
 
     @Id
@@ -26,30 +36,4 @@ public class RefreshTokenEntity {
     private UserEntity user;
 
     private Instant expiryDate;
-
-    public RefreshTokenEntity() {
-    }
-
-    public RefreshTokenEntity(String token, UserEntity user, Instant expiryDate) {
-        this.token = token;
-        this.user = user;
-        this.expiryDate = expiryDate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public Instant getExpiryDate() {
-        return expiryDate;
-    }
-
 }

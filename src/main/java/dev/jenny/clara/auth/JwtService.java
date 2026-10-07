@@ -42,7 +42,7 @@ public class JwtService {
                 .issuedAt(now)
                 .subject(user.getEmail())
                 .expiresAt(now.plus(accessTokenExpirationHours, ChronoUnit.HOURS))
-                .claim("role", user.getRole().name())
+                .claim("role", user.getRole().getName())
                 .build();
 
         var encoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), claims);

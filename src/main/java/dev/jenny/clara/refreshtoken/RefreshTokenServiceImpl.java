@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth;
+package dev.jenny.clara.refreshtoken;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import dev.jenny.clara.auth.exceptions.InvalidRefreshTokenException;
+import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -30,10 +30,11 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
     public RefreshTokenEntity createRefreshToken(UserEntity user) {
         repository.deleteByUser(user);
 
-        RefreshTokenEntity refreshToken = new RefreshTokenEntity(
-                UUID.randomUUID().toString(),
-                user,
-                Instant.now().plus(expirationDays, ChronoUnit.DAYS));
+        RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
+                .token(UUID.randomUUID().toString())
+                .user(user)
+                .expiryDate(Instant.now().plus(expirationDays, ChronoUnit.DAYS))
+                .build();
 
         return repository.save(refreshToken);
     }

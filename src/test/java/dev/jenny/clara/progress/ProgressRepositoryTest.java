@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.role.RoleEntity;
+import dev.jenny.clara.role.RoleRepository;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -35,12 +37,22 @@ class ProgressRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    private RoleEntity userRole;
+
+    @BeforeEach
+    void setUp() {
+        userRole = roleRepository.findByName("USER").orElseThrow();
+    }
+
     private UserEntity createUser(String email) {
         return userRepository.save(UserEntity.builder()
                 .email(email)
                 .passwordHash("hashed-password")
                 .alias(email.split("@")[0])
-                .role(Role.USER)
+                .role(userRole)
                 .build());
     }
 
@@ -65,7 +77,7 @@ class ProgressRepositoryTest {
     }
 
     @Test
-    void testFindByInvestigationSubmittedTrueOrderByTimeSpentSecondsAsc_ShouldReturnOnlySubmittedOrderedByTime() {
+    void testFindByInvestigationSubmittedTrueOrderByTimeSpentSecondsAsc_ShouldReturnOnlySubmittedOrderedByTime(){
         UserEntity userSlow = createUser("slow@pruebas.com");
         UserEntity userFast = createUser("fast@pruebas.com");
         UserEntity userPending = createUser("pending@pruebas.com");

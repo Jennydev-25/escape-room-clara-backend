@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
-import dev.jenny.clara.user.Role;
+import dev.jenny.clara.role.RoleEntity;
 import dev.jenny.clara.user.UserEntity;
 
 class RegisterMapperTest {
@@ -39,13 +39,14 @@ class RegisterMapperTest {
         RegisterRequestDTO request = new RegisterRequestDTO(TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD,
                 "recaptcha-token");
 
-        UserEntity entity = RegisterMapper.toEntity(request, TEST_HASHED_PASSWORD, TEST_ALIAS);
+        RoleEntity role = RoleEntity.builder().name("USER").build();
+        UserEntity entity = RegisterMapper.toEntity(request, TEST_HASHED_PASSWORD, TEST_ALIAS, role);
 
         assertThat(entity, instanceOf(UserEntity.class));
         assertThat(entity.getEmail(), is(equalTo(request.email())));
         assertThat(entity.getPasswordHash(), is(equalTo(TEST_HASHED_PASSWORD)));
         assertThat(entity.getAlias(), is(equalTo(TEST_ALIAS)));
-        assertThat(entity.getRole(), is(equalTo(Role.USER)));
+        assertThat(entity.getRole(), is(equalTo(role)));
         assertThat(entity.getCreatedAt(), is(notNullValue()));
     }
 }

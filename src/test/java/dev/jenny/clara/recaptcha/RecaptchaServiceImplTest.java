@@ -25,16 +25,16 @@ import dev.jenny.clara.recaptcha.dtos.RecaptchaVerifyResponseDTO;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 
 @ExtendWith(MockitoExtension.class)
-class RecaptchaServiceTest {
+class RecaptchaServiceImplTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    private RecaptchaService service;
+    private RecaptchaServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new RecaptchaService(restTemplate, "test-secret-key");
+        service = new RecaptchaServiceImpl(restTemplate, "test-secret-key");
     }
 
     @Test

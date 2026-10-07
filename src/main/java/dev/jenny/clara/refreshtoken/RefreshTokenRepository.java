@@ -1,4 +1,4 @@
-package dev.jenny.clara.auth;
+package dev.jenny.clara.refreshtoken;
 
 import java.util.Optional;
 
