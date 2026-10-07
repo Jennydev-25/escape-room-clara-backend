@@ -100,4 +100,21 @@ class RefreshTokenServiceImplTest {
 
         assertThrows(InvalidRefreshTokenException.class, () -> service.findValidToken("invalid-token"));
     }
+
+    @Test
+    void testRevokeRefreshToken_ShouldDeleteToken_WhenTokenBelongsToAuthenticatedUser() {
+        Authentication authentication = mock(Authentication.class);
+
+        RefreshTokenEntity token = RefreshTokenEntity.builder()
+                .token("some-token")
+                .user(user)
+                .expiryDate(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build();
+
+        when(repository.findByToken("some-token")).thenReturn(Optional.of(token));
+
+        service.revokeRefreshToken("some-token", authentication);
+
+        verify(repository).delete(token);
+    }
 }
