@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -51,6 +58,9 @@ class ProgressControllerTest {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private JwtEncoder jwtEncoder;
 
     @Test
     @WithMockUser(username = "clara@pruebas.com")
@@ -150,5 +160,37 @@ class ProgressControllerTest {
     private static Stream<UpdateNoteRequestDTO> invalidUpdateNoteRequests() {
         return Stream.of(
                 new UpdateNoteRequestDTO(null));
+    }
+
+    @Test
+    void testGetProgress_ShouldReturnOk_WhenValidBearerTokenProvided() throws Exception {
+        ProgressResponseDTO responseDto = new ProgressResponseDTO(
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(progressService.getOrCreateProgress(any(Authentication.class))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(get("/api/v1/progress")
+                .header("Authorization", "Bearer " + generateValidToken()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    private String generateValidToken() {
+        Instant now = Instant.now();
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .subject("clara@pruebas.com")
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .build();
+
+        var encoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), claims);
+        return jwtEncoder.encode(encoderParameters).getTokenValue();
     }
 }
