@@ -28,7 +28,6 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
 
     @Override
     public RefreshTokenEntity createRefreshToken(UserEntity user) {
-        repository.deleteByUser(user);
 
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
                 .token(UUID.randomUUID().toString())
