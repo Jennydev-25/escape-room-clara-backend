@@ -104,6 +104,7 @@ class RefreshTokenServiceImplTest {
     @Test
     void testRevokeRefreshToken_ShouldDeleteToken_WhenTokenBelongsToAuthenticatedUser() {
         Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("clara@example.com");
 
         RefreshTokenEntity token = RefreshTokenEntity.builder()
                 .token("some-token")
@@ -126,5 +127,23 @@ class RefreshTokenServiceImplTest {
 
         assertThrows(InvalidRefreshTokenException.class,
                 () -> service.revokeRefreshToken("invalid-token", authentication));
+    }
+    
+    @Test
+    void testRevokeRefreshToken_ShouldThrowException_WhenTokenBelongsToAnotherUser() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("clara@example.com");
+
+        UserEntity anotherUser = UserEntity.builder().email("intruder@example.com").build();
+        RefreshTokenEntity token = RefreshTokenEntity.builder()
+                .token("someone-elses-token")
+                .user(anotherUser)
+                .expiryDate(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build();
+
+        when(repository.findByToken("someone-elses-token")).thenReturn(Optional.of(token));
+
+        assertThrows(InvalidRefreshTokenException.class,
+                () -> service.revokeRefreshToken("someone-elses-token", authentication));
     }
 }
