@@ -23,6 +23,7 @@ import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.contacttype.ContactTypeEntity;
 import dev.jenny.clara.contacttype.ContactTypeRepository;
+import dev.jenny.clara.contacttype.exceptions.InvalidContactTypeException;
 import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.UserEntity;
@@ -80,6 +81,22 @@ class ContactServiceImplTest {
                 .when(recaptchaService).verifyOrThrow("invalid-captcha-token");
 
         assertThrows(InvalidRecaptchaException.class, () -> service.send(dtoRequest, null));
+
+        verify(contactRepository, never()).save(any());
+    }
+
+    @Test
+    void testSend_ShouldThrowInvalidContactTypeException_WhenTypeDoesNotExist() {
+        ContactRequestDTO dtoRequest = new ContactRequestDTO(
+                "Jugador de prueba",
+                "jugador@pruebas.com",
+                "INVALID_TYPE",
+                "No encuentro dónde seguir en la carpeta del incendio.",
+                "valid-captcha-token");
+
+        when(contactTypeRepository.findByName("INVALID_TYPE")).thenReturn(Optional.empty());
+
+        assertThrows(InvalidContactTypeException.class, () -> service.send(dtoRequest, null));
 
         verify(contactRepository, never()).save(any());
     }
