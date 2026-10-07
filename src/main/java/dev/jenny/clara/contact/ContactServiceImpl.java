@@ -8,17 +8,17 @@ import dev.jenny.clara.contact.mappers.ContactMessageMapper;
 import dev.jenny.clara.contacttype.ContactTypeEntity;
 import dev.jenny.clara.contacttype.ContactTypeRepository;
 import dev.jenny.clara.contacttype.exceptions.InvalidContactTypeException;
-import dev.jenny.clara.recaptcha.RecaptchaService;
+import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.user.UserEntity;
 
 @Service
 public class ContactServiceImpl implements InterfaceContactService {
 
     private final ContactRepository contactRepository;
-    private final RecaptchaService recaptchaService;
+    private final InterfaceRecaptchaService recaptchaService;
     private final ContactTypeRepository contactTypeRepository;
 
-    public ContactServiceImpl(ContactRepository contactRepository, RecaptchaService recaptchaService,
+    public ContactServiceImpl(ContactRepository contactRepository, InterfaceRecaptchaService recaptchaService,
             ContactTypeRepository contactTypeRepository) {
         this.contactRepository = contactRepository;
         this.recaptchaService = recaptchaService;

@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.jenny.clara.recaptcha.RecaptchaService;
+import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
@@ -19,11 +19,11 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RecaptchaService recaptchaService;
+    private final InterfaceRecaptchaService recaptchaService;
     private final InterfaceRoleService roleService;
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            RecaptchaService recaptchaService, InterfaceRoleService roleService) {
+            InterfaceRecaptchaService recaptchaService, InterfaceRoleService roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.recaptchaService = recaptchaService;

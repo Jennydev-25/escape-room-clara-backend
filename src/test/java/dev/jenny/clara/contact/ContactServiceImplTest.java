@@ -23,7 +23,7 @@ import dev.jenny.clara.contact.dtos.ContactRequestDTO;
 import dev.jenny.clara.contact.dtos.ContactResponseDTO;
 import dev.jenny.clara.contacttype.ContactTypeEntity;
 import dev.jenny.clara.contacttype.ContactTypeRepository;
-import dev.jenny.clara.recaptcha.RecaptchaService;
+import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.user.UserEntity;
 
@@ -37,7 +37,7 @@ class ContactServiceImplTest {
     private ContactRepository contactRepository;
 
     @Mock
-    private RecaptchaService recaptchaService;
+    private InterfaceRecaptchaService recaptchaService;
 
     @Mock
     private ContactTypeRepository contactTypeRepository;
@@ -76,7 +76,7 @@ class ContactServiceImplTest {
                 "No encuentro dónde seguir en la carpeta del incendio.",
                 "invalid-captcha-token");
 
-        doThrow(new InvalidRecaptchaException("Invalid recaptcha token."))
+        doThrow(new InvalidRecaptchaException("El token de recaptcha no es válido."))
                 .when(recaptchaService).verifyOrThrow("invalid-captcha-token");
 
         assertThrows(InvalidRecaptchaException.class, () -> service.send(dtoRequest, null));

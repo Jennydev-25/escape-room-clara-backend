@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import dev.jenny.clara.recaptcha.RecaptchaService;
+import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
@@ -43,7 +43,7 @@ class RegisterServiceImplTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private RecaptchaService recaptchaService;
+    private InterfaceRecaptchaService recaptchaService;
 
     @Mock
     private InterfaceRoleService roleService;
@@ -89,7 +89,7 @@ class RegisterServiceImplTest {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
                 "invalid-captcha-token");
 
-        doThrow(new InvalidRecaptchaException("Invalid recaptcha token."))
+        doThrow(new InvalidRecaptchaException("El token de recaptcha no es válido."))
                 .when(recaptchaService).verifyOrThrow("invalid-captcha-token");
 
         assertThrows(InvalidRecaptchaException.class, () -> service.register(dtoRequest));
