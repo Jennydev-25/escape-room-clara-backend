@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.auth.dtos.LogoutResponseDTO;
 import dev.jenny.clara.refreshtoken.InterfaceRefreshTokenService;
 import dev.jenny.clara.refreshtoken.RefreshTokenEntity;
 import dev.jenny.clara.user.UserEntity;
@@ -69,5 +71,16 @@ class AuthServiceImplTest {
         LoginResponseDTO result = service.refresh(oldRefreshToken);
 
         assertThat(result, is(equalTo(new LoginResponseDTO(newToken, newRefreshToken))));
+    }
+
+    @Test
+    void testLogout_ShouldRevokeRefreshTokenAndReturnConfirmationMessage() {
+        Authentication authentication = mock(Authentication.class);
+        String refreshToken = "fake-refresh-token";
+
+        LogoutResponseDTO result = service.logout(authentication, refreshToken);
+
+        verify(refreshTokenService).revokeRefreshToken(refreshToken, authentication);
+        assertThat(result, is(equalTo(new LogoutResponseDTO("Sesión cerrada correctamente"))));
     }
 }
