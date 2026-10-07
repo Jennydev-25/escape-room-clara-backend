@@ -67,6 +67,10 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
         RefreshTokenEntity token = repository.findByToken(refreshToken)
                 .orElseThrow(() -> new InvalidRefreshTokenException("El refresh token no existe"));
 
+        if (!token.getUser().getEmail().equals(authentication.getName())) {
+            throw new InvalidRefreshTokenException("El refresh token no existe");
+        }
+
         repository.delete(token);
     }
 }
