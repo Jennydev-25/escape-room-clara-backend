@@ -117,4 +117,14 @@ class RefreshTokenServiceImplTest {
 
         verify(repository).delete(token);
     }
+
+    @Test
+    void testRevokeRefreshToken_ShouldThrowException_WhenTokenDoesNotExist() {
+        Authentication authentication = mock(Authentication.class);
+
+        when(repository.findByToken("invalid-token")).thenReturn(Optional.empty());
+
+        assertThrows(InvalidRefreshTokenException.class,
+                () -> service.revokeRefreshToken("invalid-token", authentication));
+    }
 }
