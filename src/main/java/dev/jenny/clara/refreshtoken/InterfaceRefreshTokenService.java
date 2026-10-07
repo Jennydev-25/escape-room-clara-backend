@@ -13,5 +13,7 @@ public interface InterfaceRefreshTokenService {
     RefreshTokenEntity verifyExpiration(RefreshTokenEntity token);
 
     RefreshTokenEntity findValidToken(String token);
+    
+    void revokeRefreshToken(String refreshToken, Authentication authentication);
 
 }

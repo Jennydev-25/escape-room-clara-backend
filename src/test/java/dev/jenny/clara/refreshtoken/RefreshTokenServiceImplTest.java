@@ -50,7 +50,6 @@ class RefreshTokenServiceImplTest {
 
         RefreshTokenEntity result = service.createRefreshToken(user);
 
-        verify(repository).deleteByUser(user);
         assertThat(result.getToken(), is(notNullValue()));
         assertThat(result.getUser(), is(equalTo(user)));
     }
@@ -100,5 +99,51 @@ class RefreshTokenServiceImplTest {
         when(repository.findByToken("invalid-token")).thenReturn(Optional.empty());
 
         assertThrows(InvalidRefreshTokenException.class, () -> service.findValidToken("invalid-token"));
+    }
+
+    @Test
+    void testRevokeRefreshToken_ShouldDeleteToken_WhenTokenBelongsToAuthenticatedUser() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("clara@example.com");
+
+        RefreshTokenEntity token = RefreshTokenEntity.builder()
+                .token("some-token")
+                .user(user)
+                .expiryDate(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build();
+
+        when(repository.findByToken("some-token")).thenReturn(Optional.of(token));
+
+        service.revokeRefreshToken("some-token", authentication);
+
+        verify(repository).delete(token);
+    }
+
+    @Test
+    void testRevokeRefreshToken_ShouldThrowException_WhenTokenDoesNotExist() {
+        Authentication authentication = mock(Authentication.class);
+
+        when(repository.findByToken("invalid-token")).thenReturn(Optional.empty());
+
+        assertThrows(InvalidRefreshTokenException.class,
+                () -> service.revokeRefreshToken("invalid-token", authentication));
+    }
+    
+    @Test
+    void testRevokeRefreshToken_ShouldThrowException_WhenTokenBelongsToAnotherUser() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("clara@example.com");
+
+        UserEntity anotherUser = UserEntity.builder().email("intruder@example.com").build();
+        RefreshTokenEntity token = RefreshTokenEntity.builder()
+                .token("someone-elses-token")
+                .user(anotherUser)
+                .expiryDate(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build();
+
+        when(repository.findByToken("someone-elses-token")).thenReturn(Optional.of(token));
+
+        assertThrows(InvalidRefreshTokenException.class,
+                () -> service.revokeRefreshToken("someone-elses-token", authentication));
     }
 }

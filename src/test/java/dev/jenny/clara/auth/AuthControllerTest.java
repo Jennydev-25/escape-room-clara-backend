@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,6 +21,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.auth.dtos.LogoutRequestDTO;
+import dev.jenny.clara.auth.dtos.LogoutResponseDTO;
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.refreshtoken.dtos.RefreshTokenRequestDTO;
 import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
@@ -87,5 +90,26 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testLogout_ShouldReturnConfirmationMessage() throws Exception {
+        LogoutRequestDTO requestDto = new LogoutRequestDTO("fake-refresh-token");
+        LogoutResponseDTO responseDto = new LogoutResponseDTO("Sesión cerrada correctamente");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(authService.logout(any(Authentication.class), eq("fake-refresh-token"))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/api/v1/auth/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
     }
 }

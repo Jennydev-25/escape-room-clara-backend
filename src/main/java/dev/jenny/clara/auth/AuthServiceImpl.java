@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.auth.dtos.LoginResponseDTO;
+import dev.jenny.clara.auth.dtos.LogoutResponseDTO;
 import dev.jenny.clara.refreshtoken.InterfaceRefreshTokenService;
 import dev.jenny.clara.refreshtoken.RefreshTokenEntity;
 import dev.jenny.clara.user.UserEntity;
@@ -35,6 +36,12 @@ public class AuthServiceImpl implements InterfaceAuthService {
         String newRefreshToken = refreshTokenService.createRefreshToken(user).getToken();
 
         return new LoginResponseDTO(newToken, newRefreshToken);
+    }
+
+    @Override
+    public LogoutResponseDTO logout(Authentication authentication, String refreshToken) {
+        refreshTokenService.revokeRefreshToken(refreshToken, authentication);
+        return new LogoutResponseDTO("Sesión cerrada correctamente");
     }
 
 }

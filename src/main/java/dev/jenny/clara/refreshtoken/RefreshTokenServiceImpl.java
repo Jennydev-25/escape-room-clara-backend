@@ -28,7 +28,6 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
 
     @Override
     public RefreshTokenEntity createRefreshToken(UserEntity user) {
-        repository.deleteByUser(user);
 
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
                 .token(UUID.randomUUID().toString())
@@ -63,4 +62,15 @@ public class RefreshTokenServiceImpl implements InterfaceRefreshTokenService {
         return verifyExpiration(refreshToken);
     }
 
+    @Override
+    public void revokeRefreshToken(String refreshToken, Authentication authentication) {
+        RefreshTokenEntity token = repository.findByToken(refreshToken)
+                .orElseThrow(() -> new InvalidRefreshTokenException("El refresh token no existe"));
+
+        if (!token.getUser().getEmail().equals(authentication.getName())) {
+            throw new InvalidRefreshTokenException("El refresh token no existe");
+        }
+
+        repository.delete(token);
+    }
 }
