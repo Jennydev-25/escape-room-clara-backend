@@ -12,6 +12,7 @@ import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
+import dev.jenny.clara.puzzle.exceptions.UnsupportedPuzzleTypeException;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
@@ -83,5 +84,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorDTO> handlePuzzleChapterNotReached(PuzzleChapterNotReachedException exception) {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(UnsupportedPuzzleTypeException.class)
+    public ResponseEntity<ApiErrorDTO> handleUnsupportedPuzzleType(UnsupportedPuzzleTypeException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }
