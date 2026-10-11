@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.folder.dtos.FolderResponseDTO;
+import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -31,6 +32,9 @@ class FolderControllerTest {
     private static final String FOLDER_NAME = "01_TOMAS";
     private static final String MISSING_CODE = "99_NO_EXISTE";
     private static final String NOT_FOUND_MESSAGE = "No se encontró ninguna carpeta con el código " + MISSING_CODE;
+    private static final String LOCKED_CODE = "03_EMPRESAS";
+    private static final String CHAPTER_NOT_REACHED_MESSAGE = "La carpeta " + LOCKED_CODE
+            + " todavía no está disponible en el capítulo actual";
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,5 +66,15 @@ class FolderControllerTest {
 
         mockMvc.perform(get("/api/v1/folders/{code}", MISSING_CODE))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testGetFolder_ShouldReturnForbidden_WhenChapterNotReached() throws Exception {
+        when(folderService.getVisibleFolder(any(Authentication.class), eq(LOCKED_CODE)))
+                .thenThrow(new ChapterNotReachedException(CHAPTER_NOT_REACHED_MESSAGE));
+
+        mockMvc.perform(get("/api/v1/folders/{code}", LOCKED_CODE))
+                .andExpect(status().isForbidden());
     }
 }
