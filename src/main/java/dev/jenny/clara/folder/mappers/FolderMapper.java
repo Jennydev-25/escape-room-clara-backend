@@ -15,7 +15,7 @@ public class FolderMapper {
 
     public static FolderResponseDTO toDTO(FolderEntity folder, List<PuzzleEntity> visiblePuzzles) {
         List<PuzzleSummaryDTO> puzzles = visiblePuzzles.stream()
-                .map(puzzle -> new PuzzleSummaryDTO(puzzle.getId(), puzzle.getType(), puzzle.getDisplayOrder()))
+                .map(puzzle -> new PuzzleSummaryDTO(puzzle.getId(), puzzle.getTitle(), puzzle.getType(), puzzle.getDisplayOrder()))
                 .toList();
 
         return new FolderResponseDTO(folder.getCode(), folder.getName(), puzzles);

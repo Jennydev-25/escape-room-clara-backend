@@ -30,6 +30,8 @@ public class PuzzleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+
     @ManyToOne
     @JoinColumn(name = "id_folder")
     private FolderEntity folder;
