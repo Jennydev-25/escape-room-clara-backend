@@ -105,6 +105,21 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "marta@pruebas.com")
+    void testCompleteProfile_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+        CompleteProfileRequestDTO requestDto = new CompleteProfileRequestDTO("Marta Valle", TEST_ALIAS);
+        String requestJson = mapper.writeValueAsString(requestDto);
+
+        when(userService.completeProfile(any(Authentication.class), eq(requestDto)))
+                .thenThrow(new UserNotFoundException("No se encontró ningún usuario con ese email"));
+
+        mockMvc.perform(put("/api/v1/users/me/complete-profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
     void testUpdateProfile_ShouldReturnUpdatedProfile() throws Exception {
         UpdateProfileRequestDTO requestDto = new UpdateProfileRequestDTO("nuevo_alias", TEST_EMAIL, TEST_EMAIL,
                 TEST_AVATAR_ID);
