@@ -12,11 +12,10 @@ public class RegisterMapper {
         throw new UnsupportedOperationException("No se puede instanciar esta clase de utilidad");
     }
 
-    public static UserEntity toEntity(RegisterRequestDTO request, String hashedPassword, String alias, RoleEntity role) {
+    public static UserEntity toEntity(RegisterRequestDTO request, String hashedPassword, RoleEntity role) {
         return UserEntity.builder()
                 .email(request.email())
                 .passwordHash(hashedPassword)
-                .alias(alias)
                 .role(role)
                 .createdAt(LocalDateTime.now())
                 .build();

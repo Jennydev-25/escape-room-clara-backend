@@ -40,13 +40,13 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
         });
 
         String hashedPassword = passwordEncoder.encode(request.password());
-        String alias = request.email().split("@")[0];
         RoleEntity role = roleService.assignDefaultRole();
 
-        UserEntity user = RegisterMapper.toEntity(request, hashedPassword, alias, role);
+        UserEntity user = RegisterMapper.toEntity(request, hashedPassword, role);
 
         userRepository.save(user);
 
-        return new RegisterResponseDTO("User stored successfully");
+        return new RegisterResponseDTO(
+                "Tu cuenta se ha creado correctamente. Inserta tu nombre completo y escoge tu alias para la investigación.");
     }
 }

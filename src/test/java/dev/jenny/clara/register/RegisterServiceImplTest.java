@@ -3,6 +3,7 @@ package dev.jenny.clara.register;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -66,7 +67,7 @@ class RegisterServiceImplTest {
 
         assertThat(savedUser.getEmail(), is(equalTo("clara@pruebas.com")));
         assertThat(savedUser.getPasswordHash(), is(equalTo("hashedPassword")));
-        assertThat(savedUser.getAlias(), is(equalTo("clara")));
+        assertThat(savedUser.getAlias(), is(nullValue()));
         assertThat(savedUser.getRole(), is(equalTo(role)));
         assertThat(response.message(), is(equalTo(
                 "Tu cuenta se ha creado correctamente. Inserta tu nombre completo y escoge tu alias para la investigación.")));
