@@ -27,6 +27,7 @@ import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.validator.PuzzleValidator;
 import dev.jenny.clara.puzzle.validator.PuzzleValidatorResolver;
@@ -84,15 +85,42 @@ class PuzzleServiceImplTest {
     }
 
     @Test
+    void testValidateAnswer_ShouldThrowPuzzleChapterNotReachedException_WhenCurrentChapterIsBelowPuzzleMinChapter() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER - 1, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
+
+        assertThrows(PuzzleChapterNotReachedException.class,
+                () -> service.validateAnswer(authentication, EXISTING_PUZZLE_ID, answer));
+    }
+
+    @Test
     void testValidateAnswer_ShouldReturnNotCorrect_WhenAnswerIsWrong() {
         Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
 
         PuzzleEntity puzzle = PuzzleEntity.builder()
                 .id(EXISTING_PUZZLE_ID)
                 .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
                 .build();
 
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         List<ExpectedAnswerEntity> expectedAnswers = List.of(ExpectedAnswerEntity.builder().build());
         when(expectedAnswerRepository.findByPuzzleId(EXISTING_PUZZLE_ID)).thenReturn(expectedAnswers);
