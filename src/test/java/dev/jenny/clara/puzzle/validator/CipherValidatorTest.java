@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.puzzle.PuzzleEntity;
-import dev.jenny.clara.puzzle.dtos.PlayerAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CipherValidatorTest {
@@ -31,7 +31,7 @@ class CipherValidatorTest {
         CipherValidator validator = new CipherValidator(passwordEncoder);
         PuzzleEntity puzzle = PuzzleEntity.builder().build();
         ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
-        PlayerAnswerRequestDTO answer = new PlayerAnswerRequestDTO(DECIPHERED_ANSWER);
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(DECIPHERED_ANSWER);
 
         when(passwordEncoder.matches(DECIPHERED_ANSWER, STORED_HASH)).thenReturn(true);
 

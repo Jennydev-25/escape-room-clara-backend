@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.puzzle.PuzzleEntity;
-import dev.jenny.clara.puzzle.dtos.PlayerAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
 class SinglePasswordValidatorTest {
@@ -31,7 +31,7 @@ class SinglePasswordValidatorTest {
         SinglePasswordValidator validator = new SinglePasswordValidator(passwordEncoder);
         PuzzleEntity puzzle = PuzzleEntity.builder().build();
         ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
-        PlayerAnswerRequestDTO answer = new PlayerAnswerRequestDTO(EXPECTED_ANSWER);
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(EXPECTED_ANSWER);
 
         when(passwordEncoder.matches(EXPECTED_ANSWER, STORED_HASH)).thenReturn(true);
 
@@ -45,7 +45,7 @@ class SinglePasswordValidatorTest {
         SinglePasswordValidator validator = new SinglePasswordValidator(passwordEncoder);
         PuzzleEntity puzzle = PuzzleEntity.builder().build();
         ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
-        PlayerAnswerRequestDTO answer = new PlayerAnswerRequestDTO("una sola prueba");
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO("una sola prueba");
 
         when(passwordEncoder.matches(EXPECTED_ANSWER, STORED_HASH)).thenReturn(true);
 
@@ -59,7 +59,7 @@ class SinglePasswordValidatorTest {
         SinglePasswordValidator validator = new SinglePasswordValidator(passwordEncoder);
         PuzzleEntity puzzle = PuzzleEntity.builder().build();
         ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
-        PlayerAnswerRequestDTO answer = new PlayerAnswerRequestDTO("  " + EXPECTED_ANSWER + "  ");
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO("  " + EXPECTED_ANSWER + "  ");
 
         when(passwordEncoder.matches(EXPECTED_ANSWER, STORED_HASH)).thenReturn(true);
 

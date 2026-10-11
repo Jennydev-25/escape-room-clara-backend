@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.puzzle.PuzzleEntity;
 import dev.jenny.clara.puzzle.PuzzleType;
-import dev.jenny.clara.puzzle.dtos.PlayerAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 
 @Component
 public class SinglePasswordValidator implements PuzzleValidator {
@@ -25,7 +25,7 @@ public class SinglePasswordValidator implements PuzzleValidator {
     }
 
     @Override
-    public boolean isCorrect(PuzzleEntity puzzle, PlayerAnswerRequestDTO answer, List<ExpectedAnswerEntity> expected) {
+    public boolean isCorrect(PuzzleEntity puzzle, PuzzleAnswerRequestDTO answer, List<ExpectedAnswerEntity> expected) {
         String storedHash = expected.get(0).getAnswerHash();
         String normalizedAnswer = AnswerNormalizer.normalize(answer.value());
 
