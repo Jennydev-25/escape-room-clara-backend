@@ -1,7 +1,6 @@
 package dev.jenny.clara.trash;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
@@ -15,7 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("h2")
 class DiscardedFileRepositoryTest {
 
-    private static final String NAME = "borrador_reportaje_puerto_v1.txt";
+    // Nombre que no existe en el seed narrativo de data.sql (evita falsos positivos)
+    private static final String NAME = "archivo_de_prueba.txt";
     private static final String TYPE = "TXT";
     private static final String BODY = "[BORRADOR — sin terminar]";
     private static final int MIN_CHAPTER = 1;
@@ -35,8 +35,13 @@ class DiscardedFileRepositoryTest {
         List<DiscardedFileEntity> result = discardedFileRepository
                 .findByMinChapterLessThanEqualOrderByMinChapterAsc(MIN_CHAPTER);
 
-        assertThat(result.size(), is(equalTo(1)));
-        assertThat(result.get(0).getMinChapter(), is(equalTo(MIN_CHAPTER)));
+        // No comprobamos el total (el seed narrativo aporta otros archivos en ese capitulo):
+        // comprobamos que el nuestro aparece y que ninguno supera el capitulo pedido
+        boolean containsTestFile = result.stream()
+                .anyMatch(file -> file.getName().equals(NAME) && file.getMinChapter() == MIN_CHAPTER);
+
+        assertThat(containsTestFile, is(true));
+        assertThat(result.stream().anyMatch(file -> file.getMinChapter() > MIN_CHAPTER), is(false));
     }
 
     @Test

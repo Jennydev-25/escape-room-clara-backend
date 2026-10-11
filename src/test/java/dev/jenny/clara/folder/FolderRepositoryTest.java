@@ -18,11 +18,12 @@ class FolderRepositoryTest {
 
     private static final String EXISTING_CODE = "01_TOMAS";
     private static final String FOLDER_NAME = "01_TOMAS";
-    private static final int MIN_CHAPTER_TO_OPEN = 2;
+    // Capitulo fuera de rango real (el seed de data.sql solo usa 1 y 2) para no chocar con esos datos
+    private static final int MIN_CHAPTER_TO_OPEN = 97;
     private static final String MISSING_CODE = "99_NO_EXISTE";
     private static final String ANOTHER_CODE = "02_FRAUDE";
     private static final String ANOTHER_FOLDER_NAME = "02_FRAUDE";
-    private static final int CHAPTER_WITHOUT_FOLDERS = 1;
+    private static final int CHAPTER_WITHOUT_FOLDERS = 98;
 
     @Autowired
     private FolderRepository folderRepository;
