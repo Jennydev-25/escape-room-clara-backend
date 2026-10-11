@@ -13,6 +13,7 @@ public class UserMapper {
         return new UserProfileResponseDTO(
                 entity.getAlias(),
                 entity.getEmail(),
-                entity.getAvatarId());
+                entity.getAvatarId(),
+                entity.getFullName());
     }
 }

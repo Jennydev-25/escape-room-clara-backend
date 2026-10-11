@@ -56,7 +56,7 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "marta@pruebas.com")
     void testGetProfile_ShouldReturnCurrentUserProfile() throws Exception {
-        UserProfileResponseDTO responseDto = new UserProfileResponseDTO(TEST_ALIAS, TEST_EMAIL, TEST_AVATAR_ID);
+        UserProfileResponseDTO responseDto = new UserProfileResponseDTO(TEST_ALIAS, TEST_EMAIL, TEST_AVATAR_ID, null);
         String responseJson = mapper.writeValueAsString(responseDto);
 
         when(userService.getProfile(any(Authentication.class))).thenReturn(responseDto);
@@ -85,7 +85,7 @@ class UserControllerTest {
     void testUpdateProfile_ShouldReturnUpdatedProfile() throws Exception {
         UpdateProfileRequestDTO requestDto = new UpdateProfileRequestDTO("nuevo_alias", TEST_EMAIL, TEST_EMAIL,
                 TEST_AVATAR_ID);
-        UserProfileResponseDTO responseDto = new UserProfileResponseDTO("nuevo_alias", TEST_EMAIL, TEST_AVATAR_ID);
+        UserProfileResponseDTO responseDto = new UserProfileResponseDTO("nuevo_alias", TEST_EMAIL, TEST_AVATAR_ID, null);
         String requestJson = mapper.writeValueAsString(requestDto);
         String responseJson = mapper.writeValueAsString(responseDto);
 
