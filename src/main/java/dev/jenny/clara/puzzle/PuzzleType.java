@@ -1,7 +1,7 @@
 package dev.jenny.clara.puzzle;
 
 public enum PuzzleType {
-    CONTENIDO_SIMPLE,
-    CONTRASENA_SIMPLE,
-    CIFRADO
+    SIMPLE_CONTENT,
+    SIMPLE_PASSWORD,
+    CIPHER
 }

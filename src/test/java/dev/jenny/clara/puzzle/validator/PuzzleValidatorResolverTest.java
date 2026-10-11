@@ -27,24 +27,24 @@ class PuzzleValidatorResolverTest {
 
     @Test
     void testResolve_ShouldReturnTheValidatorThatSupportsTheGivenPuzzleType() {
-        when(singlePasswordValidator.supports(PuzzleType.CONTRASENA_SIMPLE)).thenReturn(true);
+        when(singlePasswordValidator.supports(PuzzleType.SIMPLE_PASSWORD)).thenReturn(true);
 
         PuzzleValidatorResolver resolver = new PuzzleValidatorResolver(
                 List.of(singlePasswordValidator, cipherValidator));
 
-        PuzzleValidator result = resolver.resolve(PuzzleType.CONTRASENA_SIMPLE);
+        PuzzleValidator result = resolver.resolve(PuzzleType.SIMPLE_PASSWORD);
 
         assertThat(result, is(sameInstance(singlePasswordValidator)));
     }
 
     @Test
     void testResolve_ShouldThrowUnsupportedPuzzleTypeException_WhenNoValidatorSupportsTheType() {
-        when(singlePasswordValidator.supports(PuzzleType.CIFRADO)).thenReturn(false);
-        when(cipherValidator.supports(PuzzleType.CIFRADO)).thenReturn(false);
+        when(singlePasswordValidator.supports(PuzzleType.CIPHER)).thenReturn(false);
+        when(cipherValidator.supports(PuzzleType.CIPHER)).thenReturn(false);
 
         PuzzleValidatorResolver resolver = new PuzzleValidatorResolver(
                 List.of(singlePasswordValidator, cipherValidator));
 
-        assertThrows(UnsupportedPuzzleTypeException.class, () -> resolver.resolve(PuzzleType.CIFRADO));
+        assertThrows(UnsupportedPuzzleTypeException.class, () -> resolver.resolve(PuzzleType.CIPHER));
     }
 }

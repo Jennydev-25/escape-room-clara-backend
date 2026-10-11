@@ -21,7 +21,7 @@ public class CipherValidator implements PuzzleValidator {
 
     @Override
     public boolean supports(PuzzleType type) {
-        return type == PuzzleType.CIFRADO;
+        return type == PuzzleType.CIPHER;
     }
 
     @Override

@@ -21,7 +21,7 @@ public class SinglePasswordValidator implements PuzzleValidator {
 
     @Override
     public boolean supports(PuzzleType type) {
-        return type == PuzzleType.CONTRASENA_SIMPLE;
+        return type == PuzzleType.SIMPLE_PASSWORD;
     }
 
     @Override

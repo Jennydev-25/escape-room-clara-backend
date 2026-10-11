@@ -43,14 +43,14 @@ class ExpectedAnswerRepositoryTest {
 
         PuzzleEntity puzzleOne = puzzleRepository.save(PuzzleEntity.builder()
                 .folder(folder)
-                .type(PuzzleType.CONTRASENA_SIMPLE)
+                .type(PuzzleType.SIMPLE_PASSWORD)
                 .minChapter(1)
                 .displayOrder(1)
                 .build());
 
         PuzzleEntity puzzleTwo = puzzleRepository.save(PuzzleEntity.builder()
                 .folder(folder)
-                .type(PuzzleType.CIFRADO)
+                .type(PuzzleType.CIPHER)
                 .minChapter(2)
                 .displayOrder(2)
                 .build());
