@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.expectedanswer.ExpectedAnswerRepository;
+import dev.jenny.clara.progress.InterfaceProgressService;
+import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
@@ -19,12 +21,14 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
     private final PuzzleRepository puzzleRepository;
     private final ExpectedAnswerRepository expectedAnswerRepository;
     private final PuzzleValidatorResolver puzzleValidatorResolver;
+    private final InterfaceProgressService progressService;
 
     public PuzzleServiceImpl(PuzzleRepository puzzleRepository, ExpectedAnswerRepository expectedAnswerRepository,
-            PuzzleValidatorResolver puzzleValidatorResolver) {
+            PuzzleValidatorResolver puzzleValidatorResolver, InterfaceProgressService progressService) {
         this.puzzleRepository = puzzleRepository;
         this.expectedAnswerRepository = expectedAnswerRepository;
         this.puzzleValidatorResolver = puzzleValidatorResolver;
+        this.progressService = progressService;
     }
 
     @Override
@@ -42,6 +46,15 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
             return new ValidatedAnswerResponseDTO(false, false, null, List.of());
         }
 
-        return null;
+        ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
+
+        if (currentProgress.currentChapter() != puzzle.getMinChapter()) {
+            return new ValidatedAnswerResponseDTO(true, false, null, List.of());
+        }
+
+        ProgressResponseDTO advancedProgress = progressService.advanceChapter(authentication,
+                puzzle.getMinChapter() + 1);
+
+        return new ValidatedAnswerResponseDTO(true, true, advancedProgress.lastHudLetterAdded(), List.of());
     }
 }
