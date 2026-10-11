@@ -59,7 +59,7 @@ class PuzzleControllerTest {
     @WithMockUser(username = "clara@pruebas.com")
     void testGetPuzzle_ShouldReturnPuzzle() throws Exception {
         PuzzleResponseDTO responseDto = new PuzzleResponseDTO(EXISTING_PUZZLE_ID, PUZZLE_TYPE, PUZZLE_MIN_CHAPTER,
-                PUZZLE_DISPLAY_ORDER, PUZZLE_CONTENT);
+                PUZZLE_DISPLAY_ORDER, PUZZLE_CONTENT, null, null, null);
         String responseJson = mapper.writeValueAsString(responseDto);
 
         when(puzzleService.getPuzzle(eq(EXISTING_PUZZLE_ID))).thenReturn(responseDto);
