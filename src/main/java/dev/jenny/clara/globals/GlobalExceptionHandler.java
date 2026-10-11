@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import dev.jenny.clara.chat.exceptions.ContactNotFoundException;
 import dev.jenny.clara.contacttype.exceptions.InvalidContactTypeException;
 import dev.jenny.clara.email.exceptions.EmailChapterNotReachedException;
 import dev.jenny.clara.email.exceptions.EmailNotFoundException;
@@ -86,6 +87,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorDTO> handleEmailChapterNotReached(EmailChapterNotReachedException exception) {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(ContactNotFoundException.class)
+    public ResponseEntity<ApiErrorDTO> handleContactNotFound(ContactNotFoundException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(PuzzleNotFoundException.class)
