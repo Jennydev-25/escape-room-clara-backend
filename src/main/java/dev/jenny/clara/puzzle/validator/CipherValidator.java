@@ -1,0 +1,28 @@
+package dev.jenny.clara.puzzle.validator;
+
+import java.util.List;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
+import dev.jenny.clara.puzzle.PuzzleEntity;
+import dev.jenny.clara.puzzle.dtos.PlayerAnswerRequestDTO;
+
+@Component
+public class CipherValidator implements PuzzleValidator {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public CipherValidator(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public boolean isCorrect(PuzzleEntity puzzle, PlayerAnswerRequestDTO answer, List<ExpectedAnswerEntity> expected) {
+        String storedHash = expected.get(0).getAnswerHash();
+        String normalizedAnswer = AnswerNormalizer.normalize(answer.value());
+
+        return passwordEncoder.matches(normalizedAnswer, storedHash);
+    }
+}
