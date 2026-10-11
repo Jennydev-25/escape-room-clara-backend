@@ -44,6 +44,9 @@ class ProgressServiceImplTest {
     private static final long EXPECTED_TOTAL_SECONDS = TEST_SECONDS + ADD_SECONDS;
     private static final String UPDATED_NOTE = "nota actualizada";
     private static final int NON_INFLECTION_CHAPTER = 5;
+    private static final int INFLECTION_CHAPTER = 3;
+    private static final String INFLECTION_LETTER = "M";
+    private static final String EXPECTED_HUD_AFTER_LETTER = TEST_HUD + INFLECTION_LETTER;
 
     @Mock
     private ProgressRepository progressRepository;
@@ -187,6 +190,33 @@ class ProgressServiceImplTest {
 
         assertThat(result.currentChapter(), is(equalTo(NON_INFLECTION_CHAPTER)));
         assertThat(result.hudLetters(), is(equalTo(TEST_HUD)));
+        verify(progressRepository).save(any(ProgressEntity.class));
+    }
+
+    @Test
+    void testAdvanceChapter_ShouldAppendHudLetter_WhenChapterIsInflectionPoint() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        ProgressEntity existingProgress = ProgressEntity.builder()
+                .user(user)
+                .currentChapter(TEST_CHAPTER)
+                .hudLetters(TEST_HUD)
+                .investigationSubmitted(false)
+                .timeSpentSeconds(TEST_SECONDS)
+                .freeNote(TEST_NOTE)
+                .updatedAt(TEST_UPDATED_AT)
+                .build();
+
+        when(progressRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.of(existingProgress));
+        when(progressRepository.save(any(ProgressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(hudService.letterForChapter(INFLECTION_CHAPTER)).thenReturn(INFLECTION_LETTER);
+
+        ProgressResponseDTO result = service.advanceChapter(authentication, INFLECTION_CHAPTER);
+
+        assertThat(result.currentChapter(), is(equalTo(INFLECTION_CHAPTER)));
+        assertThat(result.hudLetters(), is(equalTo(EXPECTED_HUD_AFTER_LETTER)));
         verify(progressRepository).save(any(ProgressEntity.class));
     }
 }
