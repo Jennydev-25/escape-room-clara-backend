@@ -26,6 +26,7 @@ import dev.jenny.clara.folder.FolderRepository;
 import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
@@ -46,6 +47,8 @@ class PuzzleServiceImplTest {
     private static final LocalDateTime TEST_UPDATED_AT = LocalDateTime.of(2026, 1, 1, 12, 0);
     private static final String NEW_HUD_LETTER = "M";
     private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
+    private static final int PUZZLE_DISPLAY_ORDER = 1;
+    private static final String PUZZLE_CONTENT = "contenido de la prueba";
 
     @Mock
     private PuzzleRepository puzzleRepository;
@@ -89,6 +92,25 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(MISSING_PUZZLE_ID)).thenReturn(Optional.empty());
 
         assertThrows(PuzzleNotFoundException.class, () -> service.getPuzzle(MISSING_PUZZLE_ID));
+    }
+
+    @Test
+    void testGetPuzzle_ShouldReturnPuzzle_WhenPuzzleExists() {
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .displayOrder(PUZZLE_DISPLAY_ORDER)
+                .content(PUZZLE_CONTENT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        PuzzleResponseDTO result = service.getPuzzle(EXISTING_PUZZLE_ID);
+
+        assertThat(result.id(), is(equalTo(EXISTING_PUZZLE_ID)));
+        assertThat(result.type(), is(equalTo(PUZZLE_TYPE)));
+        assertThat(result.content(), is(equalTo(PUZZLE_CONTENT)));
     }
 
     @Test
