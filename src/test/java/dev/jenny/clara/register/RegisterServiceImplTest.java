@@ -68,7 +68,8 @@ class RegisterServiceImplTest {
         assertThat(savedUser.getPasswordHash(), is(equalTo("hashedPassword")));
         assertThat(savedUser.getAlias(), is(equalTo("clara")));
         assertThat(savedUser.getRole(), is(equalTo(role)));
-        assertThat(response.message(), is(equalTo("User stored successfully")));
+        assertThat(response.message(), is(equalTo(
+                "Tu cuenta se ha creado correctamente. Inserta tu nombre completo y escoge tu alias para la investigación.")));
     }
 
     @Test
