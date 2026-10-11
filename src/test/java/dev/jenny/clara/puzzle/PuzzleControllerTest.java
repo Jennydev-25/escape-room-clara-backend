@@ -26,6 +26,7 @@ import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
+import dev.jenny.clara.puzzle.exceptions.UnsupportedPuzzleTypeException;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = PuzzleController.class)
@@ -109,5 +110,20 @@ class PuzzleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testValidateAnswer_ShouldReturnInternalServerError_WhenPuzzleTypeIsUnsupported() throws Exception {
+        when(puzzleService.validateAnswer(any(Authentication.class), eq(EXISTING_PUZZLE_ID),
+                any(PuzzleAnswerRequestDTO.class)))
+                .thenThrow(new UnsupportedPuzzleTypeException(PUZZLE_TYPE));
+
+        PuzzleAnswerRequestDTO requestDto = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
+
+        mockMvc.perform(post("/api/v1/puzzles/{id}/answer", EXISTING_PUZZLE_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(requestDto)))
+                .andExpect(status().isInternalServerError());
     }
 }
