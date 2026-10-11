@@ -93,6 +93,6 @@ public class ProgressServiceImpl implements InterfaceProgressService {
 
         progress.setUpdatedAt(LocalDateTime.now());
 
-        return ProgressMapper.toDTO(repository.save(progress));
+        return ProgressMapper.toDTO(repository.save(progress), newLetter);
     }
 }

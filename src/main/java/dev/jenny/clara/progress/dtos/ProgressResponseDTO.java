@@ -8,5 +8,6 @@ public record ProgressResponseDTO(
         boolean investigationSubmitted,
         long timeSpentSeconds,
         String freeNote,
-        LocalDateTime updatedAt) {
+        LocalDateTime updatedAt,
+        String lastHudLetterAdded) {
 }
