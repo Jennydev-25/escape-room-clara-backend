@@ -24,6 +24,7 @@ import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -41,6 +42,8 @@ class PuzzleControllerTest {
     private static final String ANSWER_VALUE = "any-value";
     private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
     private static final String NEW_HUD_LETTER = "M";
+    private static final String CHAPTER_NOT_REACHED_MESSAGE = "La prueba " + EXISTING_PUZZLE_ID
+            + " todavía no está disponible en el capítulo actual";
 
     @Autowired
     private MockMvc mockMvc;
@@ -91,5 +94,20 @@ class PuzzleControllerTest {
                 .content(mapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(responseJson));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testValidateAnswer_ShouldReturnForbidden_WhenChapterNotReached() throws Exception {
+        when(puzzleService.validateAnswer(any(Authentication.class), eq(EXISTING_PUZZLE_ID),
+                any(PuzzleAnswerRequestDTO.class)))
+                .thenThrow(new PuzzleChapterNotReachedException(CHAPTER_NOT_REACHED_MESSAGE));
+
+        PuzzleAnswerRequestDTO requestDto = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
+
+        mockMvc.perform(post("/api/v1/puzzles/{id}/answer", EXISTING_PUZZLE_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(requestDto)))
+                .andExpect(status().isForbidden());
     }
 }
