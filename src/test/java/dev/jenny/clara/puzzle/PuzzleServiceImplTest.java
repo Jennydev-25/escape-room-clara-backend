@@ -204,4 +204,37 @@ class PuzzleServiceImplTest {
         assertThat(result.newHudLetter(), is(equalTo(NEW_HUD_LETTER)));
         assertThat(result.unlocks(), is(equalTo(List.of(UNLOCKED_FOLDER_CODE))));
     }
+
+    @Test
+    void testValidateAnswer_ShouldReturnCorrectWithoutAdvancing_WhenAnswerIsCorrectButChapterAlreadyPassed() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        List<ExpectedAnswerEntity> expectedAnswers = List.of(ExpectedAnswerEntity.builder().build());
+        when(expectedAnswerRepository.findByPuzzleId(EXISTING_PUZZLE_ID)).thenReturn(expectedAnswers);
+
+        when(puzzleValidatorResolver.resolve(PUZZLE_TYPE)).thenReturn(puzzleValidator);
+        when(puzzleValidator.isCorrect(any(PuzzleEntity.class), any(PuzzleAnswerRequestDTO.class), eq(expectedAnswers)))
+                .thenReturn(true);
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER + 1, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
+
+        ValidatedAnswerResponseDTO result = service.validateAnswer(authentication, EXISTING_PUZZLE_ID, answer);
+
+        assertThat(result.correct(), is(equalTo(true)));
+        assertThat(result.updatesChapter(), is(equalTo(false)));
+        assertThat(result.newHudLetter(), is(equalTo(null)));
+        assertThat(result.unlocks(), is(equalTo(List.of())));
+    }
 }
