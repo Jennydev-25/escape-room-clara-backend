@@ -214,4 +214,23 @@ class UserControllerTest {
                 new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, TEST_EMAIL, null));
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidCompleteProfileRequests")
+    @WithMockUser(username = "marta@pruebas.com")
+    void testCompleteProfile_ShouldReturnBadRequest_WhenRequestIsInvalid(CompleteProfileRequestDTO invalidRequest)
+            throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(put("/api/v1/users/me/complete-profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<CompleteProfileRequestDTO> invalidCompleteProfileRequests() {
+        return Stream.of(
+                new CompleteProfileRequestDTO("", TEST_ALIAS),
+                new CompleteProfileRequestDTO("Marta Valle", ""));
+    }
+
 }
