@@ -36,6 +36,7 @@ public class UserEntity {
 
     private String passwordHash;
     private String alias;
+    private String fullName;
 
     @ManyToOne
     @JoinColumn(name = "id_role")
