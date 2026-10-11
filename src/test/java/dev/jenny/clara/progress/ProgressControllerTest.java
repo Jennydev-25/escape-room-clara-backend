@@ -66,7 +66,7 @@ class ProgressControllerTest {
     @WithMockUser(username = "clara@pruebas.com")
     void testGetProgress_ShouldReturnCurrentProgress() throws Exception {
         ProgressResponseDTO responseDto = new ProgressResponseDTO(
-                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
         String responseJson = mapper.writeValueAsString(responseDto);
 
         when(progressService.getOrCreateProgress(any(Authentication.class))).thenReturn(responseDto);
@@ -85,7 +85,7 @@ class ProgressControllerTest {
     void testAccumulateTime_ShouldReturnUpdatedProgress() throws Exception {
         AccumulateTimeRequestDTO requestDto = new AccumulateTimeRequestDTO(60L);
         ProgressResponseDTO responseDto = new ProgressResponseDTO(
-                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
         String requestJson = mapper.writeValueAsString(requestDto);
         String responseJson = mapper.writeValueAsString(responseDto);
 
@@ -107,7 +107,7 @@ class ProgressControllerTest {
     void testUpdateNote_ShouldReturnUpdatedProgress() throws Exception {
         UpdateNoteRequestDTO requestDto = new UpdateNoteRequestDTO("mi nota actualizada");
         ProgressResponseDTO responseDto = new ProgressResponseDTO(
-                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
         String requestJson = mapper.writeValueAsString(requestDto);
         String responseJson = mapper.writeValueAsString(responseDto);
 
@@ -165,7 +165,7 @@ class ProgressControllerTest {
     @Test
     void testGetProgress_ShouldReturnOk_WhenValidBearerTokenProvided() throws Exception {
         ProgressResponseDTO responseDto = new ProgressResponseDTO(
-                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT);
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
         String responseJson = mapper.writeValueAsString(responseDto);
 
         when(progressService.getOrCreateProgress(any(Authentication.class))).thenReturn(responseDto);

@@ -23,6 +23,7 @@ class ProgressMapperTest {
     private static final long TEST_SECONDS = 120L;
     private static final String TEST_NOTE = "mi nota";
     private static final LocalDateTime TEST_UPDATED_AT = LocalDateTime.of(2026, 1, 1, 10, 0);
+    private static final String TEST_LAST_LETTER = "M";
 
     @Test
     void testToDTO_ShouldMapEntityFieldsToResponseDTO() {
@@ -54,5 +55,23 @@ class ProgressMapperTest {
         InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
 
         assertThat(exception.getCause(), isA(UnsupportedOperationException.class));
+    }
+
+    @Test
+    void testToDTOWithLastLetter_ShouldMapEntityFieldsAndIncludeLastHudLetterAdded() {
+        ProgressEntity entity = ProgressEntity.builder()
+                .currentChapter(TEST_CHAPTER)
+                .hudLetters(TEST_HUD)
+                .investigationSubmitted(TEST_SUBMITTED)
+                .timeSpentSeconds(TEST_SECONDS)
+                .freeNote(TEST_NOTE)
+                .updatedAt(TEST_UPDATED_AT)
+                .build();
+
+        ProgressResponseDTO dto = ProgressMapper.toDTO(entity, TEST_LAST_LETTER);
+
+        assertThat(dto.currentChapter(), is(equalTo(entity.getCurrentChapter())));
+        assertThat(dto.hudLetters(), is(equalTo(entity.getHudLetters())));
+        assertThat(dto.lastHudLetterAdded(), is(equalTo(TEST_LAST_LETTER)));
     }
 }

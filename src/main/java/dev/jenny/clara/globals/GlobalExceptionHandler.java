@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import dev.jenny.clara.contacttype.exceptions.InvalidContactTypeException;
+import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
+import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
+import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
+import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
+import dev.jenny.clara.puzzle.exceptions.UnsupportedPuzzleTypeException;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.refreshtoken.exceptions.InvalidRefreshTokenException;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
@@ -55,5 +60,36 @@ public class GlobalExceptionHandler {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(FolderNotFoundException.class)
+    public ResponseEntity<ApiErrorDTO> handleFolderNotFound(FolderNotFoundException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(ChapterNotReachedException.class)
+    public ResponseEntity<ApiErrorDTO> handleChapterNotReached(ChapterNotReachedException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(PuzzleNotFoundException.class)
+    public ResponseEntity<ApiErrorDTO> handlePuzzleNotFound(PuzzleNotFoundException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(PuzzleChapterNotReachedException.class)
+    public ResponseEntity<ApiErrorDTO> handlePuzzleChapterNotReached(PuzzleChapterNotReachedException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(UnsupportedPuzzleTypeException.class)
+    public ResponseEntity<ApiErrorDTO> handleUnsupportedPuzzleType(UnsupportedPuzzleTypeException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

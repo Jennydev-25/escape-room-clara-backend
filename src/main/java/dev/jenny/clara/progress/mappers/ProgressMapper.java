@@ -10,12 +10,17 @@ public class ProgressMapper {
     }
 
     public static ProgressResponseDTO toDTO(ProgressEntity entity) {
+        return toDTO(entity, null);
+    }
+
+    public static ProgressResponseDTO toDTO(ProgressEntity entity, String lastHudLetterAdded) {
         return new ProgressResponseDTO(
                 entity.getCurrentChapter(),
                 entity.getHudLetters(),
                 entity.isInvestigationSubmitted(),
                 entity.getTimeSpentSeconds(),
                 entity.getFreeNote(),
-                entity.getUpdatedAt());
+                entity.getUpdatedAt(),
+                lastHudLetterAdded);
     }
 }
