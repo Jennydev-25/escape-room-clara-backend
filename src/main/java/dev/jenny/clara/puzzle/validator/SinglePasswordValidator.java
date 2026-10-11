@@ -21,7 +21,7 @@ public class SinglePasswordValidator implements PuzzleValidator {
     @Override
     public boolean isCorrect(PuzzleEntity puzzle, PlayerAnswerRequestDTO answer, List<ExpectedAnswerEntity> expected) {
         String storedHash = expected.get(0).getAnswerHash();
-        String normalizedAnswer = answer.value().trim().toUpperCase();
+        String normalizedAnswer = AnswerNormalizer.normalize(answer.value());
 
         return passwordEncoder.matches(normalizedAnswer, storedHash);
     }
