@@ -13,6 +13,7 @@ import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.validator.PuzzleValidator;
 import dev.jenny.clara.puzzle.validator.PuzzleValidatorResolver;
@@ -42,6 +43,13 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
         PuzzleEntity puzzle = puzzleRepository.findById(puzzleId)
                 .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
 
+        ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
+
+        if (currentProgress.currentChapter() < puzzle.getMinChapter()) {
+            throw new PuzzleChapterNotReachedException(
+                    "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
+        }
+
         List<ExpectedAnswerEntity> expectedAnswers = expectedAnswerRepository.findByPuzzleId(puzzleId);
 
         PuzzleValidator validator = puzzleValidatorResolver.resolve(puzzle.getType());
@@ -50,8 +58,6 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
         if (!correct) {
             return new ValidatedAnswerResponseDTO(false, false, null, List.of());
         }
-
-        ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
 
         if (currentProgress.currentChapter() != puzzle.getMinChapter()) {
             return new ValidatedAnswerResponseDTO(true, false, null, List.of());
