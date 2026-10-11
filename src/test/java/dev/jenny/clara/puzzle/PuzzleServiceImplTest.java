@@ -85,6 +85,13 @@ class PuzzleServiceImplTest {
     }
 
     @Test
+    void testGetPuzzle_ShouldThrowPuzzleNotFoundException_WhenPuzzleDoesNotExist() {
+        when(puzzleRepository.findById(MISSING_PUZZLE_ID)).thenReturn(Optional.empty());
+
+        assertThrows(PuzzleNotFoundException.class, () -> service.getPuzzle(MISSING_PUZZLE_ID));
+    }
+
+    @Test
     void testValidateAnswer_ShouldThrowPuzzleChapterNotReachedException_WhenCurrentChapterIsBelowPuzzleMinChapter() {
         Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
 
