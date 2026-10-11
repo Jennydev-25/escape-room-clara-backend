@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.puzzle.PuzzleEntity;
+import dev.jenny.clara.puzzle.PuzzleType;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,5 +39,37 @@ class CipherValidatorTest {
         boolean result = validator.isCorrect(puzzle, answer, List.of(expectedAnswer));
 
         assertThat(result, is(equalTo(true)));
+    }
+
+    @Test
+    void testSupports_ShouldReturnTrue_WhenTypeIsCipher() {
+        CipherValidator validator = new CipherValidator(passwordEncoder);
+
+        boolean result = validator.supports(PuzzleType.CIPHER);
+
+        assertThat(result, is(equalTo(true)));
+    }
+
+    @Test
+    void testSupports_ShouldReturnFalse_WhenTypeIsNotCipher() {
+        CipherValidator validator = new CipherValidator(passwordEncoder);
+
+        boolean result = validator.supports(PuzzleType.SIMPLE_PASSWORD);
+
+        assertThat(result, is(equalTo(false)));
+    }
+
+    @Test
+    void testIsCorrect_ShouldReturnFalse_WhenDecipheredAnswerDoesNotMatchStoredHash() {
+        CipherValidator validator = new CipherValidator(passwordEncoder);
+        PuzzleEntity puzzle = PuzzleEntity.builder().build();
+        ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO("respuesta incorrecta");
+
+        when(passwordEncoder.matches("RESPUESTA INCORRECTA", STORED_HASH)).thenReturn(false);
+
+        boolean result = validator.isCorrect(puzzle, answer, List.of(expectedAnswer));
+
+        assertThat(result, is(equalTo(false)));
     }
 }
