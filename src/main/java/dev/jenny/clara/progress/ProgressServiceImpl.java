@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.jenny.clara.progress.dtos.AccumulateTimeRequestDTO;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
@@ -23,10 +24,12 @@ public class ProgressServiceImpl implements InterfaceProgressService {
 
     private final ProgressRepository repository;
     private final UserRepository userRepository;
+    private final HudService hudService;
 
-    public ProgressServiceImpl(ProgressRepository repository, UserRepository userRepository) {
+    public ProgressServiceImpl(ProgressRepository repository, UserRepository userRepository, HudService hudService) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.hudService = hudService;
     }
 
     @Override
@@ -70,6 +73,24 @@ public class ProgressServiceImpl implements InterfaceProgressService {
         ProgressEntity progress = findOrCreateProgress(user);
 
         progress.setFreeNote(dto.freeNote());
+        progress.setUpdatedAt(LocalDateTime.now());
+
+        return ProgressMapper.toDTO(repository.save(progress));
+    }
+
+    @Override
+    @Transactional
+    public ProgressResponseDTO advanceChapter(Authentication authentication, int newChapter) {
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+        ProgressEntity progress = findOrCreateProgress(user);
+
+        progress.setCurrentChapter(newChapter);
+
+        String newLetter = hudService.letterForChapter(newChapter);
+        if (newLetter != null) {
+            progress.setHudLetters(progress.getHudLetters() + newLetter);
+        }
+
         progress.setUpdatedAt(LocalDateTime.now());
 
         return ProgressMapper.toDTO(repository.save(progress));
