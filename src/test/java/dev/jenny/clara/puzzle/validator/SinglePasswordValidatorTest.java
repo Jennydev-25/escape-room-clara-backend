@@ -53,4 +53,18 @@ class SinglePasswordValidatorTest {
 
         assertThat(result, is(equalTo(true)));
     }
+
+    @Test
+    void testIsCorrect_ShouldReturnTrue_WhenAnswerHasSurroundingWhitespace() {
+        SinglePasswordValidator validator = new SinglePasswordValidator(passwordEncoder);
+        PuzzleEntity puzzle = PuzzleEntity.builder().build();
+        ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
+        PlayerAnswerRequestDTO answer = new PlayerAnswerRequestDTO("  " + EXPECTED_ANSWER + "  ");
+
+        when(passwordEncoder.matches(EXPECTED_ANSWER, STORED_HASH)).thenReturn(true);
+
+        boolean result = validator.isCorrect(puzzle, answer, List.of(expectedAnswer));
+
+        assertThat(result, is(equalTo(true)));
+    }
 }
