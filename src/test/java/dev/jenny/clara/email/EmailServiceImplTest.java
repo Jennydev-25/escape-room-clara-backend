@@ -70,8 +70,11 @@ class EmailServiceImplTest {
         service = new EmailServiceImpl(emailRepository, emailReadRepository, userRepository, progressService);
         authentication = org.mockito.Mockito.mock(Authentication.class);
         user = UserEntity.builder().id(USER_ID).email(USER_EMAIL).build();
-        when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
+    }
+
+    private void stubAuthenticatedUser() {
         when(authentication.getName()).thenReturn(USER_EMAIL);
+        when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.of(user));
     }
 
     private ProgressResponseDTO progressAtChapter(int chapter) {
@@ -80,6 +83,8 @@ class EmailServiceImplTest {
 
     @Test
     void testListInbox_ShouldMarkEmailAsRead_WhenAReadAlreadyExists() {
+        stubAuthenticatedUser();
+
         EmailEntity email = EmailEntity.builder()
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(MIN_CHAPTER).build();
 
@@ -97,6 +102,8 @@ class EmailServiceImplTest {
 
     @Test
     void testListInbox_ShouldMarkEmailAsUnread_WhenNoReadExists() {
+        stubAuthenticatedUser();
+
         EmailEntity email = EmailEntity.builder()
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(MIN_CHAPTER).build();
 
@@ -122,6 +129,8 @@ class EmailServiceImplTest {
 
     @Test
     void testGetDetail_ShouldThrowEmailChapterNotReachedException_WhenChapterNotReached() {
+        stubAuthenticatedUser();
+
         EmailEntity email = EmailEntity.builder()
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(LOCKED_MIN_CHAPTER).build();
 
@@ -133,6 +142,8 @@ class EmailServiceImplTest {
 
     @Test
     void testGetDetail_ShouldCreateEmailRead_WhenNotReadYet() {
+        stubAuthenticatedUser();
+
         EmailEntity email = EmailEntity.builder()
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(MIN_CHAPTER).build();
 
@@ -148,6 +159,8 @@ class EmailServiceImplTest {
 
     @Test
     void testGetDetail_ShouldNotCreateDuplicateEmailRead_WhenAlreadyRead() {
+        stubAuthenticatedUser();
+
         EmailEntity email = EmailEntity.builder()
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(MIN_CHAPTER).build();
 
