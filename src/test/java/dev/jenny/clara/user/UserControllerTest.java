@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
+import dev.jenny.clara.user.dtos.CompleteProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
@@ -78,6 +79,28 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/v1/users/me"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
+    void testCompleteProfile_ShouldReturnUpdatedProfile() throws Exception {
+        CompleteProfileRequestDTO requestDto = new CompleteProfileRequestDTO("Marta Valle", TEST_ALIAS);
+        UserProfileResponseDTO responseDto = new UserProfileResponseDTO(TEST_ALIAS, TEST_EMAIL, TEST_AVATAR_ID,
+                "Marta Valle");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(userService.completeProfile(any(Authentication.class), eq(requestDto))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(put("/api/v1/users/me/complete-profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
     }
 
     @Test
