@@ -19,6 +19,7 @@ class UserMapperTest {
     private static final String TEST_ALIAS = "marta_v";
     private static final String TEST_EMAIL = "marta@example.com";
     private static final Integer TEST_AVATAR_ID = 3;
+    private static final String TEST_FULL_NAME = "Marta Valle";
 
     @Test
     void testToDTO_ShouldMapEntityFieldsToResponseDTO() {
@@ -26,6 +27,7 @@ class UserMapperTest {
                 .alias(TEST_ALIAS)
                 .email(TEST_EMAIL)
                 .avatarId(TEST_AVATAR_ID)
+                .fullName(TEST_FULL_NAME)
                 .build();
 
         UserProfileResponseDTO dto = UserMapper.toDTO(entity);
@@ -34,6 +36,7 @@ class UserMapperTest {
         assertThat(dto.alias(), is(equalTo(entity.getAlias())));
         assertThat(dto.email(), is(equalTo(entity.getEmail())));
         assertThat(dto.avatarId(), is(equalTo(entity.getAvatarId())));
+        assertThat(dto.fullName(), is(equalTo(entity.getFullName())));
     }
 
     @Test

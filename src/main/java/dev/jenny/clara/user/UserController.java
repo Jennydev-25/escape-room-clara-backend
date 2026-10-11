@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
+import dev.jenny.clara.user.dtos.CompleteProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import jakarta.validation.Valid;
@@ -26,6 +27,12 @@ public class UserController {
     @GetMapping
     public UserProfileResponseDTO getProfile(Authentication authentication) {
         return userService.getProfile(authentication);
+    }
+
+    @PutMapping("/complete-profile")
+    public UserProfileResponseDTO completeProfile(Authentication authentication,
+            @Valid @RequestBody CompleteProfileRequestDTO dto) {
+        return userService.completeProfile(authentication, dto);
     }
 
     @PutMapping

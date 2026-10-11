@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Constructor;
@@ -21,7 +22,6 @@ class RegisterMapperTest {
     private static final String TEST_EMAIL = "marta@example.com";
     private static final String TEST_PASSWORD = "password123";
     private static final String TEST_HASHED_PASSWORD = "$2a$10$hashedExamplePassword";
-    private static final String TEST_ALIAS = "marta";
 
     @Test
     void testConstructor_ShouldThrowException_WhenInstantiated() throws Exception {
@@ -40,12 +40,12 @@ class RegisterMapperTest {
                 "recaptcha-token");
 
         RoleEntity role = RoleEntity.builder().name("USER").build();
-        UserEntity entity = RegisterMapper.toEntity(request, TEST_HASHED_PASSWORD, TEST_ALIAS, role);
+        UserEntity entity = RegisterMapper.toEntity(request, TEST_HASHED_PASSWORD, role);
 
         assertThat(entity, instanceOf(UserEntity.class));
         assertThat(entity.getEmail(), is(equalTo(request.email())));
         assertThat(entity.getPasswordHash(), is(equalTo(TEST_HASHED_PASSWORD)));
-        assertThat(entity.getAlias(), is(equalTo(TEST_ALIAS)));
+        assertThat(entity.getAlias(), is(nullValue()));
         assertThat(entity.getRole(), is(equalTo(role)));
         assertThat(entity.getCreatedAt(), is(notNullValue()));
     }

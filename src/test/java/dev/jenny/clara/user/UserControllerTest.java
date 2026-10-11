@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
+import dev.jenny.clara.user.dtos.CompleteProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
@@ -56,7 +57,7 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "marta@pruebas.com")
     void testGetProfile_ShouldReturnCurrentUserProfile() throws Exception {
-        UserProfileResponseDTO responseDto = new UserProfileResponseDTO(TEST_ALIAS, TEST_EMAIL, TEST_AVATAR_ID);
+        UserProfileResponseDTO responseDto = new UserProfileResponseDTO(TEST_ALIAS, TEST_EMAIL, TEST_AVATAR_ID, null);
         String responseJson = mapper.writeValueAsString(responseDto);
 
         when(userService.getProfile(any(Authentication.class))).thenReturn(responseDto);
@@ -82,10 +83,47 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "marta@pruebas.com")
+    void testCompleteProfile_ShouldReturnUpdatedProfile() throws Exception {
+        CompleteProfileRequestDTO requestDto = new CompleteProfileRequestDTO("Marta Valle", TEST_ALIAS);
+        UserProfileResponseDTO responseDto = new UserProfileResponseDTO(TEST_ALIAS, TEST_EMAIL, TEST_AVATAR_ID,
+                "Marta Valle");
+        String requestJson = mapper.writeValueAsString(requestDto);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(userService.completeProfile(any(Authentication.class), eq(requestDto))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(put("/api/v1/users/me/complete-profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
+    void testCompleteProfile_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+        CompleteProfileRequestDTO requestDto = new CompleteProfileRequestDTO("Marta Valle", TEST_ALIAS);
+        String requestJson = mapper.writeValueAsString(requestDto);
+
+        when(userService.completeProfile(any(Authentication.class), eq(requestDto)))
+                .thenThrow(new UserNotFoundException("No se encontró ningún usuario con ese email"));
+
+        mockMvc.perform(put("/api/v1/users/me/complete-profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "marta@pruebas.com")
     void testUpdateProfile_ShouldReturnUpdatedProfile() throws Exception {
         UpdateProfileRequestDTO requestDto = new UpdateProfileRequestDTO("nuevo_alias", TEST_EMAIL, TEST_EMAIL,
                 TEST_AVATAR_ID);
-        UserProfileResponseDTO responseDto = new UserProfileResponseDTO("nuevo_alias", TEST_EMAIL, TEST_AVATAR_ID);
+        UserProfileResponseDTO responseDto = new UserProfileResponseDTO("nuevo_alias", TEST_EMAIL, TEST_AVATAR_ID, null);
         String requestJson = mapper.writeValueAsString(requestDto);
         String responseJson = mapper.writeValueAsString(responseDto);
 
@@ -174,6 +212,25 @@ class UserControllerTest {
                 new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, "", TEST_AVATAR_ID),
                 new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, "otro@pruebas.com", TEST_AVATAR_ID),
                 new UpdateProfileRequestDTO(TEST_ALIAS, TEST_EMAIL, TEST_EMAIL, null));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidCompleteProfileRequests")
+    @WithMockUser(username = "marta@pruebas.com")
+    void testCompleteProfile_ShouldReturnBadRequest_WhenRequestIsInvalid(CompleteProfileRequestDTO invalidRequest)
+            throws Exception {
+        String requestJson = mapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(put("/api/v1/users/me/complete-profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static Stream<CompleteProfileRequestDTO> invalidCompleteProfileRequests() {
+        return Stream.of(
+                new CompleteProfileRequestDTO("", TEST_ALIAS),
+                new CompleteProfileRequestDTO("Marta Valle", ""));
     }
 
 }

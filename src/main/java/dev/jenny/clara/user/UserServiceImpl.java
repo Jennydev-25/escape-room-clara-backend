@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
+import dev.jenny.clara.user.dtos.CompleteProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
@@ -28,6 +29,20 @@ public class UserServiceImpl implements InterfaceUserService {
         UserEntity user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UserNotFoundException(
                         "No se encontró ningún usuario con ese email " + authentication.getName()));
+        return UserMapper.toDTO(user);
+    }
+
+    @Override
+    public UserProfileResponseDTO completeProfile(Authentication authentication, CompleteProfileRequestDTO request) {
+        UserEntity user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException(
+                        "No se encontró ningún usuario con ese email " + authentication.getName()));
+
+        user.setFullName(request.fullName());
+        user.setAlias(request.alias());
+
+        userRepository.save(user);
+
         return UserMapper.toDTO(user);
     }
 
