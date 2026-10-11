@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.expectedanswer.ExpectedAnswerRepository;
+import dev.jenny.clara.folder.FolderEntity;
+import dev.jenny.clara.folder.FolderRepository;
 import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
@@ -42,6 +44,7 @@ class PuzzleServiceImplTest {
     private static final String TEST_NOTE = "";
     private static final LocalDateTime TEST_UPDATED_AT = LocalDateTime.of(2026, 1, 1, 12, 0);
     private static final String NEW_HUD_LETTER = "M";
+    private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
 
     @Mock
     private PuzzleRepository puzzleRepository;
@@ -58,12 +61,15 @@ class PuzzleServiceImplTest {
     @Mock
     private InterfaceProgressService progressService;
 
+    @Mock
+    private FolderRepository folderRepository;
+
     private PuzzleServiceImpl service;
 
     @BeforeEach
     void setUp() {
         service = new PuzzleServiceImpl(puzzleRepository, expectedAnswerRepository, puzzleValidatorResolver,
-                progressService);
+                progressService, folderRepository);
     }
 
     @Test
@@ -129,6 +135,9 @@ class PuzzleServiceImplTest {
                 TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, NEW_HUD_LETTER);
         when(progressService.advanceChapter(authentication, PUZZLE_MIN_CHAPTER + 1)).thenReturn(advancedProgress);
 
+        FolderEntity unlockedFolder = FolderEntity.builder().code(UNLOCKED_FOLDER_CODE).build();
+        when(folderRepository.findByMinChapterToOpen(PUZZLE_MIN_CHAPTER + 1)).thenReturn(List.of(unlockedFolder));
+
         PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
 
         ValidatedAnswerResponseDTO result = service.validateAnswer(authentication, EXISTING_PUZZLE_ID, answer);
@@ -136,5 +145,6 @@ class PuzzleServiceImplTest {
         assertThat(result.correct(), is(equalTo(true)));
         assertThat(result.updatesChapter(), is(equalTo(true)));
         assertThat(result.newHudLetter(), is(equalTo(NEW_HUD_LETTER)));
+        assertThat(result.unlocks(), is(equalTo(List.of(UNLOCKED_FOLDER_CODE))));
     }
 }
