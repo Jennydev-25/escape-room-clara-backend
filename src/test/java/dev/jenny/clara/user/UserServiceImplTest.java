@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import dev.jenny.clara.register.exceptions.EmailAlreadyExistsException;
 import dev.jenny.clara.user.dtos.ChangePasswordRequestDTO;
+import dev.jenny.clara.user.dtos.CompleteProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UpdateProfileRequestDTO;
 import dev.jenny.clara.user.dtos.UserProfileResponseDTO;
 import dev.jenny.clara.user.exceptions.InvalidCurrentPasswordException;
@@ -147,6 +148,36 @@ class UserServiceImplTest {
         UserProfileResponseDTO result = userService.updateProfile(authentication, request);
 
         assertThat(result.email(), is(equalTo(newEmail)));
+    }
+
+    @Test
+    void testCompleteProfile_ShouldReturnProfileWithFullNameAndAlias_WhenUserExists() {
+        UserEntity user = UserEntity.builder()
+                .email(TEST_EMAIL)
+                .build();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        CompleteProfileRequestDTO request = new CompleteProfileRequestDTO("Marta Valle", TEST_ALIAS);
+
+        UserProfileResponseDTO result = userService.completeProfile(authentication, request);
+
+        assertThat(result.fullName(), is(equalTo("Marta Valle")));
+        assertThat(result.alias(), is(equalTo(TEST_ALIAS)));
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void testCompleteProfile_ShouldThrowUserNotFoundException_WhenUserDoesNotExist() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+
+        CompleteProfileRequestDTO request = new CompleteProfileRequestDTO("Marta Valle", TEST_ALIAS);
+
+        assertThrows(UserNotFoundException.class, () -> userService.completeProfile(authentication, request));
     }
 
     @Test
