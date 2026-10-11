@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import dev.jenny.clara.contacttype.exceptions.InvalidContactTypeException;
+import dev.jenny.clara.email.exceptions.EmailChapterNotReachedException;
+import dev.jenny.clara.email.exceptions.EmailNotFoundException;
 import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
@@ -70,6 +72,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ChapterNotReachedException.class)
     public ResponseEntity<ApiErrorDTO> handleChapterNotReached(ChapterNotReachedException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<ApiErrorDTO> handleEmailNotFound(EmailNotFoundException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(EmailChapterNotReachedException.class)
+    public ResponseEntity<ApiErrorDTO> handleEmailChapterNotReached(EmailChapterNotReachedException exception) {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
