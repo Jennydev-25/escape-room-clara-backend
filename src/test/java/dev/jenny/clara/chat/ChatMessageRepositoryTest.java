@@ -72,4 +72,52 @@ class ChatMessageRepositoryTest {
 
         assertThat(result.isEmpty(), is(true));
     }
+
+    @Test
+    void testFindDistinctContactByMinChapterLessThanEqual_ShouldReturnDistinctVisibleContacts_WhenChapterMatches() {
+        chatMessageRepository.save(ChatMessageEntity.builder()
+                .contact(CONTACT)
+                .character(CHARACTER)
+                .content(CONTENT)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(1)
+                .build());
+        chatMessageRepository.save(ChatMessageEntity.builder()
+                .contact(CONTACT)
+                .character(CHARACTER)
+                .content(CONTENT)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(2)
+                .build());
+        chatMessageRepository.save(ChatMessageEntity.builder()
+                .contact(OTHER_CONTACT)
+                .character(CHARACTER)
+                .content(CONTENT)
+                .minChapter(LATER_MIN_CHAPTER)
+                .displayOrder(1)
+                .build());
+
+        List<String> result = chatMessageRepository.findDistinctContactByMinChapterLessThanEqual(MIN_CHAPTER);
+
+        assertThat(result.size(), is(equalTo(1)));
+        assertThat(result.get(0), is(equalTo(CONTACT)));
+    }
+
+    @Test
+    void testExistsByContact_ShouldReturnTrue_WhenContactHasMessages() {
+        chatMessageRepository.save(ChatMessageEntity.builder()
+                .contact(CONTACT)
+                .character(CHARACTER)
+                .content(CONTENT)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(1)
+                .build());
+
+        assertThat(chatMessageRepository.existsByContact(CONTACT), is(true));
+    }
+
+    @Test
+    void testExistsByContact_ShouldReturnFalse_WhenContactHasNoMessages() {
+        assertThat(chatMessageRepository.existsByContact(OTHER_CONTACT), is(false));
+    }
 }
