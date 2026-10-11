@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.puzzle.PuzzleEntity;
+import dev.jenny.clara.puzzle.PuzzleType;
 import dev.jenny.clara.puzzle.dtos.PlayerAnswerRequestDTO;
 
 @Component
@@ -16,6 +17,11 @@ public class SinglePasswordValidator implements PuzzleValidator {
 
     public SinglePasswordValidator(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public boolean supports(PuzzleType type) {
+        return type == PuzzleType.CONTRASENA_SIMPLE;
     }
 
     @Override
