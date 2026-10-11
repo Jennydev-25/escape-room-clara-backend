@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.expectedanswer.ExpectedAnswerEntity;
 import dev.jenny.clara.expectedanswer.ExpectedAnswerRepository;
+import dev.jenny.clara.folder.FolderEntity;
+import dev.jenny.clara.folder.FolderRepository;
 import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
@@ -22,13 +24,16 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
     private final ExpectedAnswerRepository expectedAnswerRepository;
     private final PuzzleValidatorResolver puzzleValidatorResolver;
     private final InterfaceProgressService progressService;
+    private final FolderRepository folderRepository;
 
     public PuzzleServiceImpl(PuzzleRepository puzzleRepository, ExpectedAnswerRepository expectedAnswerRepository,
-            PuzzleValidatorResolver puzzleValidatorResolver, InterfaceProgressService progressService) {
+            PuzzleValidatorResolver puzzleValidatorResolver, InterfaceProgressService progressService,
+            FolderRepository folderRepository) {
         this.puzzleRepository = puzzleRepository;
         this.expectedAnswerRepository = expectedAnswerRepository;
         this.puzzleValidatorResolver = puzzleValidatorResolver;
         this.progressService = progressService;
+        this.folderRepository = folderRepository;
     }
 
     @Override
@@ -52,9 +57,13 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
             return new ValidatedAnswerResponseDTO(true, false, null, List.of());
         }
 
-        ProgressResponseDTO advancedProgress = progressService.advanceChapter(authentication,
-                puzzle.getMinChapter() + 1);
+        int newChapter = puzzle.getMinChapter() + 1;
+        ProgressResponseDTO advancedProgress = progressService.advanceChapter(authentication, newChapter);
 
-        return new ValidatedAnswerResponseDTO(true, true, advancedProgress.lastHudLetterAdded(), List.of());
+        List<String> unlocks = folderRepository.findByMinChapterToOpen(newChapter).stream()
+                .map(FolderEntity::getCode)
+                .toList();
+
+        return new ValidatedAnswerResponseDTO(true, true, advancedProgress.lastHudLetterAdded(), unlocks);
     }
 }
