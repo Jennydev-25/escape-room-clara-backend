@@ -31,6 +31,7 @@ class EmailMapperTest {
         EmailEntity email = EmailEntity.builder()
                 .id(TEST_ID)
                 .sender(TEST_SENDER)
+                .sentDate(TEST_SENT_DATE)
                 .subject(TEST_SUBJECT)
                 .body(TEST_BODY)
                 .minChapter(TEST_MIN_CHAPTER)
@@ -42,6 +43,7 @@ class EmailMapperTest {
         assertThat(dto.id(), is(equalTo(TEST_ID)));
         assertThat(dto.sender(), is(equalTo(TEST_SENDER)));
         assertThat(dto.subject(), is(equalTo(TEST_SUBJECT)));
+        assertThat(dto.sentDate(), is(equalTo(TEST_SENT_DATE)));
         assertThat(dto.read(), is(true));
     }
 
