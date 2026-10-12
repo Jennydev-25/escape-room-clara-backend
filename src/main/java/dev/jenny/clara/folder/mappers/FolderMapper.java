@@ -4,6 +4,7 @@ import java.util.List;
 
 import dev.jenny.clara.folder.FolderEntity;
 import dev.jenny.clara.folder.dtos.FolderResponseDTO;
+import dev.jenny.clara.folder.dtos.FolderSummaryDTO;
 import dev.jenny.clara.puzzle.PuzzleEntity;
 import dev.jenny.clara.puzzle.dtos.PuzzleSummaryDTO;
 
@@ -19,5 +20,9 @@ public class FolderMapper {
                 .toList();
 
         return new FolderResponseDTO(folder.getCode(), folder.getName(), puzzles);
+    }
+
+    public static FolderSummaryDTO toSummaryDTO(FolderEntity folder) {
+        return new FolderSummaryDTO(folder.getCode(), folder.getName());
     }
 }
