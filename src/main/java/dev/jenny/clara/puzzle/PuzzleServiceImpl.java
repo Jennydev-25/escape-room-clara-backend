@@ -12,6 +12,7 @@ import dev.jenny.clara.folder.FolderRepository;
 import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
@@ -45,6 +46,14 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
                 .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
 
         return PuzzleMapper.toDTO(puzzle);
+    }
+
+    @Override
+    public PuzzleHintResponseDTO getHint(Authentication authentication, Long puzzleId, int number) {
+        puzzleRepository.findById(puzzleId)
+                .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
+
+        return null;
     }
 
     @Override
