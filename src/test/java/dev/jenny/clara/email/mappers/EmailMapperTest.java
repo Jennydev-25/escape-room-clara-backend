@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +20,10 @@ class EmailMapperTest {
 
     private static final Long TEST_ID = 1L;
     private static final String TEST_SENDER = "Marina Ortiz";
+    private static final String TEST_RECIPIENT = "Clara Vega";
     private static final String TEST_SUBJECT = "Lo de esta noche";
     private static final String TEST_BODY = "Nos vemos luego en el puerto.";
+    private static final LocalDate TEST_SENT_DATE = LocalDate.of(2025, 6, 3);
     private static final int TEST_MIN_CHAPTER = 1;
 
     @Test
@@ -47,6 +50,8 @@ class EmailMapperTest {
         EmailEntity email = EmailEntity.builder()
                 .id(TEST_ID)
                 .sender(TEST_SENDER)
+                .recipient(TEST_RECIPIENT)
+                .sentDate(TEST_SENT_DATE)
                 .subject(TEST_SUBJECT)
                 .body(TEST_BODY)
                 .minChapter(TEST_MIN_CHAPTER)
@@ -58,6 +63,8 @@ class EmailMapperTest {
         assertThat(dto.id(), is(equalTo(TEST_ID)));
         assertThat(dto.sender(), is(equalTo(TEST_SENDER)));
         assertThat(dto.subject(), is(equalTo(TEST_SUBJECT)));
+        assertThat(dto.recipient(), is(equalTo(TEST_RECIPIENT)));
+        assertThat(dto.sentDate(), is(equalTo(TEST_SENT_DATE)));
         assertThat(dto.body(), is(equalTo(TEST_BODY)));
     }
 
