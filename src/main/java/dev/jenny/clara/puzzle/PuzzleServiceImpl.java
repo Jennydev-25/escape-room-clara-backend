@@ -62,11 +62,11 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
                     "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
         }
 
-        if (number < 1) {
+        List<String> hints = Stream.of(puzzle.getHint1(), puzzle.getHint2(), puzzle.getHint3()).toList();
+
+        if (number < 1 || number > hints.size()) {
             throw new HintNotFoundException("La prueba " + puzzleId + " no tiene la pista " + number);
         }
-
-        List<String> hints = Stream.of(puzzle.getHint1(), puzzle.getHint2(), puzzle.getHint3()).toList();
 
         return new PuzzleHintResponseDTO(number, hints.get(number - 1));
     }
