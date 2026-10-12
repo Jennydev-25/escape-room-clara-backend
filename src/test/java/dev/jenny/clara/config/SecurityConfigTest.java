@@ -40,4 +40,13 @@ class SecurityConfigTest {
                 .header("Access-Control-Request-Method", "POST"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void testCors_ShouldAllowPreflightRequest_ForPatchMethod() throws Exception {
+        mockMvc.perform(options("/api/v1/contact")
+                .header("Origin", "http://localhost:5173")
+                .header("Access-Control-Request-Method", "PATCH"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"));
+    }
 }
