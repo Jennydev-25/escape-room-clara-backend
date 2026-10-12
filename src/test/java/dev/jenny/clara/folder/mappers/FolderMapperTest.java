@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import dev.jenny.clara.folder.FolderEntity;
 import dev.jenny.clara.folder.dtos.FolderResponseDTO;
+import dev.jenny.clara.folder.dtos.FolderSummaryDTO;
 import dev.jenny.clara.puzzle.PuzzleEntity;
 import dev.jenny.clara.puzzle.PuzzleType;
 
@@ -52,6 +53,21 @@ class FolderMapperTest {
         assertThat(dto.puzzles().get(0).title(), is(equalTo(TEST_PUZZLE_TITLE)));
         assertThat(dto.puzzles().get(0).type(), is(equalTo(TEST_PUZZLE_TYPE)));
         assertThat(dto.puzzles().get(0).displayOrder(), is(equalTo(TEST_DISPLAY_ORDER)));
+    }
+
+    @Test
+    void testToSummaryDTO_ShouldMapCodeAndName() {
+        FolderEntity folder = FolderEntity.builder()
+                .code(TEST_CODE)
+                .name(TEST_NAME)
+                .minChapterToOpen(TEST_MIN_CHAPTER_TO_OPEN)
+                .build();
+
+        FolderSummaryDTO dto = FolderMapper.toSummaryDTO(folder);
+
+        assertThat(dto, isA(FolderSummaryDTO.class));
+        assertThat(dto.code(), is(equalTo(TEST_CODE)));
+        assertThat(dto.name(), is(equalTo(TEST_NAME)));
     }
 
     @Test
