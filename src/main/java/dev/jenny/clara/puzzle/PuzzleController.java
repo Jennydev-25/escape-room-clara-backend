@@ -13,7 +13,7 @@ import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/puzzles")
+@RequestMapping(path = "${api-endpoint}/puzzles/{id}")
 public class PuzzleController {
 
     private final InterfacePuzzleService puzzleService;
@@ -22,12 +22,12 @@ public class PuzzleController {
         this.puzzleService = puzzleService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
     public PuzzleResponseDTO getPuzzle(@PathVariable Long id) {
         return puzzleService.getPuzzle(id);
     }
 
-    @PostMapping("/{id}/answer")
+    @PostMapping("/answer")
     public ValidatedAnswerResponseDTO validateAnswer(Authentication authentication, @PathVariable Long id,
             @RequestBody PuzzleAnswerRequestDTO answer) {
         return puzzleService.validateAnswer(authentication, id, answer);
