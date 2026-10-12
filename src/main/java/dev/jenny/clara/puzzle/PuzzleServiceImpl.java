@@ -44,23 +44,18 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
 
     @Override
     public PuzzleResponseDTO getPuzzle(Long puzzleId) {
-        PuzzleEntity puzzle = puzzleRepository.findById(puzzleId)
-                .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
+        PuzzleEntity puzzle = findPuzzle(puzzleId);
 
         return PuzzleMapper.toDTO(puzzle);
     }
 
     @Override
     public PuzzleHintResponseDTO getHint(Authentication authentication, Long puzzleId, int number) {
-        PuzzleEntity puzzle = puzzleRepository.findById(puzzleId)
-                .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
+        PuzzleEntity puzzle = findPuzzle(puzzleId);
 
         ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
 
-        if (currentProgress.currentChapter() < puzzle.getMinChapter()) {
-            throw new PuzzleChapterNotReachedException(
-                    "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
-        }
+        checkChapterReached(currentProgress, puzzle, puzzleId);
 
         List<String> hints = Stream.of(puzzle.getHint1(), puzzle.getHint2(), puzzle.getHint3()).toList();
 
@@ -74,15 +69,11 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
     @Override
     public ValidatedAnswerResponseDTO validateAnswer(Authentication authentication, Long puzzleId,
             PuzzleAnswerRequestDTO answer) {
-        PuzzleEntity puzzle = puzzleRepository.findById(puzzleId)
-                .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
+        PuzzleEntity puzzle = findPuzzle(puzzleId);
 
         ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
 
-        if (currentProgress.currentChapter() < puzzle.getMinChapter()) {
-            throw new PuzzleChapterNotReachedException(
-                    "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
-        }
+        checkChapterReached(currentProgress, puzzle, puzzleId);
 
         List<ExpectedAnswerEntity> expectedAnswers = expectedAnswerRepository.findByPuzzleId(puzzleId);
 
@@ -105,5 +96,17 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
                 .toList();
 
         return new ValidatedAnswerResponseDTO(true, true, advancedProgress.lastHudLetterAdded(), unlocks);
+    }
+
+    private PuzzleEntity findPuzzle(Long puzzleId) {
+        return puzzleRepository.findById(puzzleId)
+                .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
+    }
+
+    private void checkChapterReached(ProgressResponseDTO currentProgress, PuzzleEntity puzzle, Long puzzleId) {
+        if (currentProgress.currentChapter() < puzzle.getMinChapter()) {
+            throw new PuzzleChapterNotReachedException(
+                    "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
+        }
     }
 }
