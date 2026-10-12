@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ class ChatMapperTest {
     private static final String TEST_CONTACT = "Diego Barreda";
     private static final String TEST_CHARACTER = "Clara";
     private static final String TEST_CONTENT = "Buenas tardes, Sr. Barreda.";
+    private static final LocalDateTime TEST_SENT_AT = LocalDateTime.of(2025, 6, 3, 9, 15);
     private static final int TEST_MIN_CHAPTER = 1;
     private static final int TEST_DISPLAY_ORDER = 1;
     private static final int TEST_UNREAD = 2;
@@ -32,6 +34,7 @@ class ChatMapperTest {
                 .contact(TEST_CONTACT)
                 .character(TEST_CHARACTER)
                 .content(TEST_CONTENT)
+                .sentAt(TEST_SENT_AT)
                 .minChapter(TEST_MIN_CHAPTER)
                 .displayOrder(TEST_DISPLAY_ORDER)
                 .build();
@@ -43,6 +46,7 @@ class ChatMapperTest {
         assertThat(dto.contact(), is(equalTo(TEST_CONTACT)));
         assertThat(dto.character(), is(equalTo(TEST_CHARACTER)));
         assertThat(dto.content(), is(equalTo(TEST_CONTENT)));
+        assertThat(dto.sentAt(), is(equalTo(TEST_SENT_AT)));
         assertThat(dto.displayOrder(), is(equalTo(TEST_DISPLAY_ORDER)));
         assertThat(dto.read(), is(true));
     }
