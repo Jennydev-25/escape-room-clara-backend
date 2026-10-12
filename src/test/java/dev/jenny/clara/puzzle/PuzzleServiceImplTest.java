@@ -27,6 +27,7 @@ import dev.jenny.clara.folder.FolderRepository;
 import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
@@ -51,6 +52,7 @@ class PuzzleServiceImplTest {
     private static final int PUZZLE_DISPLAY_ORDER = 1;
     private static final String PUZZLE_FILE = "/leeme/leeme.txt";
     private static final int FIRST_HINT_NUMBER = 1;
+    private static final String FIRST_HINT_TEXT = "Fíjate en la fecha de la nota.";
 
     @Mock
     private PuzzleRepository puzzleRepository;
@@ -267,5 +269,28 @@ class PuzzleServiceImplTest {
 
         assertThrows(PuzzleChapterNotReachedException.class,
                 () -> service.getHint(authentication, EXISTING_PUZZLE_ID, FIRST_HINT_NUMBER));
+    }
+
+    @Test
+    void testGetHint_ShouldReturnHint_WhenHintExists() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        PuzzleHintResponseDTO result = service.getHint(authentication, EXISTING_PUZZLE_ID, FIRST_HINT_NUMBER);
+
+        assertThat(result.number(), is(equalTo(FIRST_HINT_NUMBER)));
+        assertThat(result.text(), is(equalTo(FIRST_HINT_TEXT)));
     }
 }
