@@ -1,6 +1,7 @@
 package dev.jenny.clara.trash;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
@@ -21,6 +22,8 @@ class DiscardedFileRepositoryTest {
     private static final int MIN_CHAPTER = 1;
     private static final int LATER_MIN_CHAPTER = 2;
     private static final int CHAPTER_WITHOUT_FILES = 0;
+    private static final int FIRST_DISPLAY_ORDER = 98;
+    private static final int SECOND_DISPLAY_ORDER = 99;
 
     @Autowired
     private DiscardedFileRepository discardedFileRepository;
@@ -50,5 +53,24 @@ class DiscardedFileRepositoryTest {
                 .findByMinChapterLessThanEqualOrderByMinChapterAsc(CHAPTER_WITHOUT_FILES);
 
         assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    void testFindByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc_ShouldReturnFilesOrderedByDisplayOrder_WhenSameChapter() {
+        discardedFileRepository.save(DiscardedFileEntity.builder()
+                .name(NAME).type(TYPE).body(BODY).minChapter(MIN_CHAPTER).displayOrder(SECOND_DISPLAY_ORDER).build());
+        discardedFileRepository.save(DiscardedFileEntity.builder()
+                .name(NAME).type(TYPE).body(BODY).minChapter(MIN_CHAPTER).displayOrder(FIRST_DISPLAY_ORDER).build());
+
+        List<DiscardedFileEntity> result = discardedFileRepository
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(MIN_CHAPTER);
+
+        // Nos quedamos solo con nuestros archivos (el seed narrativo aporta otros en ese capitulo)
+        List<Integer> displayOrders = result.stream()
+                .filter(file -> file.getName().equals(NAME))
+                .map(DiscardedFileEntity::getDisplayOrder)
+                .toList();
+
+        assertThat(displayOrders, contains(FIRST_DISPLAY_ORDER, SECOND_DISPLAY_ORDER));
     }
 }
