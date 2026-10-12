@@ -1,5 +1,7 @@
 package dev.jenny.clara.email;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +28,9 @@ public class EmailEntity {
     private Long id;
 
     private String sender;
+    private String recipient;
     private String subject;
+    private LocalDate sentDate;
 
     @Column(columnDefinition = "TEXT")
     private String body;

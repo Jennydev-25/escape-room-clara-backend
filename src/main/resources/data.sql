@@ -91,28 +91,16 @@ VALUES
   ('Andrés Salas', 'Andrés', 'No puedo explicárselo por aquí. Quedamos en persona.', 9, 7);
 
 -- Correos: 4 contactos, 4 mensajes
-INSERT INTO emails (sender, subject, body, min_chapter, display_order)
+INSERT INTO emails (sender, recipient, subject, sent_date, body, min_chapter, display_order)
 VALUES
-  ('Marina Ortiz', 'Lo de esta noche', 'De: Marina Ortiz
-Para: Clara Vega
-Asunto: Lo de esta noche
-Fecha: 3 de junio de 2025
-Cuerpo:
-
-Clara, ¿vienes luego a la despedida de Fermín? Lleva 31 años en el Faro y al final le vamos
+  ('Marina Ortiz', 'Clara Vega', 'Lo de esta noche', '2025-06-03', 'Clara, ¿vienes luego a la despedida de Fermín? Lleva 31 años en el Faro y al final le vamos
 a hacer algo en el bar de siempre, nada del otro mundo. Dile que sí aunque sea media hora,
 que si no se va a poner triste y luego nos toca aguantarlo un mes.
 
 Por cierto, ¿al final entregaste lo del puerto? Ibáñez ha preguntado dos veces esta mañana.
 
 M.', 1, 1),
-  ('Recursos Humanos — El Faro de San Adrián', 'Recordatorio: revisión de días de vacaciones pendientes', 'De: Recursos Humanos — El Faro de San Adrián
-Para: Clara Vega
-Asunto: Recordatorio: revisión de días de vacaciones pendientes
-Fecha: 5 de junio de 2025
-Cuerpo:
-
-Estimada Clara Vega:
+  ('Recursos Humanos — El Faro de San Adrián', 'Clara Vega', 'Recordatorio: revisión de días de vacaciones pendientes', '2025-06-05', 'Estimada Clara Vega:
 
 Le recordamos que, según nuestros registros, tiene 6 días de vacaciones del año en curso
 todavía sin planificar. Le rogamos que lo comunique al departamento antes de fin de mes
@@ -120,26 +108,14 @@ para evitar la pérdida de los mismos según el convenio vigente.
 
 Un saludo,
 Recursos Humanos', 1, 2),
-  ('Marina Ortiz', '¿Todo bien?', 'De: Marina Ortiz
-Para: Clara Vega
-Asunto: ¿Todo bien?
-Fecha: 26 de junio de 2025
-Cuerpo:
-
-Oye, te noto rara últimamente. Llevas dos semanas comiendo sola en la mesa del rincón con
+  ('Marina Ortiz', 'Clara Vega', '¿Todo bien?', '2025-06-26', 'Oye, te noto rara últimamente. Llevas dos semanas comiendo sola en la mesa del rincón con
 el portátil y contestando por monosílabos. Si es por lo del puerto, tranquila, a Ibáñez se
 le olvida todo en cuanto sale algo nuevo.
 
 Si es otra cosa y no quieres hablar de ello, vale, pero al menos dime que estás bien.
 
 M.', 2, 1),
-  ('Registro Mercantil de Asturias', 'Confirmación de solicitud — Expte. 2025-4471', 'De: Registro Mercantil de Asturias
-Para: Clara Vega
-Asunto: Confirmación de solicitud — Expte. 2025-4471
-Fecha: 27 de junio de 2025
-Cuerpo:
-
-Estimada Sra. Vega,
+  ('Registro Mercantil de Asturias', 'Clara Vega', 'Confirmación de solicitud — Expte. 2025-4471', '2025-06-27', 'Estimada Sra. Vega,
 
 Confirmamos la recepción de su solicitud de información registral (Expte. 2025-4471),
 relativa al reportaje sobre concesiones del puerto pesquero que nos indica en su instancia.
