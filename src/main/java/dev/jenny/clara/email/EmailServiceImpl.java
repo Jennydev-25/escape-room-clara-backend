@@ -40,7 +40,7 @@ public class EmailServiceImpl implements InterfaceEmailService {
         ProgressResponseDTO progress = progressService.getOrCreateProgress(authentication);
 
         List<EmailEntity> visibleEmails = emailRepository
-                .findByMinChapterLessThanEqualOrderByMinChapterAsc(progress.currentChapter());
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(progress.currentChapter());
 
         Set<Long> readEmailIds = emailReadRepository.findByUserId(user.getId()).stream()
                 .map(read -> read.getEmail().getId())

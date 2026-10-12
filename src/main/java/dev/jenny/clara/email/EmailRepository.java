@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmailRepository extends JpaRepository<EmailEntity, Long> {
 
-    List<EmailEntity> findByMinChapterLessThanEqualOrderByMinChapterAsc(int chapter);
+    List<EmailEntity> findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(int chapter);
 }

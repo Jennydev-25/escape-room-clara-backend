@@ -43,7 +43,7 @@ class EmailRepositoryTest {
                 .minChapter(LATER_MIN_CHAPTER)
                 .build());
 
-        List<EmailEntity> result = emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAsc(MIN_CHAPTER);
+        List<EmailEntity> result = emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(MIN_CHAPTER);
 
         // No comprobamos el total (el seed narrativo aporta otros correos en ese capitulo):
         // comprobamos que el nuestro aparece y que ninguno supera el capitulo pedido
@@ -57,7 +57,7 @@ class EmailRepositoryTest {
     @Test
     void testFindByMinChapterLessThanEqualOrderByMinChapterAsc_ShouldReturnEmpty_WhenNoEmailReachedYet() {
         List<EmailEntity> result = emailRepository
-                .findByMinChapterLessThanEqualOrderByMinChapterAsc(CHAPTER_WITHOUT_EMAILS);
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CHAPTER_WITHOUT_EMAILS);
 
         assertThat(result.isEmpty(), is(true));
     }

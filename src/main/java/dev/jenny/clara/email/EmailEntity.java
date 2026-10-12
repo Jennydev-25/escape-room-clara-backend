@@ -32,4 +32,5 @@ public class EmailEntity {
     private String body;
 
     private int minChapter;
+    private int displayOrder;
 }
