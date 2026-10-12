@@ -21,8 +21,8 @@ VALUES
 -- Puzzles: contenido del capitulo, pregunta y pistas
 INSERT INTO puzzles (title, id_folder, type, min_chapter, display_order, content, question, hint1, hint2, hint3)
 VALUES
-  ('00_LEEME.txt', (SELECT id FROM folders WHERE code = 'leeme'), 'SIMPLE_PASSWORD', 1, 1, '/leeme/leeme.txt', 'Según la nota, ¿en qué no debes confiar nunca?', 'Vuelve a leer la nota con calma: no todas las frases cumplen la misma función.', 'Fíjate en la advertencia que habla de cómo valorar la información que encuentres.', 'La respuesta está en una frase intermedia de la nota, no en la última línea ni en el nombre de una carpeta.'),
-  ('Nota al margen cifrada con César', (SELECT id FROM folders WHERE code = 'tomas'), 'CIPHER', 2, 1, '/tomas/tomas_elorza.png
+  ('Capítulo 1: La desaparición', (SELECT id FROM folders WHERE code = 'leeme'), 'SIMPLE_PASSWORD', 1, 1, '/leeme/leeme.txt', 'Según la nota, ¿en qué no debes confiar nunca?', 'Vuelve a leer la nota con calma: no todas las frases cumplen la misma función.', 'Fíjate en la advertencia que habla de cómo valorar la información que encuentres.', 'La respuesta está en una frase intermedia de la nota, no en la última línea ni en el nombre de una carpeta.'),
+  ('Capítulo 2: Tomás Elorza', (SELECT id FROM folders WHERE code = 'tomas'), 'CIPHER', 2, 1, '/tomas/tomas_elorza.png
 /tomas/libreta_tomas.png
 /tomas/portada_conciliacion.png
 /tomas/indice_criptico.png
@@ -30,8 +30,8 @@ VALUES
 
 INSERT INTO puzzles (title, id_folder, type, min_chapter, display_order, content)
 VALUES
-  ('Hoja de cálculo de conciliación de proveedores', (SELECT id FROM folders WHERE code = 'tomas'), 'SIMPLE_CONTENT', 3, 2, '/tomas/conciliacion_proveedores_2002-2005.pdf'),
-  ('Facturas del fraude', (SELECT id FROM folders WHERE code = 'fraude'), 'SIMPLE_CONTENT', 3, 1, '/fraude/factura_3812.png
+  ('Capítulo 3: El fraude', (SELECT id FROM folders WHERE code = 'tomas'), 'SIMPLE_CONTENT', 3, 2, '/tomas/conciliacion_proveedores_2002-2005.pdf'),
+  ('Capítulo 3: El fraude', (SELECT id FROM folders WHERE code = 'fraude'), 'SIMPLE_CONTENT', 3, 1, '/fraude/factura_3812.png
 /fraude/factura_3847.png
 /fraude/factura_3911.png
 /fraude/factura_firmada.png
@@ -40,8 +40,8 @@ VALUES
 -- Respuestas esperadas de los puzzles con validación de contraseña/cifrado
 INSERT INTO expected_answers (id_puzzle, answer_key, answer_hash)
 VALUES
-  ((SELECT id FROM puzzles WHERE title = '00_LEEME.txt'), NULL, '$2b$10$TdOrxq3j7dOOf6cruaeomeZrDZe130XCxXk/dPLzAxEW6/UGo7QCa'),
-  ((SELECT id FROM puzzles WHERE title = 'Nota al margen cifrada con César'), NULL, '$2b$10$fodmKsv.mnlnPCzqSNFwqOpJLstQa5JOHR78.HKtIV9vvstNVxrta');
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 1: La desaparición'), NULL, '$2b$10$TdOrxq3j7dOOf6cruaeomeZrDZe130XCxXk/dPLzAxEW6/UGo7QCa'),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), NULL, '$2b$10$fodmKsv.mnlnPCzqSNFwqOpJLstQa5JOHR78.HKtIV9vvstNVxrta');
 
 -- Papelera:
 INSERT INTO discarded_files (name, type, body, min_chapter)
