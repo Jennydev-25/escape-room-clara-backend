@@ -8,6 +8,7 @@ public record PuzzleResponseDTO(
         int minChapter,
         int displayOrder,
         String content,
+        String question,
         String hint1,
         String hint2,
         String hint3) {

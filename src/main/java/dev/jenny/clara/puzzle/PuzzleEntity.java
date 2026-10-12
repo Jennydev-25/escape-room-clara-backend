@@ -46,6 +46,9 @@ public class PuzzleEntity {
     private String content;
 
     @Column(columnDefinition = "TEXT")
+    private String question;
+
+    @Column(columnDefinition = "TEXT")
     private String hint1;
 
     @Column(columnDefinition = "TEXT")

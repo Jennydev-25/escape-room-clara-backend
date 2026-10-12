@@ -16,6 +16,7 @@ public class PuzzleMapper {
                 entity.getMinChapter(),
                 entity.getDisplayOrder(),
                 entity.getContent(),
+                entity.getQuestion(),
                 entity.getHint1(),
                 entity.getHint2(),
                 entity.getHint3());
