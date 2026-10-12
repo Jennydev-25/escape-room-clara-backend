@@ -13,6 +13,7 @@ import dev.jenny.clara.email.exceptions.EmailChapterNotReachedException;
 import dev.jenny.clara.email.exceptions.EmailNotFoundException;
 import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
+import dev.jenny.clara.puzzle.exceptions.HintNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.UnsupportedPuzzleTypeException;
@@ -97,6 +98,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PuzzleNotFoundException.class)
     public ResponseEntity<ApiErrorDTO> handlePuzzleNotFound(PuzzleNotFoundException exception) {
+        ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(HintNotFoundException.class)
+    public ResponseEntity<ApiErrorDTO> handleHintNotFound(HintNotFoundException exception) {
         ApiErrorDTO error = new ApiErrorDTO(exception.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }

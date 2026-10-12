@@ -12,7 +12,7 @@ public class ChatMapper {
 
     public static ChatMessageResponseDTO toMessageDTO(ChatMessageEntity message, boolean read) {
         return new ChatMessageResponseDTO(message.getId(), message.getContact(), message.getCharacter(),
-                message.getContent(), message.getDisplayOrder(), read);
+                message.getContent(), message.getSentAt(), message.getDisplayOrder(), read);
     }
 
     public static ContactSummaryDTO toContactSummaryDTO(String contact, String lastMessage, int unread) {

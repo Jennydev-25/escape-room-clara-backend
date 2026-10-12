@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.folder.dtos.FolderResponseDTO;
+import dev.jenny.clara.folder.dtos.FolderSummaryDTO;
 import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
 import tools.jackson.databind.ObjectMapper;
@@ -76,5 +77,18 @@ class FolderControllerTest {
 
         mockMvc.perform(get("/api/v1/folders/{code}", LOCKED_CODE))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testListFolders_ShouldReturnVisibleFolders() throws Exception {
+        List<FolderSummaryDTO> folders = List.of(new FolderSummaryDTO(EXISTING_CODE, FOLDER_NAME));
+        String responseJson = mapper.writeValueAsString(folders);
+
+        when(folderService.listVisibleFolders(any(Authentication.class))).thenReturn(folders);
+
+        mockMvc.perform(get("/api/v1/folders"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseJson));
     }
 }

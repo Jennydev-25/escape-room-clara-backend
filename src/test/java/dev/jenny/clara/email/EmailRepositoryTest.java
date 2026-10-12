@@ -15,11 +15,14 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("h2")
 class EmailRepositoryTest {
 
-    private static final String SENDER = "Marina Ortiz";
+    // Remitente que no existe en el seed narrativo de data.sql (evita falsos positivos)
+    private static final String SENDER = "Remitente De Prueba";
     private static final String SUBJECT = "Lo de esta noche";
     private static final String BODY = "Nos vemos luego en el puerto.";
     private static final int MIN_CHAPTER = 1;
     private static final int LATER_MIN_CHAPTER = 2;
+    private static final int FIRST_DISPLAY_ORDER = 1;
+    private static final int SECOND_DISPLAY_ORDER = 2;
     private static final int CHAPTER_WITHOUT_EMAILS = 0;
 
     @Autowired
@@ -40,17 +43,50 @@ class EmailRepositoryTest {
                 .minChapter(LATER_MIN_CHAPTER)
                 .build());
 
-        List<EmailEntity> result = emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAsc(MIN_CHAPTER);
+        List<EmailEntity> result = emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(MIN_CHAPTER);
 
-        assertThat(result.size(), is(equalTo(1)));
-        assertThat(result.get(0).getMinChapter(), is(equalTo(MIN_CHAPTER)));
+        // No comprobamos el total (el seed narrativo aporta otros correos en ese capitulo):
+        // comprobamos que el nuestro aparece y que ninguno supera el capitulo pedido
+        boolean containsTestEmail = result.stream()
+                .anyMatch(email -> email.getSender().equals(SENDER) && email.getMinChapter() == MIN_CHAPTER);
+
+        assertThat(containsTestEmail, is(true));
+        assertThat(result.stream().anyMatch(email -> email.getMinChapter() > MIN_CHAPTER), is(false));
     }
 
     @Test
     void testFindByMinChapterLessThanEqualOrderByMinChapterAsc_ShouldReturnEmpty_WhenNoEmailReachedYet() {
         List<EmailEntity> result = emailRepository
-                .findByMinChapterLessThanEqualOrderByMinChapterAsc(CHAPTER_WITHOUT_EMAILS);
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CHAPTER_WITHOUT_EMAILS);
 
         assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    void testFindByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc_ShouldOrderByDisplayOrder_WhenSameChapter() {
+        emailRepository.save(EmailEntity.builder()
+                .sender(SENDER)
+                .subject(SUBJECT)
+                .body(BODY)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(SECOND_DISPLAY_ORDER)
+                .build());
+        emailRepository.save(EmailEntity.builder()
+                .sender(SENDER)
+                .subject(SUBJECT)
+                .body(BODY)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(FIRST_DISPLAY_ORDER)
+                .build());
+
+        List<EmailEntity> result = emailRepository
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(MIN_CHAPTER);
+
+        List<Integer> testEmailOrders = result.stream()
+                .filter(email -> email.getSender().equals(SENDER))
+                .map(EmailEntity::getDisplayOrder)
+                .toList();
+
+        assertThat(testEmailOrders, is(equalTo(List.of(FIRST_DISPLAY_ORDER, SECOND_DISPLAY_ORDER))));
     }
 }

@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,8 @@ class EmailControllerTest {
 
     private static final Long EMAIL_ID = 1L;
     private static final String SENDER = "Marina Ortiz";
+    private static final String RECIPIENT = "Clara Vega";
+    private static final LocalDate SENT_DATE = LocalDate.of(2025, 6, 3);
     private static final String SUBJECT = "Lo de esta noche";
     private static final String BODY = "Nos vemos luego en el puerto.";
     private static final Long MISSING_EMAIL_ID = 99L;
@@ -51,7 +54,7 @@ class EmailControllerTest {
     @Test
     @WithMockUser(username = "clara@pruebas.com")
     void testListInbox_ShouldReturnVisibleEmails() throws Exception {
-        List<EmailSummaryDTO> inbox = List.of(new EmailSummaryDTO(EMAIL_ID, SENDER, SUBJECT, false));
+        List<EmailSummaryDTO> inbox = List.of(new EmailSummaryDTO(EMAIL_ID, SENDER, SUBJECT, SENT_DATE, false));
         String responseJson = mapper.writeValueAsString(inbox);
 
         when(emailService.listInbox(any(Authentication.class))).thenReturn(inbox);
@@ -64,7 +67,7 @@ class EmailControllerTest {
     @Test
     @WithMockUser(username = "clara@pruebas.com")
     void testGetEmail_ShouldReturnEmailDetail() throws Exception {
-        EmailDetailDTO detail = new EmailDetailDTO(EMAIL_ID, SENDER, SUBJECT, BODY);
+        EmailDetailDTO detail = new EmailDetailDTO(EMAIL_ID, SENDER, RECIPIENT, SUBJECT, SENT_DATE, BODY);
         String responseJson = mapper.writeValueAsString(detail);
 
         when(emailService.getDetail(any(Authentication.class), eq(EMAIL_ID))).thenReturn(detail);

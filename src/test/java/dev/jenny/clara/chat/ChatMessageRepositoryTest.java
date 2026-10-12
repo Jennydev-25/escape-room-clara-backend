@@ -2,7 +2,9 @@ package dev.jenny.clara.chat;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.util.List;
 
@@ -15,10 +17,11 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("h2")
 class ChatMessageRepositoryTest {
 
-    private static final String CONTACT = "Diego Barreda";
-    private static final String OTHER_CONTACT = "Mamá";
+    // Nombres que no existen en el seed narrativo de data.sql (evita falsos positivos por contactos reales)
+    private static final String CONTACT = "Contacto De Prueba";
+    private static final String OTHER_CONTACT = "Contacto Sin Mensajes";
     private static final String CHARACTER = "Clara";
-    private static final String CONTENT = "Buenas tardes, Sr. Barreda.";
+    private static final String CONTENT = "Mensaje de prueba.";
     private static final int MIN_CHAPTER = 1;
     private static final int LATER_MIN_CHAPTER = 2;
     private static final int CHAPTER_WITHOUT_MESSAGES = 0;
@@ -99,8 +102,10 @@ class ChatMessageRepositoryTest {
 
         List<String> result = chatMessageRepository.findDistinctContactByMinChapterLessThanEqual(MIN_CHAPTER);
 
-        assertThat(result.size(), is(equalTo(1)));
-        assertThat(result.get(0), is(equalTo(CONTACT)));
+        // No comprobamos el total (el seed narrativo aporta otros contactos en ese capitulo):
+        // comprobamos que el nuestro aparece y que el de un capitulo posterior no se filtra de mas
+        assertThat(result, hasItem(CONTACT));
+        assertThat(result, not(hasItem(OTHER_CONTACT)));
     }
 
     @Test

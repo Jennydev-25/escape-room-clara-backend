@@ -32,4 +32,5 @@ public class DiscardedFileEntity {
     private String body;
 
     private int minChapter;
+    private int displayOrder;
 }

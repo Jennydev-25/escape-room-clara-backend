@@ -89,7 +89,7 @@ class EmailServiceImplTest {
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(MIN_CHAPTER).build();
 
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progressAtChapter(CURRENT_CHAPTER));
-        when(emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAsc(CURRENT_CHAPTER))
+        when(emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CURRENT_CHAPTER))
                 .thenReturn(List.of(email));
         when(emailReadRepository.findByUserId(USER_ID)).thenReturn(List.of(
                 EmailReadEntity.builder().user(user).email(email).readAt(LocalDateTime.now()).build()));
@@ -108,7 +108,7 @@ class EmailServiceImplTest {
                 .id(EMAIL_ID).sender(SENDER).subject(SUBJECT).body(BODY).minChapter(MIN_CHAPTER).build();
 
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progressAtChapter(CURRENT_CHAPTER));
-        when(emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAsc(CURRENT_CHAPTER))
+        when(emailRepository.findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CURRENT_CHAPTER))
                 .thenReturn(List.of(email));
         when(emailReadRepository.findByUserId(USER_ID)).thenReturn(List.of());
 

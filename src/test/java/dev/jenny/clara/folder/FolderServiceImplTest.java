@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import dev.jenny.clara.folder.dtos.FolderResponseDTO;
+import dev.jenny.clara.folder.dtos.FolderSummaryDTO;
 import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
 import dev.jenny.clara.progress.InterfaceProgressService;
@@ -121,5 +122,29 @@ class FolderServiceImplTest {
         assertThat(result.name(), is(equalTo(FOLDER_NAME)));
         assertThat(result.puzzles().size(), is(equalTo(1)));
         assertThat(result.puzzles().get(0).id(), is(equalTo(VISIBLE_PUZZLE_ID)));
+    }
+
+    @Test
+    void testListVisibleFolders_ShouldReturnReachedFolders_WhenChapterIsReached() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        FolderEntity reachedFolder = FolderEntity.builder()
+                .id(FOLDER_ID)
+                .code(EXISTING_CODE)
+                .name(FOLDER_NAME)
+                .minChapterToOpen(MIN_CHAPTER_TO_OPEN)
+                .build();
+
+        ProgressResponseDTO progress = new ProgressResponseDTO(CURRENT_CHAPTER_REACHED, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(progress);
+        when(folderRepository.findByMinChapterToOpenLessThanEqualOrderByMinChapterToOpenAsc(CURRENT_CHAPTER_REACHED))
+                .thenReturn(List.of(reachedFolder));
+
+        List<FolderSummaryDTO> result = service.listVisibleFolders(authentication);
+
+        assertThat(result.size(), is(equalTo(1)));
+        assertThat(result.get(0).code(), is(equalTo(EXISTING_CODE)));
+        assertThat(result.get(0).name(), is(equalTo(FOLDER_NAME)));
     }
 }

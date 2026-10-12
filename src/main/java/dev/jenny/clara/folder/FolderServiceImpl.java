@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import dev.jenny.clara.folder.dtos.FolderResponseDTO;
+import dev.jenny.clara.folder.dtos.FolderSummaryDTO;
 import dev.jenny.clara.folder.exceptions.ChapterNotReachedException;
 import dev.jenny.clara.folder.exceptions.FolderNotFoundException;
 import dev.jenny.clara.folder.mappers.FolderMapper;
@@ -45,5 +46,15 @@ public class FolderServiceImpl implements InterfaceFolderService {
                         progress.currentChapter());
 
         return FolderMapper.toDTO(folder, visiblePuzzles);
+    }
+
+    @Override
+    public List<FolderSummaryDTO> listVisibleFolders(Authentication authentication) {
+        ProgressResponseDTO progress = progressService.getOrCreateProgress(authentication);
+
+        return folderRepository.findByMinChapterToOpenLessThanEqualOrderByMinChapterToOpenAsc(progress.currentChapter())
+                .stream()
+                .map(FolderMapper::toSummaryDTO)
+                .toList();
     }
 }

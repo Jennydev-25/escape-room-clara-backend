@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DiscardedFileRepository extends JpaRepository<DiscardedFileEntity, Long> {
 
-    List<DiscardedFileEntity> findByMinChapterLessThanEqualOrderByMinChapterAsc(int chapter);
+    List<DiscardedFileEntity> findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(int chapter);
 }

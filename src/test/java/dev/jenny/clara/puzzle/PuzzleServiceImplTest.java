@@ -1,6 +1,7 @@
 package dev.jenny.clara.puzzle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,8 +27,10 @@ import dev.jenny.clara.folder.FolderRepository;
 import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.HintNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.validator.PuzzleValidator;
@@ -48,7 +51,12 @@ class PuzzleServiceImplTest {
     private static final String NEW_HUD_LETTER = "M";
     private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
     private static final int PUZZLE_DISPLAY_ORDER = 1;
-    private static final String PUZZLE_CONTENT = "contenido de la prueba";
+    private static final String PUZZLE_FILE = "/leeme/leeme.txt";
+    private static final int FIRST_HINT_NUMBER = 1;
+    private static final int SECOND_HINT_NUMBER = 2;
+    private static final int NUMBER_BELOW_FIRST_HINT = 0;
+    private static final int NUMBER_ABOVE_LAST_HINT = 4;
+    private static final String FIRST_HINT_TEXT = "Fíjate en la fecha de la nota.";
 
     @Mock
     private PuzzleRepository puzzleRepository;
@@ -101,7 +109,7 @@ class PuzzleServiceImplTest {
                 .type(PUZZLE_TYPE)
                 .minChapter(PUZZLE_MIN_CHAPTER)
                 .displayOrder(PUZZLE_DISPLAY_ORDER)
-                .content(PUZZLE_CONTENT)
+                .files(List.of(PuzzleFileEntity.builder().path(PUZZLE_FILE).build()))
                 .build();
 
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
@@ -110,7 +118,7 @@ class PuzzleServiceImplTest {
 
         assertThat(result.id(), is(equalTo(EXISTING_PUZZLE_ID)));
         assertThat(result.type(), is(equalTo(PUZZLE_TYPE)));
-        assertThat(result.content(), is(equalTo(PUZZLE_CONTENT)));
+        assertThat(result.files(), contains(PUZZLE_FILE));
     }
 
     @Test
@@ -236,5 +244,120 @@ class PuzzleServiceImplTest {
         assertThat(result.updatesChapter(), is(equalTo(false)));
         assertThat(result.newHudLetter(), is(equalTo(null)));
         assertThat(result.unlocks(), is(equalTo(List.of())));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowPuzzleNotFoundException_WhenPuzzleDoesNotExist() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+        when(puzzleRepository.findById(MISSING_PUZZLE_ID)).thenReturn(Optional.empty());
+
+        assertThrows(PuzzleNotFoundException.class,
+                () -> service.getHint(authentication, MISSING_PUZZLE_ID, FIRST_HINT_NUMBER));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowPuzzleChapterNotReachedException_WhenCurrentChapterIsBelowPuzzleMinChapter() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER - 1, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(PuzzleChapterNotReachedException.class,
+                () -> service.getHint(authentication, EXISTING_PUZZLE_ID, FIRST_HINT_NUMBER));
+    }
+
+    @Test
+    void testGetHint_ShouldReturnHint_WhenHintExists() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        PuzzleHintResponseDTO result = service.getHint(authentication, EXISTING_PUZZLE_ID, FIRST_HINT_NUMBER);
+
+        assertThat(result.number(), is(equalTo(FIRST_HINT_NUMBER)));
+        assertThat(result.text(), is(equalTo(FIRST_HINT_TEXT)));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowHintNotFoundException_WhenNumberIsBelowFirstHint() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(HintNotFoundException.class,
+                () -> service.getHint(authentication, EXISTING_PUZZLE_ID, NUMBER_BELOW_FIRST_HINT));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowHintNotFoundException_WhenNumberIsAboveLastHint() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(HintNotFoundException.class,
+                () -> service.getHint(authentication, EXISTING_PUZZLE_ID, NUMBER_ABOVE_LAST_HINT));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowHintNotFoundException_WhenHintIsNotDefined() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(HintNotFoundException.class,
+                () -> service.getHint(authentication, EXISTING_PUZZLE_ID, SECOND_HINT_NUMBER));
     }
 }

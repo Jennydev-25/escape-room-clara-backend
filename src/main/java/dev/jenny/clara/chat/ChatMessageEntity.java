@@ -1,5 +1,7 @@
 package dev.jenny.clara.chat;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +32,8 @@ public class ChatMessageEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    private LocalDateTime sentAt;
 
     private int minChapter;
     private int displayOrder;

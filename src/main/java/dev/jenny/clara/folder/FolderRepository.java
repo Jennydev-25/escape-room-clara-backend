@@ -10,4 +10,6 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Long> {
     Optional<FolderEntity> findByCode(String code);
 
     List<FolderEntity> findByMinChapterToOpen(int minChapterToOpen);
+
+    List<FolderEntity> findByMinChapterToOpenLessThanEqualOrderByMinChapterToOpenAsc(int chapter);
 }

@@ -26,7 +26,7 @@ public class TrashServiceImpl implements InterfaceTrashService {
         ProgressResponseDTO progress = progressService.getOrCreateProgress(authentication);
 
         List<DiscardedFileEntity> visibleFiles = discardedFileRepository
-                .findByMinChapterLessThanEqualOrderByMinChapterAsc(progress.currentChapter());
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(progress.currentChapter());
 
         return visibleFiles.stream()
                 .map(TrashMapper::toDTO)

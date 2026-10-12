@@ -1,6 +1,7 @@
 package dev.jenny.clara.puzzle.mappers;
 
 import dev.jenny.clara.puzzle.PuzzleEntity;
+import dev.jenny.clara.puzzle.PuzzleFileEntity;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 
 public class PuzzleMapper {
@@ -15,9 +16,7 @@ public class PuzzleMapper {
                 entity.getType(),
                 entity.getMinChapter(),
                 entity.getDisplayOrder(),
-                entity.getContent(),
-                entity.getHint1(),
-                entity.getHint2(),
-                entity.getHint3());
+                entity.getFiles().stream().map(PuzzleFileEntity::getPath).toList(),
+                entity.getQuestion());
     }
 }
