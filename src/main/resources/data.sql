@@ -19,23 +19,31 @@ VALUES
   ('fraude', 'Fraude', 3);
 
 -- Puzzles: contenido del capitulo, pregunta y pistas
-INSERT INTO puzzles (title, id_folder, type, min_chapter, display_order, content, question, hint1, hint2, hint3)
+INSERT INTO puzzles (title, id_folder, type, min_chapter, display_order, question, hint1, hint2, hint3)
 VALUES
-  ('Capítulo 1: La desaparición', (SELECT id FROM folders WHERE code = 'leeme'), 'SIMPLE_PASSWORD', 1, 1, '/leeme/leeme.txt', 'Según la nota, ¿en qué no debes confiar nunca?', 'Vuelve a leer la nota con calma: no todas las frases cumplen la misma función.', 'Fíjate en la advertencia que habla de cómo valorar la información que encuentres.', 'La respuesta está en una frase intermedia de la nota, no en la última línea ni en el nombre de una carpeta.'),
-  ('Capítulo 2: Tomás Elorza', (SELECT id FROM folders WHERE code = 'tomas'), 'CIPHER', 2, 1, '/tomas/tomas_elorza.png
-/tomas/libreta_tomas.png
-/tomas/portada_conciliacion.png
-/tomas/indice_criptico.png
-/tomas/recorte_periodico.png', 'Descifra el mensaje y escribe lo que has obtenido.', 'El texto del margen parece ilegible, pero conserva la estructura de una frase normal.', 'Busca una pista relacionada con un número de desplazamiento en el índice críptico. ¿Has oído hablar del código César?', 'Prueba a retroceder cuatro posiciones en el alfabeto para cada letra y conserva los espacios entre palabras.');
+  ('Capítulo 1: La desaparición', (SELECT id FROM folders WHERE code = 'leeme'), 'SIMPLE_PASSWORD', 1, 1, 'Según la nota, ¿en qué no debes confiar nunca?', 'Vuelve a leer la nota con calma: no todas las frases cumplen la misma función.', 'Fíjate en la advertencia que habla de cómo valorar la información que encuentres.', 'La respuesta está en una frase intermedia de la nota, no en la última línea ni en el nombre de una carpeta.'),
+  ('Capítulo 2: Tomás Elorza', (SELECT id FROM folders WHERE code = 'tomas'), 'CIPHER', 2, 1, 'Descifra el mensaje y escribe lo que has obtenido.', 'El texto del margen parece ilegible, pero conserva la estructura de una frase normal.', 'Busca una pista relacionada con un número de desplazamiento en el índice críptico. ¿Has oído hablar del código César?', 'Prueba a retroceder cuatro posiciones en el alfabeto para cada letra y conserva los espacios entre palabras.');
 
-INSERT INTO puzzles (title, id_folder, type, min_chapter, display_order, content)
+INSERT INTO puzzles (title, id_folder, type, min_chapter, display_order)
 VALUES
-  ('Capítulo 3: El fraude', (SELECT id FROM folders WHERE code = 'tomas'), 'SIMPLE_CONTENT', 3, 2, '/tomas/conciliacion_proveedores_2002-2005.pdf'),
-  ('Capítulo 3: El fraude', (SELECT id FROM folders WHERE code = 'fraude'), 'SIMPLE_CONTENT', 3, 1, '/fraude/factura_3812.png
-/fraude/factura_3847.png
-/fraude/factura_3911.png
-/fraude/factura_firmada.png
-/fraude/hoja_calculo_facturas.pdf');
+  ('Capítulo 3: El fraude', (SELECT id FROM folders WHERE code = 'tomas'), 'SIMPLE_CONTENT', 3, 2),
+  ('Capítulo 3: El fraude', (SELECT id FROM folders WHERE code = 'fraude'), 'SIMPLE_CONTENT', 3, 1);
+
+-- Archivos de cada puzzle (una fila por ruta en static/), en el orden en que se muestran
+INSERT INTO puzzle_files (id_puzzle, path, display_order)
+VALUES
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 1: La desaparición'), '/leeme/leeme.txt', 1),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), '/tomas/tomas_elorza.png', 1),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), '/tomas/libreta_tomas.png', 2),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), '/tomas/portada_conciliacion.png', 3),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), '/tomas/indice_criptico.png', 4),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), '/tomas/recorte_periodico.png', 5),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 3: El fraude' AND id_folder = (SELECT id FROM folders WHERE code = 'tomas')), '/tomas/conciliacion_proveedores_2002-2005.pdf', 1),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 3: El fraude' AND id_folder = (SELECT id FROM folders WHERE code = 'fraude')), '/fraude/factura_3812.png', 1),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 3: El fraude' AND id_folder = (SELECT id FROM folders WHERE code = 'fraude')), '/fraude/factura_3847.png', 2),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 3: El fraude' AND id_folder = (SELECT id FROM folders WHERE code = 'fraude')), '/fraude/factura_3911.png', 3),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 3: El fraude' AND id_folder = (SELECT id FROM folders WHERE code = 'fraude')), '/fraude/factura_firmada.png', 4),
+  ((SELECT id FROM puzzles WHERE title = 'Capítulo 3: El fraude' AND id_folder = (SELECT id FROM folders WHERE code = 'fraude')), '/fraude/hoja_calculo_facturas.pdf', 5);
 
 -- Respuestas esperadas de los puzzles con validación de contraseña/cifrado
 INSERT INTO expected_answers (id_puzzle, answer_key, answer_hash)

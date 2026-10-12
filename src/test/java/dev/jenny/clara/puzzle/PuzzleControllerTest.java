@@ -37,7 +37,7 @@ class PuzzleControllerTest {
     private static final PuzzleType PUZZLE_TYPE = PuzzleType.SIMPLE_PASSWORD;
     private static final int PUZZLE_MIN_CHAPTER = 1;
     private static final int PUZZLE_DISPLAY_ORDER = 1;
-    private static final String PUZZLE_CONTENT = "contenido de la prueba";
+    private static final List<String> PUZZLE_FILES = List.of("/leeme/leeme.txt");
     private static final String PUZZLE_QUESTION = "pregunta de la prueba";
     private static final Long MISSING_PUZZLE_ID = 99L;
     private static final String NOT_FOUND_MESSAGE = "No se encontró ninguna prueba con el id " + MISSING_PUZZLE_ID;
@@ -60,7 +60,7 @@ class PuzzleControllerTest {
     @WithMockUser(username = "clara@pruebas.com")
     void testGetPuzzle_ShouldReturnPuzzle() throws Exception {
         PuzzleResponseDTO responseDto = new PuzzleResponseDTO(EXISTING_PUZZLE_ID, PUZZLE_TYPE, PUZZLE_MIN_CHAPTER,
-                PUZZLE_DISPLAY_ORDER, PUZZLE_CONTENT, PUZZLE_QUESTION, null, null, null);
+                PUZZLE_DISPLAY_ORDER, PUZZLE_FILES, PUZZLE_QUESTION, null, null, null);
         String responseJson = mapper.writeValueAsString(responseDto);
 
         when(puzzleService.getPuzzle(eq(EXISTING_PUZZLE_ID))).thenReturn(responseDto);

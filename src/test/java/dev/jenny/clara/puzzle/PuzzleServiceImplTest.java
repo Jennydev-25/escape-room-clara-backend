@@ -1,6 +1,7 @@
 package dev.jenny.clara.puzzle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +49,7 @@ class PuzzleServiceImplTest {
     private static final String NEW_HUD_LETTER = "M";
     private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
     private static final int PUZZLE_DISPLAY_ORDER = 1;
-    private static final String PUZZLE_CONTENT = "contenido de la prueba";
+    private static final String PUZZLE_FILE = "/leeme/leeme.txt";
 
     @Mock
     private PuzzleRepository puzzleRepository;
@@ -101,7 +102,7 @@ class PuzzleServiceImplTest {
                 .type(PUZZLE_TYPE)
                 .minChapter(PUZZLE_MIN_CHAPTER)
                 .displayOrder(PUZZLE_DISPLAY_ORDER)
-                .content(PUZZLE_CONTENT)
+                .files(List.of(PuzzleFileEntity.builder().path(PUZZLE_FILE).build()))
                 .build();
 
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
@@ -110,7 +111,7 @@ class PuzzleServiceImplTest {
 
         assertThat(result.id(), is(equalTo(EXISTING_PUZZLE_ID)));
         assertThat(result.type(), is(equalTo(PUZZLE_TYPE)));
-        assertThat(result.content(), is(equalTo(PUZZLE_CONTENT)));
+        assertThat(result.files(), contains(PUZZLE_FILE));
     }
 
     @Test

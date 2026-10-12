@@ -1,5 +1,7 @@
 package dev.jenny.clara.puzzle.dtos;
 
+import java.util.List;
+
 import dev.jenny.clara.puzzle.PuzzleType;
 
 public record PuzzleResponseDTO(
@@ -7,7 +9,7 @@ public record PuzzleResponseDTO(
         PuzzleType type,
         int minChapter,
         int displayOrder,
-        String content,
+        List<String> files,
         String question,
         String hint1,
         String hint2,

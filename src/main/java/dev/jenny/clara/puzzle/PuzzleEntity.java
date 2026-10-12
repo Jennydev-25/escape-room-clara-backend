@@ -1,6 +1,10 @@
 package dev.jenny.clara.puzzle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.jenny.clara.folder.FolderEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,8 +47,9 @@ public class PuzzleEntity {
     private int minChapter;
     private int displayOrder;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @OneToMany(mappedBy = "puzzle", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<PuzzleFileEntity> files = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String question;
