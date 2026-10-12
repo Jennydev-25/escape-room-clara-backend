@@ -11,7 +11,8 @@ public class EmailMapper {
     }
 
     public static EmailSummaryDTO toSummaryDTO(EmailEntity email, boolean read) {
-        return new EmailSummaryDTO(email.getId(), email.getSender(), email.getSubject(), read);
+        return new EmailSummaryDTO(email.getId(), email.getSender(), email.getSubject(), email.getSentDate(),
+                read);
     }
 
     public static EmailDetailDTO toDetailDTO(EmailEntity email) {

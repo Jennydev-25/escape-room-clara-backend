@@ -54,7 +54,7 @@ class EmailControllerTest {
     @Test
     @WithMockUser(username = "clara@pruebas.com")
     void testListInbox_ShouldReturnVisibleEmails() throws Exception {
-        List<EmailSummaryDTO> inbox = List.of(new EmailSummaryDTO(EMAIL_ID, SENDER, SUBJECT, false));
+        List<EmailSummaryDTO> inbox = List.of(new EmailSummaryDTO(EMAIL_ID, SENDER, SUBJECT, SENT_DATE, false));
         String responseJson = mapper.writeValueAsString(inbox);
 
         when(emailService.listInbox(any(Authentication.class))).thenReturn(inbox);
