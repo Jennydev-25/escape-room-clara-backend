@@ -25,6 +25,7 @@ import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.HintNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.UnsupportedPuzzleTypeException;
@@ -146,5 +147,15 @@ class PuzzleControllerTest {
         mockMvc.perform(get("/api/v1/puzzles/{id}/hints/{number}", EXISTING_PUZZLE_ID, HINT_NUMBER))
                 .andExpect(status().isOk())
                 .andExpect(content().json(responseJson));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testGetHint_ShouldReturnNotFound_WhenHintDoesNotExist() throws Exception {
+        when(puzzleService.getHint(any(Authentication.class), eq(EXISTING_PUZZLE_ID), eq(MISSING_HINT_NUMBER)))
+                .thenThrow(new HintNotFoundException(HINT_NOT_FOUND_MESSAGE));
+
+        mockMvc.perform(get("/api/v1/puzzles/{id}/hints/{number}", EXISTING_PUZZLE_ID, MISSING_HINT_NUMBER))
+                .andExpect(status().isNotFound());
     }
 }
