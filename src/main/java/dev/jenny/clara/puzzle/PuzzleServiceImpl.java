@@ -64,7 +64,7 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
 
         List<String> hints = Stream.of(puzzle.getHint1(), puzzle.getHint2(), puzzle.getHint3()).toList();
 
-        if (number < 1 || number > hints.size()) {
+        if (number < 1 || number > hints.size() || hints.get(number - 1) == null) {
             throw new HintNotFoundException("La prueba " + puzzleId + " no tiene la pista " + number);
         }
 
