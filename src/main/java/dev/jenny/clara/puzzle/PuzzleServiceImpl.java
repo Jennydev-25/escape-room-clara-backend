@@ -1,6 +1,7 @@
 package dev.jenny.clara.puzzle;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,9 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
                     "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
         }
 
-        return null;
+        List<String> hints = Stream.of(puzzle.getHint1(), puzzle.getHint2(), puzzle.getHint3()).toList();
+
+        return new PuzzleHintResponseDTO(number, hints.get(number - 1));
     }
 
     @Override
