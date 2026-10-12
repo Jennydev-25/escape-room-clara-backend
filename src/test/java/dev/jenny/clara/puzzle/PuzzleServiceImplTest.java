@@ -122,6 +122,26 @@ class PuzzleServiceImplTest {
     }
 
     @Test
+    void testGetPuzzle_ShouldThrowPuzzleChapterNotReachedException_WhenCurrentChapterIsBelowPuzzleMinChapter() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER - 1, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(PuzzleChapterNotReachedException.class,
+                () -> service.getPuzzle(authentication, EXISTING_PUZZLE_ID));
+    }
+
+    @Test
     void testValidateAnswer_ShouldThrowPuzzleChapterNotReachedException_WhenCurrentChapterIsBelowPuzzleMinChapter() {
         Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
 
