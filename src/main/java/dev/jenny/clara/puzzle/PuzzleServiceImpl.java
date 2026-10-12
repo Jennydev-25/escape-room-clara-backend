@@ -50,8 +50,15 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
 
     @Override
     public PuzzleHintResponseDTO getHint(Authentication authentication, Long puzzleId, int number) {
-        puzzleRepository.findById(puzzleId)
+        PuzzleEntity puzzle = puzzleRepository.findById(puzzleId)
                 .orElseThrow(() -> new PuzzleNotFoundException("No se encontró ninguna prueba con el id " + puzzleId));
+
+        ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
+
+        if (currentProgress.currentChapter() < puzzle.getMinChapter()) {
+            throw new PuzzleChapterNotReachedException(
+                    "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
+        }
 
         return null;
     }
