@@ -17,9 +17,6 @@ public class PuzzleMapper {
                 entity.getMinChapter(),
                 entity.getDisplayOrder(),
                 entity.getFiles().stream().map(PuzzleFileEntity::getPath).toList(),
-                entity.getQuestion(),
-                entity.getHint1(),
-                entity.getHint2(),
-                entity.getHint3());
+                entity.getQuestion());
     }
 }

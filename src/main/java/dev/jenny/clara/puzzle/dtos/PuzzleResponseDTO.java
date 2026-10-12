@@ -10,8 +10,5 @@ public record PuzzleResponseDTO(
         int minChapter,
         int displayOrder,
         List<String> files,
-        String question,
-        String hint1,
-        String hint2,
-        String hint3) {
+        String question) {
 }

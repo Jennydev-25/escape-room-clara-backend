@@ -27,9 +27,6 @@ class PuzzleMapperTest {
     private static final String TEST_FIRST_FILE = "/tomas/tomas_elorza.png";
     private static final String TEST_SECOND_FILE = "/tomas/libreta_tomas.png";
     private static final String TEST_QUESTION = "Descifra el mensaje y escribe lo que has obtenido.";
-    private static final String TEST_HINT1 = "revisa lo que ya has investigado";
-    private static final String TEST_HINT2 = "mira en la libreta de Tomás";
-    private static final String TEST_HINT3 = "la respuesta empieza por C";
 
     @Test
     void testToDTO_ShouldMapEntityFieldsToResponseDTO() {
@@ -42,9 +39,6 @@ class PuzzleMapperTest {
                         PuzzleFileEntity.builder().path(TEST_FIRST_FILE).build(),
                         PuzzleFileEntity.builder().path(TEST_SECOND_FILE).build()))
                 .question(TEST_QUESTION)
-                .hint1(TEST_HINT1)
-                .hint2(TEST_HINT2)
-                .hint3(TEST_HINT3)
                 .build();
 
         PuzzleResponseDTO dto = PuzzleMapper.toDTO(entity);
@@ -56,9 +50,6 @@ class PuzzleMapperTest {
         assertThat(dto.displayOrder(), is(equalTo(entity.getDisplayOrder())));
         assertThat(dto.files(), contains(TEST_FIRST_FILE, TEST_SECOND_FILE));
         assertThat(dto.question(), is(equalTo(entity.getQuestion())));
-        assertThat(dto.hint1(), is(equalTo(entity.getHint1())));
-        assertThat(dto.hint2(), is(equalTo(entity.getHint2())));
-        assertThat(dto.hint3(), is(equalTo(entity.getHint3())));
     }
 
     @Test
