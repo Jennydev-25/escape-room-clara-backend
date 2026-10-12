@@ -339,4 +339,25 @@ class PuzzleServiceImplTest {
         assertThrows(HintNotFoundException.class,
                 () -> service.getHint(authentication, EXISTING_PUZZLE_ID, NUMBER_ABOVE_LAST_HINT));
     }
+
+    @Test
+    void testGetHint_ShouldThrowHintNotFoundException_WhenHintIsNotDefined() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(HintNotFoundException.class,
+                () -> service.getHint(authentication, EXISTING_PUZZLE_ID, SECOND_HINT_NUMBER));
+    }
 }
