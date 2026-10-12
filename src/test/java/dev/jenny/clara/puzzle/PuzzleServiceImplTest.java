@@ -30,6 +30,7 @@ import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.HintNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.validator.PuzzleValidator;
@@ -52,6 +53,9 @@ class PuzzleServiceImplTest {
     private static final int PUZZLE_DISPLAY_ORDER = 1;
     private static final String PUZZLE_FILE = "/leeme/leeme.txt";
     private static final int FIRST_HINT_NUMBER = 1;
+    private static final int SECOND_HINT_NUMBER = 2;
+    private static final int NUMBER_BELOW_FIRST_HINT = 0;
+    private static final int NUMBER_ABOVE_LAST_HINT = 4;
     private static final String FIRST_HINT_TEXT = "Fíjate en la fecha de la nota.";
 
     @Mock
@@ -292,5 +296,26 @@ class PuzzleServiceImplTest {
 
         assertThat(result.number(), is(equalTo(FIRST_HINT_NUMBER)));
         assertThat(result.text(), is(equalTo(FIRST_HINT_TEXT)));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowHintNotFoundException_WhenNumberIsBelowFirstHint() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+
+        PuzzleEntity puzzle = PuzzleEntity.builder()
+                .id(EXISTING_PUZZLE_ID)
+                .type(PUZZLE_TYPE)
+                .minChapter(PUZZLE_MIN_CHAPTER)
+                .hint1(FIRST_HINT_TEXT)
+                .build();
+
+        when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
+
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        assertThrows(HintNotFoundException.class,
+                () -> service.getHint(authentication, EXISTING_PUZZLE_ID, NUMBER_BELOW_FIRST_HINT));
     }
 }
