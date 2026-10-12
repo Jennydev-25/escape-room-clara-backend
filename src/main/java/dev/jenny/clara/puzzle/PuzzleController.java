@@ -24,8 +24,8 @@ public class PuzzleController {
     }
 
     @GetMapping
-    public PuzzleResponseDTO getPuzzle(@PathVariable Long id) {
-        return puzzleService.getPuzzle(id);
+    public PuzzleResponseDTO getPuzzle(Authentication authentication, @PathVariable Long id) {
+        return puzzleService.getPuzzle(authentication, id);
     }
 
     @GetMapping("/hints/{number}")

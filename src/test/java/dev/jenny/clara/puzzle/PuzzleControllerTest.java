@@ -70,7 +70,7 @@ class PuzzleControllerTest {
                 PUZZLE_DISPLAY_ORDER, PUZZLE_FILES, PUZZLE_QUESTION);
         String responseJson = mapper.writeValueAsString(responseDto);
 
-        when(puzzleService.getPuzzle(eq(EXISTING_PUZZLE_ID))).thenReturn(responseDto);
+        when(puzzleService.getPuzzle(any(Authentication.class), eq(EXISTING_PUZZLE_ID))).thenReturn(responseDto);
 
         mockMvc.perform(get("/api/v1/puzzles/{id}", EXISTING_PUZZLE_ID))
                 .andExpect(status().isOk())
@@ -80,7 +80,8 @@ class PuzzleControllerTest {
     @Test
     @WithMockUser(username = "clara@pruebas.com")
     void testGetPuzzle_ShouldReturnNotFound_WhenPuzzleDoesNotExist() throws Exception {
-        when(puzzleService.getPuzzle(eq(MISSING_PUZZLE_ID))).thenThrow(new PuzzleNotFoundException(NOT_FOUND_MESSAGE));
+        when(puzzleService.getPuzzle(any(Authentication.class), eq(MISSING_PUZZLE_ID)))
+                .thenThrow(new PuzzleNotFoundException(NOT_FOUND_MESSAGE));
 
         mockMvc.perform(get("/api/v1/puzzles/{id}", MISSING_PUZZLE_ID))
                 .andExpect(status().isNotFound());

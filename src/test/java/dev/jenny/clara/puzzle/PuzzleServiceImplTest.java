@@ -97,13 +97,15 @@ class PuzzleServiceImplTest {
 
     @Test
     void testGetPuzzle_ShouldThrowPuzzleNotFoundException_WhenPuzzleDoesNotExist() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
         when(puzzleRepository.findById(MISSING_PUZZLE_ID)).thenReturn(Optional.empty());
 
-        assertThrows(PuzzleNotFoundException.class, () -> service.getPuzzle(MISSING_PUZZLE_ID));
+        assertThrows(PuzzleNotFoundException.class, () -> service.getPuzzle(authentication, MISSING_PUZZLE_ID));
     }
 
     @Test
     void testGetPuzzle_ShouldReturnPuzzle_WhenPuzzleExists() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
         PuzzleEntity puzzle = PuzzleEntity.builder()
                 .id(EXISTING_PUZZLE_ID)
                 .type(PUZZLE_TYPE)
@@ -114,7 +116,11 @@ class PuzzleServiceImplTest {
 
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
-        PuzzleResponseDTO result = service.getPuzzle(EXISTING_PUZZLE_ID);
+        ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
+
+        PuzzleResponseDTO result = service.getPuzzle(authentication, EXISTING_PUZZLE_ID);
 
         assertThat(result.id(), is(equalTo(EXISTING_PUZZLE_ID)));
         assertThat(result.type(), is(equalTo(PUZZLE_TYPE)));

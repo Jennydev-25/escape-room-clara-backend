@@ -43,8 +43,12 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
     }
 
     @Override
-    public PuzzleResponseDTO getPuzzle(Long puzzleId) {
+    public PuzzleResponseDTO getPuzzle(Authentication authentication, Long puzzleId) {
         PuzzleEntity puzzle = findPuzzle(puzzleId);
+
+        ProgressResponseDTO currentProgress = progressService.getOrCreateProgress(authentication);
+
+        checkChapterReached(currentProgress, puzzle, puzzleId);
 
         return PuzzleMapper.toDTO(puzzle);
     }
