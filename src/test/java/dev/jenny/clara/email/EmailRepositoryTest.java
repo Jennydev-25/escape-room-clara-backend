@@ -1,6 +1,7 @@
 package dev.jenny.clara.email;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
@@ -20,6 +21,8 @@ class EmailRepositoryTest {
     private static final String BODY = "Nos vemos luego en el puerto.";
     private static final int MIN_CHAPTER = 1;
     private static final int LATER_MIN_CHAPTER = 2;
+    private static final int FIRST_DISPLAY_ORDER = 1;
+    private static final int SECOND_DISPLAY_ORDER = 2;
     private static final int CHAPTER_WITHOUT_EMAILS = 0;
 
     @Autowired
@@ -57,5 +60,33 @@ class EmailRepositoryTest {
                 .findByMinChapterLessThanEqualOrderByMinChapterAsc(CHAPTER_WITHOUT_EMAILS);
 
         assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    void testFindByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc_ShouldOrderByDisplayOrder_WhenSameChapter() {
+        emailRepository.save(EmailEntity.builder()
+                .sender(SENDER)
+                .subject(SUBJECT)
+                .body(BODY)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(SECOND_DISPLAY_ORDER)
+                .build());
+        emailRepository.save(EmailEntity.builder()
+                .sender(SENDER)
+                .subject(SUBJECT)
+                .body(BODY)
+                .minChapter(MIN_CHAPTER)
+                .displayOrder(FIRST_DISPLAY_ORDER)
+                .build());
+
+        List<EmailEntity> result = emailRepository
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(MIN_CHAPTER);
+
+        List<Integer> testEmailOrders = result.stream()
+                .filter(email -> email.getSender().equals(SENDER))
+                .map(EmailEntity::getDisplayOrder)
+                .toList();
+
+        assertThat(testEmailOrders, is(equalTo(List.of(FIRST_DISPLAY_ORDER, SECOND_DISPLAY_ORDER))));
     }
 }
