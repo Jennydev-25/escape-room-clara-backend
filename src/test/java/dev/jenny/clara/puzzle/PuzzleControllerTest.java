@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import dev.jenny.clara.config.SecurityConfig;
 import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
+import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
@@ -40,6 +41,11 @@ class PuzzleControllerTest {
     private static final List<String> PUZZLE_FILES = List.of("/leeme/leeme.txt");
     private static final String PUZZLE_QUESTION = "pregunta de la prueba";
     private static final Long MISSING_PUZZLE_ID = 99L;
+    private static final int HINT_NUMBER = 1;
+    private static final String HINT_TEXT = "Fíjate en la fecha de la nota.";
+    private static final int MISSING_HINT_NUMBER = 3;
+    private static final String HINT_NOT_FOUND_MESSAGE = "La prueba " + EXISTING_PUZZLE_ID
+            + " no tiene la pista " + MISSING_HINT_NUMBER;
     private static final String NOT_FOUND_MESSAGE = "No se encontró ninguna prueba con el id " + MISSING_PUZZLE_ID;
     private static final String ANSWER_VALUE = "any-value";
     private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
@@ -126,5 +132,19 @@ class PuzzleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto)))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testGetHint_ShouldReturnHint() throws Exception {
+        PuzzleHintResponseDTO responseDto = new PuzzleHintResponseDTO(HINT_NUMBER, HINT_TEXT);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(puzzleService.getHint(any(Authentication.class), eq(EXISTING_PUZZLE_ID), eq(HINT_NUMBER)))
+                .thenReturn(responseDto);
+
+        mockMvc.perform(get("/api/v1/puzzles/{id}/hints/{number}", EXISTING_PUZZLE_ID, HINT_NUMBER))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseJson));
     }
 }
