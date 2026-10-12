@@ -30,8 +30,8 @@
 	<properties>
 		<java.version>21</java.version>
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-		<jacoco.unit-tests.limit.instruction-ratio>0%</jacoco.unit-tests.limit.instruction-ratio>
-		<jacoco.unit-tests.limit.branch-ratio>0%</jacoco.unit-tests.limit.branch-ratio>
+		<jacoco.unit-tests.limit.instruction-ratio>100%</jacoco.unit-tests.limit.instruction-ratio>
+		<jacoco.unit-tests.limit.branch-ratio>100%</jacoco.unit-tests.limit.branch-ratio>
 		<jacoco.unit-tests.limit.class-complexity>80</jacoco.unit-tests.limit.class-complexity>
 		<jacoco.unit-tests.limit.method-complexity>10</jacoco.unit-tests.limit.method-complexity>
 	</properties>
