@@ -16,6 +16,7 @@ import dev.jenny.clara.puzzle.dtos.PuzzleAnswerRequestDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleHintResponseDTO;
 import dev.jenny.clara.puzzle.dtos.PuzzleResponseDTO;
 import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
+import dev.jenny.clara.puzzle.exceptions.HintNotFoundException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleChapterNotReachedException;
 import dev.jenny.clara.puzzle.exceptions.PuzzleNotFoundException;
 import dev.jenny.clara.puzzle.mappers.PuzzleMapper;
@@ -59,6 +60,10 @@ public class PuzzleServiceImpl implements InterfacePuzzleService {
         if (currentProgress.currentChapter() < puzzle.getMinChapter()) {
             throw new PuzzleChapterNotReachedException(
                     "La prueba " + puzzleId + " todavía no está disponible en el capítulo actual");
+        }
+
+        if (number < 1) {
+            throw new HintNotFoundException("La prueba " + puzzleId + " no tiene la pista " + number);
         }
 
         List<String> hints = Stream.of(puzzle.getHint1(), puzzle.getHint2(), puzzle.getHint3()).toList();
