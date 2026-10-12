@@ -9,7 +9,7 @@ import dev.jenny.clara.puzzle.dtos.ValidatedAnswerResponseDTO;
 
 public interface InterfacePuzzleService {
 
-    PuzzleResponseDTO getPuzzle(Long puzzleId);
+    PuzzleResponseDTO getPuzzle(Authentication authentication, Long puzzleId);
 
     PuzzleHintResponseDTO getHint(Authentication authentication, Long puzzleId, int number);
 
