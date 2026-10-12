@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +49,7 @@ public class PuzzleEntity {
     private int displayOrder;
 
     @OneToMany(mappedBy = "puzzle", cascade = CascadeType.ALL)
+    @OrderBy("displayOrder ASC")
     @Builder.Default
     private List<PuzzleFileEntity> files = new ArrayList<>();
 
