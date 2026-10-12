@@ -61,34 +61,34 @@ VALUES
   ('salgo_fatal.png', 'IMG', '/papelera/salgo_fatal.png', 1);
 
 -- Chat: 4 contactos, 26 mensajes
-INSERT INTO chat_messages (contact, character, content, min_chapter, display_order)
+INSERT INTO chat_messages (contact, character, content, sent_at, min_chapter, display_order)
 VALUES
-  ('Redacción · El Faro', 'Javier', 'recordatorio: hoy es el cumple de Ibáñez, hay bizcocho en la sala de reuniones a las 12', 1, 1),
-  ('Redacción · El Faro', 'Marina', '¿alguien tiene el cargador de USB-C? el mío ha muerto en combate', 1, 2),
-  ('Redacción · El Faro', 'Javier', 'yo tengo, está en mi mesa, coge el que quieras', 1, 3),
-  ('Redacción · El Faro', 'Marina', 'eres mi héroe', 1, 4),
-  ('Redacción · El Faro', 'Fermín', 'como oiga la palabra bizcocho una vez más antes de las 12 me da algo', 1, 5),
-  ('Redacción · El Faro', 'Javier', 'Fermín amargado como siempre jaja', 1, 6),
-  ('Redacción · El Faro', 'Marina', 'Clara pareces zombi esta semana eh', 1, 7),
-  ('Redacción · El Faro', 'Javier', 'es verdad, ayer casi te quedas dormida en la reunión de las 9', 1, 8),
-  ('Redacción · El Faro', 'Clara', 'gracias por la preocupación jajaja estoy bien, solo cansada', 1, 9),
-  ('Redacción · El Faro', 'Marina', 'duerme algo anda, que luego no hay café que te arregle', 1, 10),
-  ('Mamá', 'Mamá', 'Hija, ¿este finde vienes a comer o otra vez tienes lío?', 1, 1),
-  ('Mamá', 'Clara', 'Este finde no puedo mamá, tengo un cierre. El que viene seguro', 1, 2),
-  ('Mamá', 'Mamá', 'Llevas semanas rara por teléfono. ¿Va todo bien de verdad?', 1, 3),
-  ('Mamá', 'Clara', 'Sí mamá, tranquila, es solo trabajo. Te llamo este finde', 1, 4),
-  ('Mamá', 'Mamá', 'Clara no me has llamado el finde pasado ni el anterior. Contesta cuando puedas, aunque sea un mensaje', 1, 5),
-  ('Diego Barreda', 'Clara', 'Buenas tardes, Sr. Barreda. Soy Clara Vega, de El Faro de San Adrián. Estoy preparando un reportaje sobre el cierre de la antigua conservera Marlecha y me gustaría hacerle un par de preguntas.', 1, 1),
-  ('Diego Barreda', 'Diego', 'Fue hace veinte años. No creo que tenga mucho que aportar que no esté ya en la prensa de la época.', 1, 2),
-  ('Diego Barreda', 'Clara', 'Solo dos preguntas más: ¿por qué se descartó parte del testimonio de Elena Sáez? ¿Y qué relación tiene usted con Norte Atlántico Servicios?', 1, 3),
-  ('Diego Barreda', 'Diego', 'Le agradecería que tuviera cuidado con las preguntas que hace y a quién se las hace. Marlecha es historia cerrada.', 1, 4),
-  ('Andrés Salas', 'Clara', 'Andrés Salas, ¿verdad? He encontrado su nombre en unas notas de Tomás Elorza de 2005. ¿Qué pasó con la fotografía 17?', 9, 1),
-  ('Andrés Salas', 'Andrés', '¿Quién le ha dado mi nombre?', 9, 2),
-  ('Andrés Salas', 'Clara', 'Nadie. Lo encontré yo. Lleva veinte años sin salir a la luz y creo que usted lo sabe.', 9, 3),
-  ('Andrés Salas', 'Andrés', 'No me crea. Compruébelo todo usted misma, con sus propias fuentes. Yo solo le voy a dar piezas, nunca la respuesta entera.', 9, 4),
-  ('Andrés Salas', 'Andrés', 'He encontrado algo que Tomás dejó atrás.', 9, 5),
-  ('Andrés Salas', 'Clara', '¿Qué es?', 9, 6),
-  ('Andrés Salas', 'Andrés', 'No puedo explicárselo por aquí. Quedamos en persona.', 9, 7);
+  ('Redacción · El Faro', 'Javier', 'recordatorio: hoy es el cumple de Ibáñez, hay bizcocho en la sala de reuniones a las 12', '2025-06-10 10:48:00', 1, 1),
+  ('Redacción · El Faro', 'Marina', '¿alguien tiene el cargador de USB-C? el mío ha muerto en combate', '2025-06-10 10:52:00', 1, 2),
+  ('Redacción · El Faro', 'Javier', 'yo tengo, está en mi mesa, coge el que quieras', '2025-06-10 10:53:00', 1, 3),
+  ('Redacción · El Faro', 'Marina', 'eres mi héroe', '2025-06-10 10:54:00', 1, 4),
+  ('Redacción · El Faro', 'Fermín', 'como oiga la palabra bizcocho una vez más antes de las 12 me da algo', '2025-06-10 11:01:00', 1, 5),
+  ('Redacción · El Faro', 'Javier', 'Fermín amargado como siempre jaja', '2025-06-10 11:02:00', 1, 6),
+  ('Redacción · El Faro', 'Marina', 'Clara pareces zombi esta semana eh', '2025-06-10 11:15:00', 1, 7),
+  ('Redacción · El Faro', 'Javier', 'es verdad, ayer casi te quedas dormida en la reunión de las 9', '2025-06-10 11:16:00', 1, 8),
+  ('Redacción · El Faro', 'Clara', 'gracias por la preocupación jajaja estoy bien, solo cansada', '2025-06-10 11:20:00', 1, 9),
+  ('Redacción · El Faro', 'Marina', 'duerme algo anda, que luego no hay café que te arregle', '2025-06-10 11:21:00', 1, 10),
+  ('Mamá', 'Mamá', 'Hija, ¿este finde vienes a comer o otra vez tienes lío?', '2025-04-20 13:47:00', 1, 1),
+  ('Mamá', 'Clara', 'Este finde no puedo mamá, tengo un cierre. El que viene seguro', '2025-04-20 14:10:00', 1, 2),
+  ('Mamá', 'Mamá', 'Llevas semanas rara por teléfono. ¿Va todo bien de verdad?', '2025-06-08 20:05:00', 1, 3),
+  ('Mamá', 'Clara', 'Sí mamá, tranquila, es solo trabajo. Te llamo este finde', '2025-06-08 21:32:00', 1, 4),
+  ('Mamá', 'Mamá', 'Clara no me has llamado el finde pasado ni el anterior. Contesta cuando puedas, aunque sea un mensaje', '2025-06-29 19:15:00', 1, 5),
+  ('Diego Barreda', 'Clara', 'Buenas tardes, Sr. Barreda. Soy Clara Vega, de El Faro de San Adrián. Estoy preparando un reportaje sobre el cierre de la antigua conservera Marlecha y me gustaría hacerle un par de preguntas.', '2025-05-02 10:14:00', 1, 1),
+  ('Diego Barreda', 'Diego', 'Fue hace veinte años. No creo que tenga mucho que aportar que no esté ya en la prensa de la época.', '2025-05-02 18:42:00', 1, 2),
+  ('Diego Barreda', 'Clara', 'Solo dos preguntas más: ¿por qué se descartó parte del testimonio de Elena Sáez? ¿Y qué relación tiene usted con Norte Atlántico Servicios?', '2025-06-06 12:20:00', 1, 3),
+  ('Diego Barreda', 'Diego', 'Le agradecería que tuviera cuidado con las preguntas que hace y a quién se las hace. Marlecha es historia cerrada.', '2025-06-09 09:07:00', 1, 4),
+  ('Andrés Salas', 'Clara', 'Andrés Salas, ¿verdad? He encontrado su nombre en unas notas de Tomás Elorza de 2005. ¿Qué pasó con la fotografía 17?', '2025-06-10 17:30:00', 9, 1),
+  ('Andrés Salas', 'Andrés', '¿Quién le ha dado mi nombre?', '2025-06-15 22:14:00', 9, 2),
+  ('Andrés Salas', 'Clara', 'Nadie. Lo encontré yo. Lleva veinte años sin salir a la luz y creo que usted lo sabe.', '2025-06-15 22:19:00', 9, 3),
+  ('Andrés Salas', 'Andrés', 'No me crea. Compruébelo todo usted misma, con sus propias fuentes. Yo solo le voy a dar piezas, nunca la respuesta entera.', '2025-06-24 08:51:00', 9, 4),
+  ('Andrés Salas', 'Andrés', 'He encontrado algo que Tomás dejó atrás.', '2025-07-05 21:03:00', 9, 5),
+  ('Andrés Salas', 'Clara', '¿Qué es?', '2025-07-05 21:04:00', 9, 6),
+  ('Andrés Salas', 'Andrés', 'No puedo explicárselo por aquí. Quedamos en persona.', '2025-07-05 21:09:00', 9, 7);
 
 -- Correos: 4 contactos, 4 mensajes
 INSERT INTO emails (sender, recipient, subject, sent_date, body, min_chapter, display_order)

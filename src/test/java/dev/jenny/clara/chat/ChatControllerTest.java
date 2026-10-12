@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ class ChatControllerTest {
     private static final String CHARACTER = "Clara";
     private static final String CONTENT = "Buenas tardes, Sr. Barreda.";
     private static final Long MESSAGE_ID = 1L;
+    private static final LocalDateTime SENT_AT = LocalDateTime.of(2025, 6, 10, 10, 48);
     private static final int DISPLAY_ORDER = 1;
     private static final String MISSING_CONTACT = "Nadie";
     private static final String NOT_FOUND_MESSAGE = "No se encontró ningún contacto con el nombre " + MISSING_CONTACT;
@@ -62,7 +64,7 @@ class ChatControllerTest {
     @WithMockUser(username = "clara@pruebas.com")
     void testGetConversation_ShouldReturnMessages() throws Exception {
         List<ChatMessageResponseDTO> conversation = List
-                .of(new ChatMessageResponseDTO(MESSAGE_ID, CONTACT, CHARACTER, CONTENT, DISPLAY_ORDER, true));
+                .of(new ChatMessageResponseDTO(MESSAGE_ID, CONTACT, CHARACTER, CONTENT, SENT_AT, DISPLAY_ORDER, true));
         String responseJson = mapper.writeValueAsString(conversation);
 
         when(chatService.listConversation(any(Authentication.class), eq(CONTACT))).thenReturn(conversation);
