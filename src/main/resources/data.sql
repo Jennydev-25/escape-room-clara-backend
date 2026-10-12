@@ -52,13 +52,13 @@ VALUES
   ((SELECT id FROM puzzles WHERE title = 'Capítulo 2: Tomás Elorza'), NULL, '$2b$10$fodmKsv.mnlnPCzqSNFwqOpJLstQa5JOHR78.HKtIV9vvstNVxrta');
 
 -- Papelera:
-INSERT INTO discarded_files (name, type, body, min_chapter)
+INSERT INTO discarded_files (name, type, body, min_chapter, display_order)
 VALUES
-  ('borrador_reportaje_puerto_v1.txt', 'TEXT', '/papelera/borrador_reportaje_puerto_v1.txt', 1),
-  ('notas_ayuntamiento_ronda.txt', 'TEXT', '/papelera/notas_ayuntamiento_ronda.txt', 1),
-  ('ideas_sueltas.txt', 'TEXT', '/papelera/ideas_sueltas.txt', 2),
-  ('contactos_pendientes.txt', 'TEXT', '/papelera/contactos_pendientes.txt', 3),
-  ('salgo_fatal.png', 'IMG', '/papelera/salgo_fatal.png', 1);
+  ('borrador_reportaje_puerto_v1.txt', 'TEXT', '/papelera/borrador_reportaje_puerto_v1.txt', 1, 1),
+  ('notas_ayuntamiento_ronda.txt', 'TEXT', '/papelera/notas_ayuntamiento_ronda.txt', 1, 2),
+  ('ideas_sueltas.txt', 'TEXT', '/papelera/ideas_sueltas.txt', 2, 1),
+  ('contactos_pendientes.txt', 'TEXT', '/papelera/contactos_pendientes.txt', 3, 1),
+  ('salgo_fatal.png', 'IMG', '/papelera/salgo_fatal.png', 1, 3);
 
 -- Chat: 4 contactos, 26 mensajes
 INSERT INTO chat_messages (contact, character, content, sent_at, min_chapter, display_order)

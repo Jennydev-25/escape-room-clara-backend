@@ -59,7 +59,7 @@ class TrashServiceImplTest {
                 .id(FILE_ID).name(NAME).type(TYPE).body(BODY).minChapter(MIN_CHAPTER).build();
 
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progressAtChapter(CURRENT_CHAPTER));
-        when(discardedFileRepository.findByMinChapterLessThanEqualOrderByMinChapterAsc(CURRENT_CHAPTER))
+        when(discardedFileRepository.findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CURRENT_CHAPTER))
                 .thenReturn(List.of(file));
 
         List<DiscardedFileDTO> result = service.listDiscardedFiles(authentication);
@@ -72,7 +72,7 @@ class TrashServiceImplTest {
     @Test
     void testListDiscardedFiles_ShouldReturnEmpty_WhenNoFileReachedYet() {
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progressAtChapter(CURRENT_CHAPTER));
-        when(discardedFileRepository.findByMinChapterLessThanEqualOrderByMinChapterAsc(CURRENT_CHAPTER))
+        when(discardedFileRepository.findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CURRENT_CHAPTER))
                 .thenReturn(List.of());
 
         List<DiscardedFileDTO> result = service.listDiscardedFiles(authentication);

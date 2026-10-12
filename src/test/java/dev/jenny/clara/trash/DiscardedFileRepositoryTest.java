@@ -36,7 +36,7 @@ class DiscardedFileRepositoryTest {
                 .name(NAME).type(TYPE).body(BODY).minChapter(LATER_MIN_CHAPTER).build());
 
         List<DiscardedFileEntity> result = discardedFileRepository
-                .findByMinChapterLessThanEqualOrderByMinChapterAsc(MIN_CHAPTER);
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(MIN_CHAPTER);
 
         // No comprobamos el total (el seed narrativo aporta otros archivos en ese capitulo):
         // comprobamos que el nuestro aparece y que ninguno supera el capitulo pedido
@@ -50,7 +50,7 @@ class DiscardedFileRepositoryTest {
     @Test
     void testFindByMinChapterLessThanEqualOrderByMinChapterAsc_ShouldReturnEmpty_WhenNoFileReachedYet() {
         List<DiscardedFileEntity> result = discardedFileRepository
-                .findByMinChapterLessThanEqualOrderByMinChapterAsc(CHAPTER_WITHOUT_FILES);
+                .findByMinChapterLessThanEqualOrderByMinChapterAscDisplayOrderAsc(CHAPTER_WITHOUT_FILES);
 
         assertThat(result.isEmpty(), is(true));
     }
