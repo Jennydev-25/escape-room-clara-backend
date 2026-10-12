@@ -50,6 +50,7 @@ class PuzzleServiceImplTest {
     private static final String UNLOCKED_FOLDER_CODE = "02_FRAUDE";
     private static final int PUZZLE_DISPLAY_ORDER = 1;
     private static final String PUZZLE_FILE = "/leeme/leeme.txt";
+    private static final int FIRST_HINT_NUMBER = 1;
 
     @Mock
     private PuzzleRepository puzzleRepository;
@@ -237,5 +238,14 @@ class PuzzleServiceImplTest {
         assertThat(result.updatesChapter(), is(equalTo(false)));
         assertThat(result.newHudLetter(), is(equalTo(null)));
         assertThat(result.unlocks(), is(equalTo(List.of())));
+    }
+
+    @Test
+    void testGetHint_ShouldThrowPuzzleNotFoundException_WhenPuzzleDoesNotExist() {
+        Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+        when(puzzleRepository.findById(MISSING_PUZZLE_ID)).thenReturn(Optional.empty());
+
+        assertThrows(PuzzleNotFoundException.class,
+                () -> service.getHint(authentication, MISSING_PUZZLE_ID, FIRST_HINT_NUMBER));
     }
 }
