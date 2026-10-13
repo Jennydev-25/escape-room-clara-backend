@@ -1,0 +1,107 @@
+package dev.jenny.clara.auth;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+
+import dev.jenny.clara.role.RoleEntity;
+import dev.jenny.clara.user.UserEntity;
+import dev.jenny.clara.user.UserRepository;
+
+@ExtendWith(MockitoExtension.class)
+class JwtServiceTest {
+
+    private JwtService service;
+
+    @Mock
+    private JwtEncoder jwtEncoder;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        service = new JwtService(jwtEncoder, userRepository, 1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("rolesAndExpectedClaim")
+    void testGenerateToken_ShouldIncludeUserRoleAsClaim(RoleEntity role, String expectedClaim) {
+        UserEntity user = UserEntity.builder()
+                .email("clara@pruebas.com")
+                .passwordHash("hashedPassword")
+                .alias("clara")
+                .role(role)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("clara@pruebas.com");
+        when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.of(user));
+
+        Jwt fakeJwt = mock(Jwt.class);
+        when(fakeJwt.getTokenValue()).thenReturn("fake-token");
+        when(jwtEncoder.encode(any())).thenReturn(fakeJwt);
+
+        String result = service.generateToken(authentication);
+
+        ArgumentCaptor<JwtEncoderParameters> paramsCaptor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(paramsCaptor.capture());
+        String role_ = paramsCaptor.getValue().getClaims().getClaim("role");
+
+        assertThat(role_, is(equalTo(expectedClaim)));
+        assertThat(result, is(equalTo("fake-token")));
+    }
+
+    @Test
+    void testGenerateToken_WithUser_ShouldIncludeUserRoleAsClaim() {
+        UserEntity user = UserEntity.builder()
+                .email("clara@pruebas.com")
+                .passwordHash("hashedPassword")
+                .alias("clara")
+                .role(RoleEntity.builder().name("USER").build())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Jwt fakeJwt = mock(Jwt.class);
+        when(fakeJwt.getTokenValue()).thenReturn("fake-token");
+        when(jwtEncoder.encode(any())).thenReturn(fakeJwt);
+
+        String result = service.generateToken(user);
+
+        ArgumentCaptor<JwtEncoderParameters> paramsCaptor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(paramsCaptor.capture());
+        String role = paramsCaptor.getValue().getClaims().getClaim("role");
+
+        assertThat(role, is(equalTo("USER")));
+        assertThat(result, is(equalTo("fake-token")));
+    }
+
+    private static Stream<Arguments> rolesAndExpectedClaim() {
+        return Stream.of(
+                Arguments.of(RoleEntity.builder().name("USER").build(), "USER"),
+                Arguments.of(RoleEntity.builder().name("ADMIN").build(), "ADMIN"));
+    }
+}

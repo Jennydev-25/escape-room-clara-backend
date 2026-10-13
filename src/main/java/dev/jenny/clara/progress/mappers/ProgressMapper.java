@@ -1,0 +1,26 @@
+package dev.jenny.clara.progress.mappers;
+
+import dev.jenny.clara.progress.ProgressEntity;
+import dev.jenny.clara.progress.dtos.ProgressResponseDTO;
+
+public class ProgressMapper {
+
+    private ProgressMapper() {
+        throw new UnsupportedOperationException("No se puede instanciar esta clase de utilidad");
+    }
+
+    public static ProgressResponseDTO toDTO(ProgressEntity entity) {
+        return toDTO(entity, null);
+    }
+
+    public static ProgressResponseDTO toDTO(ProgressEntity entity, String lastHudLetterAdded) {
+        return new ProgressResponseDTO(
+                entity.getCurrentChapter(),
+                entity.getHudLetters(),
+                entity.isInvestigationSubmitted(),
+                entity.getTimeSpentSeconds(),
+                entity.getFreeNote(),
+                entity.getUpdatedAt(),
+                lastHudLetterAdded);
+    }
+}
