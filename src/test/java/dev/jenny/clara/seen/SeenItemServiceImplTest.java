@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
+import dev.jenny.clara.seen.dtos.SeenItemResponseDTO;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -27,6 +29,7 @@ class SeenItemServiceImplTest {
     private static final Long USER_ID = 10L;
     private static final String FOLDER_KEY = "folder:leeme";
     private static final String FILE_KEY = "file:/tomas/tomas_elorza.png";
+    private static final LocalDateTime SEEN_AT = LocalDateTime.of(2026, 10, 15, 18, 30);
 
     @Mock
     private SeenItemRepository seenItemRepository;
@@ -52,15 +55,17 @@ class SeenItemServiceImplTest {
     }
 
     @Test
-    void testGetSeenKeys_ShouldReturnKeysOfTheAuthenticatedUser() {
+    void testGetSeenItems_ShouldReturnDtosOfTheAuthenticatedUser() {
         stubAuthenticatedUser();
         when(seenItemRepository.findByUserId(USER_ID)).thenReturn(List.of(
-                SeenItemEntity.builder().user(user).itemKey(FOLDER_KEY).build(),
-                SeenItemEntity.builder().user(user).itemKey(FILE_KEY).build()));
+                SeenItemEntity.builder().user(user).itemKey(FOLDER_KEY).seenAt(SEEN_AT).build(),
+                SeenItemEntity.builder().user(user).itemKey(FILE_KEY).seenAt(SEEN_AT).build()));
 
-        List<String> result = service.getSeenKeys(authentication);
+        List<SeenItemResponseDTO> result = service.getSeenItems(authentication);
 
-        assertThat(result, contains(FOLDER_KEY, FILE_KEY));
+        assertThat(result, contains(
+                new SeenItemResponseDTO(FOLDER_KEY, SEEN_AT),
+                new SeenItemResponseDTO(FILE_KEY, SEEN_AT)));
     }
 
     @Test
