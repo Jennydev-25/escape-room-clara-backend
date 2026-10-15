@@ -10,6 +10,7 @@ import dev.jenny.clara.seen.dtos.SeenItemResponseDTO;
 import dev.jenny.clara.seen.mappers.SeenItemMapper;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
+import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @Service
 public class SeenItemServiceImpl implements InterfaceSeenItemService {
@@ -24,7 +25,7 @@ public class SeenItemServiceImpl implements InterfaceSeenItemService {
 
     @Override
     public List<SeenItemResponseDTO> getSeenItems(Authentication authentication) {
-        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+        UserEntity user = findUser(authentication);
 
         return seenItemRepository.findByUserId(user.getId()).stream()
                 .map(SeenItemMapper::toDTO)
@@ -33,7 +34,7 @@ public class SeenItemServiceImpl implements InterfaceSeenItemService {
 
     @Override
     public void markSeen(Authentication authentication, String key) {
-        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+        UserEntity user = findUser(authentication);
 
         if (seenItemRepository.existsByUserIdAndItemKey(user.getId(), key)) {
             return;
@@ -44,5 +45,11 @@ public class SeenItemServiceImpl implements InterfaceSeenItemService {
                 .itemKey(key)
                 .seenAt(LocalDateTime.now())
                 .build());
+    }
+
+    private UserEntity findUser(Authentication authentication) {
+        return userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new UserNotFoundException(
+                        "No se encontró ningún usuario con ese email " + authentication.getName()));
     }
 }
