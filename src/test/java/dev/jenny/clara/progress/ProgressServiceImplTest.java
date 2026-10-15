@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
@@ -245,4 +246,20 @@ class ProgressServiceImplTest {
         assertThat(result.hudLetters(), is(equalTo(EXPECTED_HUD_AFTER_LETTER)));
         verify(progressRepository).save(any(ProgressEntity.class));
     }
+
+    @Test
+    void testCreateDefaultProgress_ShouldSaveDefaultProgress_ForTheGivenUser() {
+        service.createDefaultProgress(user);
+
+        ArgumentCaptor<ProgressEntity> progressCaptor = ArgumentCaptor.forClass(ProgressEntity.class);
+        verify(progressRepository).save(progressCaptor.capture());
+        ProgressEntity savedProgress = progressCaptor.getValue();
+
+        assertThat(savedProgress.getUser(), is(equalTo(user)));
+        assertThat(savedProgress.getCurrentChapter(), is(equalTo(DEFAULT_CHAPTER)));
+        assertThat(savedProgress.getHudLetters(), is(equalTo(DEFAULT_HUD)));
+        assertThat(savedProgress.getTimeSpentSeconds(), is(equalTo(DEFAULT_SECONDS)));
+        assertThat(savedProgress.isWelcomeSeen(), is(false));
+    }
+
 }
