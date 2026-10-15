@@ -21,6 +21,7 @@ public class ProgressMapper {
                 entity.getTimeSpentSeconds(),
                 entity.getFreeNote(),
                 entity.getUpdatedAt(),
-                lastHudLetterAdded);
+                lastHudLetterAdded,
+                entity.isWelcomeSeen());
     }
 }

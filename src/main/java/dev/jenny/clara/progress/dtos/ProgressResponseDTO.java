@@ -9,5 +9,6 @@ public record ProgressResponseDTO(
         long timeSpentSeconds,
         String freeNote,
         LocalDateTime updatedAt,
-        String lastHudLetterAdded) {
+        String lastHudLetterAdded,
+        boolean welcomeSeen) {
 }

@@ -83,7 +83,7 @@ class FolderServiceImplTest {
         when(folderRepository.findByCode(EXISTING_CODE)).thenReturn(Optional.of(folder));
 
         ProgressResponseDTO progress = new ProgressResponseDTO(CURRENT_CHAPTER_BELOW_OPENING, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progress);
 
         assertThrows(ChapterNotReachedException.class,
@@ -104,7 +104,7 @@ class FolderServiceImplTest {
         when(folderRepository.findByCode(EXISTING_CODE)).thenReturn(Optional.of(folder));
 
         ProgressResponseDTO progress = new ProgressResponseDTO(CURRENT_CHAPTER_REACHED, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progress);
 
         PuzzleEntity visiblePuzzle = PuzzleEntity.builder()
@@ -136,7 +136,7 @@ class FolderServiceImplTest {
                 .build();
 
         ProgressResponseDTO progress = new ProgressResponseDTO(CURRENT_CHAPTER_REACHED, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(progress);
         when(folderRepository.findByMinChapterToOpenLessThanEqualOrderByMinChapterToOpenAsc(CURRENT_CHAPTER_REACHED))
                 .thenReturn(List.of(reachedFolder));
