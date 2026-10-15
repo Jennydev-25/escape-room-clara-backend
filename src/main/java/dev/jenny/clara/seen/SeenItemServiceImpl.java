@@ -1,5 +1,6 @@
 package dev.jenny.clara.seen;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -26,5 +27,16 @@ public class SeenItemServiceImpl implements InterfaceSeenItemService {
         return seenItemRepository.findByUserId(user.getId()).stream()
                 .map(SeenItemEntity::getItemKey)
                 .toList();
+    }
+
+    @Override
+    public void markSeen(Authentication authentication, String key) {
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+
+        seenItemRepository.save(SeenItemEntity.builder()
+                .user(user)
+                .itemKey(key)
+                .seenAt(LocalDateTime.now())
+                .build());
     }
 }
