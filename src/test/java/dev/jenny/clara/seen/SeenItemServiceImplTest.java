@@ -2,6 +2,7 @@ package dev.jenny.clara.seen;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import dev.jenny.clara.seen.dtos.SeenItemResponseDTO;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
+import dev.jenny.clara.user.exceptions.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class SeenItemServiceImplTest {
@@ -86,5 +88,21 @@ class SeenItemServiceImplTest {
         service.markSeen(authentication, FOLDER_KEY);
 
         verify(seenItemRepository, never()).save(any(SeenItemEntity.class));
+    }
+
+    @Test
+    void testGetSeenItems_ShouldThrowUserNotFoundException_WhenUserDoesNotExist() {
+        when(authentication.getName()).thenReturn(USER_EMAIL);
+        when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.getSeenItems(authentication));
+    }
+
+    @Test
+    void testMarkSeen_ShouldThrowUserNotFoundException_WhenUserDoesNotExist() {
+        when(authentication.getName()).thenReturn(USER_EMAIL);
+        when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.markSeen(authentication, FOLDER_KEY));
     }
 }
