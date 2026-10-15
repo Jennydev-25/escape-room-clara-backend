@@ -33,6 +33,10 @@ public class SeenItemServiceImpl implements InterfaceSeenItemService {
     public void markSeen(Authentication authentication, String key) {
         UserEntity user = userRepository.findByEmail(authentication.getName()).get();
 
+        if (seenItemRepository.existsByUserIdAndItemKey(user.getId(), key)) {
+            return;
+        }
+
         seenItemRepository.save(SeenItemEntity.builder()
                 .user(user)
                 .itemKey(key)
