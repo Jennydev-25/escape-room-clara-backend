@@ -14,6 +14,8 @@ public interface InterfaceProgressService {
 
     ProgressResponseDTO updateNote(Authentication authentication, UpdateNoteRequestDTO dto);
 
+    ProgressResponseDTO markWelcomeSeen(Authentication authentication);
+
     ProgressResponseDTO advanceChapter(Authentication authentication, int newChapter);
 
 }
