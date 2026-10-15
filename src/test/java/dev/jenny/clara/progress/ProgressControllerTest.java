@@ -124,6 +124,24 @@ class ProgressControllerTest {
         assertThat(response.getContentAsString(), is(equalTo(responseJson)));
     }
 
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testMarkWelcomeSeen_ShouldReturnUpdatedProgress() throws Exception {
+        ProgressResponseDTO responseDto = new ProgressResponseDTO(
+                TEST_CHAPTER, TEST_HUD, TEST_SUBMITTED, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, true);
+        String responseJson = mapper.writeValueAsString(responseDto);
+
+        when(progressService.markWelcomeSeen(any(Authentication.class))).thenReturn(responseDto);
+
+        MockHttpServletResponse response = mockMvc.perform(patch("/api/v1/progress/welcome"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getContentAsString(), is(equalTo(responseJson)));
+    }
+
     @ParameterizedTest
     @MethodSource("invalidAccumulateTimeRequests")
     @WithMockUser(username = "clara@pruebas.com")
