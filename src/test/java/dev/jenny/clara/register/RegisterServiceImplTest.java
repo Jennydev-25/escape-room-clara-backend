@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.recaptcha.exceptions.InvalidRecaptchaException;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
@@ -49,6 +50,9 @@ class RegisterServiceImplTest {
     @Mock
     private InterfaceRoleService roleService;
 
+    @Mock
+    private InterfaceProgressService progressService;
+
     @Test
     void testRegister_ShouldSaveUserAndReturnSuccessResponse() {
         RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
@@ -71,6 +75,23 @@ class RegisterServiceImplTest {
         assertThat(savedUser.getRole(), is(equalTo(role)));
         assertThat(response.message(), is(equalTo(
                 "Tu cuenta se ha creado correctamente. Inserta tu nombre completo y escoge tu alias para la investigación.")));
+    }
+
+    @Test
+    void testRegister_ShouldCreateDefaultProgress_ForTheNewUser() {
+        RegisterRequestDTO dtoRequest = new RegisterRequestDTO("clara@pruebas.com", "plainPassword", "plainPassword",
+                "valid-captcha-token");
+        RoleEntity role = RoleEntity.builder().name("USER").build();
+
+        when(userRepository.findByEmail("clara@pruebas.com")).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("plainPassword")).thenReturn("hashedPassword");
+        when(roleService.assignDefaultRole()).thenReturn(role);
+
+        service.register(dtoRequest);
+
+        ArgumentCaptor<UserEntity> userCaptor = ArgumentCaptor.forClass(UserEntity.class);
+        verify(userRepository).save(userCaptor.capture());
+        verify(progressService).createDefaultProgress(userCaptor.getValue());
     }
 
     @Test
