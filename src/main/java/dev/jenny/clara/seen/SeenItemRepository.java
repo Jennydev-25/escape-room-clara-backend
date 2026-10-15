@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SeenItemRepository extends JpaRepository<SeenItemEntity, Long> {
 
     List<SeenItemEntity> findByUserId(Long userId);
+
+    boolean existsByUserIdAndItemKey(Long userId, String itemKey);
 }
