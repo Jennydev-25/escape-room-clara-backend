@@ -2,6 +2,8 @@ package dev.jenny.clara.seen;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -58,5 +60,15 @@ class SeenItemServiceImplTest {
         List<String> result = service.getSeenKeys(authentication);
 
         assertThat(result, contains(FOLDER_KEY, FILE_KEY));
+    }
+
+    @Test
+    void testMarkSeen_ShouldSaveTheKey_WhenUserHasNotSeenItYet() {
+        stubAuthenticatedUser();
+        when(seenItemRepository.existsByUserIdAndItemKey(USER_ID, FOLDER_KEY)).thenReturn(false);
+
+        service.markSeen(authentication, FOLDER_KEY);
+
+        verify(seenItemRepository).save(any(SeenItemEntity.class));
     }
 }
