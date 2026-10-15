@@ -3,6 +3,7 @@ package dev.jenny.clara.seen;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,5 +71,15 @@ class SeenItemServiceImplTest {
         service.markSeen(authentication, FOLDER_KEY);
 
         verify(seenItemRepository).save(any(SeenItemEntity.class));
+    }
+
+    @Test
+    void testMarkSeen_ShouldNotSaveAgain_WhenUserAlreadySawIt() {
+        stubAuthenticatedUser();
+        when(seenItemRepository.existsByUserIdAndItemKey(USER_ID, FOLDER_KEY)).thenReturn(true);
+
+        service.markSeen(authentication, FOLDER_KEY);
+
+        verify(seenItemRepository, never()).save(any(SeenItemEntity.class));
     }
 }
