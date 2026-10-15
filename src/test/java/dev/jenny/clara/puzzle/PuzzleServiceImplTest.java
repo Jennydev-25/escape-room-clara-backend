@@ -117,7 +117,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         PuzzleResponseDTO result = service.getPuzzle(authentication, EXISTING_PUZZLE_ID);
@@ -140,7 +140,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER - 1, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         assertThrows(PuzzleChapterNotReachedException.class,
@@ -160,7 +160,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER - 1, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
@@ -182,7 +182,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         List<ExpectedAnswerEntity> expectedAnswers = List.of(ExpectedAnswerEntity.builder().build());
@@ -219,11 +219,11 @@ class PuzzleServiceImplTest {
                 .thenReturn(true);
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         ProgressResponseDTO advancedProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER + 1, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, NEW_HUD_LETTER);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, NEW_HUD_LETTER, false);
         when(progressService.advanceChapter(authentication, PUZZLE_MIN_CHAPTER + 1)).thenReturn(advancedProgress);
 
         FolderEntity unlockedFolder = FolderEntity.builder().code(UNLOCKED_FOLDER_CODE).build();
@@ -259,7 +259,7 @@ class PuzzleServiceImplTest {
                 .thenReturn(true);
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER + 1, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO(ANSWER_VALUE);
@@ -294,7 +294,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER - 1, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         assertThrows(PuzzleChapterNotReachedException.class,
@@ -315,7 +315,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         PuzzleHintResponseDTO result = service.getHint(authentication, EXISTING_PUZZLE_ID, FIRST_HINT_NUMBER);
@@ -338,7 +338,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         assertThrows(HintNotFoundException.class,
@@ -359,7 +359,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         assertThrows(HintNotFoundException.class,
@@ -380,7 +380,7 @@ class PuzzleServiceImplTest {
         when(puzzleRepository.findById(EXISTING_PUZZLE_ID)).thenReturn(Optional.of(puzzle));
 
         ProgressResponseDTO currentProgress = new ProgressResponseDTO(PUZZLE_MIN_CHAPTER, TEST_HUD, false,
-                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+                TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
         when(progressService.getOrCreateProgress(authentication)).thenReturn(currentProgress);
 
         assertThrows(HintNotFoundException.class,

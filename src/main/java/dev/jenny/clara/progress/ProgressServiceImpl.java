@@ -79,6 +79,17 @@ public class ProgressServiceImpl implements InterfaceProgressService {
     }
 
     @Override
+    public ProgressResponseDTO markWelcomeSeen(Authentication authentication) {
+        UserEntity user = userRepository.findByEmail(authentication.getName()).get();
+        ProgressEntity progress = findOrCreateProgress(user);
+
+        progress.setWelcomeSeen(true);
+        progress.setUpdatedAt(LocalDateTime.now());
+
+        return ProgressMapper.toDTO(repository.save(progress));
+    }
+
+    @Override
     @Transactional
     public ProgressResponseDTO advanceChapter(Authentication authentication, int newChapter) {
         UserEntity user = userRepository.findByEmail(authentication.getName()).get();

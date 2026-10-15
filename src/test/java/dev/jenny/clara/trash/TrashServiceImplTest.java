@@ -50,7 +50,7 @@ class TrashServiceImplTest {
     }
 
     private ProgressResponseDTO progressAtChapter(int chapter) {
-        return new ProgressResponseDTO(chapter, TEST_HUD, false, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null);
+        return new ProgressResponseDTO(chapter, TEST_HUD, false, TEST_SECONDS, TEST_NOTE, TEST_UPDATED_AT, null, false);
     }
 
     @Test

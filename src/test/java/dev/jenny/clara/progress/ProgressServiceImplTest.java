@@ -167,6 +167,32 @@ class ProgressServiceImplTest {
     }
 
     @Test
+    void testMarkWelcomeSeen_ShouldSetWelcomeSeenOnExistingProgress() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        ProgressEntity existingProgress = ProgressEntity.builder()
+                .user(user)
+                .currentChapter(TEST_CHAPTER)
+                .hudLetters(TEST_HUD)
+                .investigationSubmitted(false)
+                .timeSpentSeconds(TEST_SECONDS)
+                .freeNote(TEST_NOTE)
+                .updatedAt(TEST_UPDATED_AT)
+                .welcomeSeen(false)
+                .build();
+
+        when(progressRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.of(existingProgress));
+        when(progressRepository.save(any(ProgressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProgressResponseDTO result = service.markWelcomeSeen(authentication);
+
+        assertThat(result.welcomeSeen(), is(equalTo(true)));
+        verify(progressRepository).save(any(ProgressEntity.class));
+    }
+
+    @Test
     void testAdvanceChapter_ShouldUpdateCurrentChapter_WhenChapterIsNotInflectionPoint() {
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(TEST_EMAIL);
