@@ -2,6 +2,7 @@ package dev.jenny.clara.seen;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -71,5 +72,18 @@ class SeenItemControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(seenItemService).markSeen(any(Authentication.class), eq(FOLDER_KEY));
+    }
+
+    @Test
+    @WithMockUser(username = "clara@pruebas.com")
+    void testMarkSeen_ShouldReturnBadRequest_WhenKeyIsBlank() throws Exception {
+        String requestJson = mapper.writeValueAsString(new SeenItemRequestDTO(" "));
+
+        mockMvc.perform(post("/api/v1/seen")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isBadRequest());
+
+        verify(seenItemService, never()).markSeen(any(Authentication.class), any(String.class));
     }
 }
