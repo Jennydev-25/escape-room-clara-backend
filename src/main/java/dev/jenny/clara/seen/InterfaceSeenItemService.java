@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
+import dev.jenny.clara.seen.dtos.SeenItemResponseDTO;
+
 public interface InterfaceSeenItemService {
 
-    List<String> getSeenKeys(Authentication authentication);
+    List<SeenItemResponseDTO> getSeenItems(Authentication authentication);
 
     void markSeen(Authentication authentication, String key);
 }

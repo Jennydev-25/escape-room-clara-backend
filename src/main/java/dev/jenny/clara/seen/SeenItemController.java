@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.jenny.clara.seen.dtos.SeenItemResponseDTO;
+
 @RestController
 @RequestMapping(path = "${api-endpoint}/seen")
 public class SeenItemController {
@@ -18,7 +20,7 @@ public class SeenItemController {
     }
 
     @GetMapping
-    public List<String> getSeenKeys(Authentication authentication) {
-        return seenItemService.getSeenKeys(authentication);
+    public List<SeenItemResponseDTO> getSeenItems(Authentication authentication) {
+        return seenItemService.getSeenItems(authentication);
     }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import dev.jenny.clara.seen.dtos.SeenItemResponseDTO;
+import dev.jenny.clara.seen.mappers.SeenItemMapper;
 import dev.jenny.clara.user.UserEntity;
 import dev.jenny.clara.user.UserRepository;
 
@@ -21,11 +23,11 @@ public class SeenItemServiceImpl implements InterfaceSeenItemService {
     }
 
     @Override
-    public List<String> getSeenKeys(Authentication authentication) {
+    public List<SeenItemResponseDTO> getSeenItems(Authentication authentication) {
         UserEntity user = userRepository.findByEmail(authentication.getName()).get();
 
         return seenItemRepository.findByUserId(user.getId()).stream()
-                .map(SeenItemEntity::getItemKey)
+                .map(SeenItemMapper::toDTO)
                 .toList();
     }
 
