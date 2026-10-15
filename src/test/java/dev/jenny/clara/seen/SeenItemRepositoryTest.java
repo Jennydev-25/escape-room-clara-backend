@@ -69,4 +69,19 @@ class SeenItemRepositoryTest {
 
         assertThat(result.size(), is(equalTo(1)));
     }
+
+    @Test
+    void testExistsByUserIdAndItemKey_ShouldReturnTrue_WhenUserSawIt() {
+        UserEntity clara = createUser("clara@pruebas.com");
+
+        seenItemRepository.save(SeenItemEntity.builder()
+                .user(clara)
+                .itemKey(FOLDER_KEY)
+                .seenAt(LocalDateTime.now())
+                .build());
+
+        boolean result = seenItemRepository.existsByUserIdAndItemKey(clara.getId(), FOLDER_KEY);
+
+        assertThat(result, is(true));
+    }
 }
