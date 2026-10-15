@@ -41,10 +41,15 @@ public class ProgressServiceImpl implements InterfaceProgressService {
 
     private ProgressEntity findOrCreateProgress(UserEntity user) {
         return repository.findByUserId(user.getId())
-                .orElseGet(() -> repository.save(createDefaultProgress(user)));
+                .orElseGet(() -> repository.save(buildDefaultProgress(user)));
     }
 
-    private ProgressEntity createDefaultProgress(UserEntity user) {
+    @Override
+    public void createDefaultProgress(UserEntity user) {
+        repository.save(buildDefaultProgress(user));
+    }
+
+    private ProgressEntity buildDefaultProgress(UserEntity user) {
         return ProgressEntity.builder()
                 .user(user)
                 .currentChapter(DEFAULT_CHAPTER)
