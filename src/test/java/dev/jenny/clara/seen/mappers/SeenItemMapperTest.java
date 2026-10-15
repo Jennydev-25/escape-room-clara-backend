@@ -4,7 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
@@ -29,5 +32,15 @@ class SeenItemMapperTest {
         assertThat(dto, isA(SeenItemResponseDTO.class));
         assertThat(dto.key(), is(equalTo(TEST_KEY)));
         assertThat(dto.seenAt(), is(equalTo(TEST_SEEN_AT)));
+    }
+
+    @Test
+    void testConstructor_ShouldThrowException_WhenInstantiatedViaReflection() throws Exception {
+        Constructor<SeenItemMapper> constructor = SeenItemMapper.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+
+        assertThat(exception.getCause(), isA(UnsupportedOperationException.class));
     }
 }
