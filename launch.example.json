@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "escape-room-clara-backend",
+            "request": "launch",
+            "mainClass": "dev.jenny.clara.App",
+            "projectName": "escape-room-clara-backend",
+            "env": {
+                "POSTGRES_DB": "your_database_name",
+                "POSTGRES_USER": "your_database_user",
+                "POSTGRES_PASSWORD": "your_database_password",
+                "JWT_SECRET_KEY": "your_long_random_secret_for_signing_tokens",
+                "RECAPTCHA_SECRET_KEY": "your_recaptcha_secret_key"
+            }
+        }
+    ]
+}
