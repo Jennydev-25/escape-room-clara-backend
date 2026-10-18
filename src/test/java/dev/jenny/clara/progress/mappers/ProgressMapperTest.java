@@ -48,6 +48,18 @@ class ProgressMapperTest {
     }
 
     @Test
+    void testToDTO_ShouldMapWelcomeSeen() {
+        ProgressEntity entity = ProgressEntity.builder()
+                .timeSpentSeconds(TEST_SECONDS)
+                .welcomeSeen(true)
+                .build();
+
+        ProgressResponseDTO dto = ProgressMapper.toDTO(entity);
+
+        assertThat(dto.welcomeSeen(), is(equalTo(entity.isWelcomeSeen())));
+    }
+
+    @Test
     void testConstructor_ShouldThrowException_WhenInstantiatedViaReflection() throws Exception {
         Constructor<ProgressMapper> constructor = ProgressMapper.class.getDeclaredConstructor();
         constructor.setAccessible(true);

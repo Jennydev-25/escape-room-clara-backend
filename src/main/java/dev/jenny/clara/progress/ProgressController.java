@@ -37,4 +37,9 @@ public class ProgressController {
     public ProgressResponseDTO updateNote(Authentication authentication, @Valid @RequestBody UpdateNoteRequestDTO dto) {
         return progressService.updateNote(authentication, dto);
     }
+
+    @PatchMapping("/welcome")
+    public ProgressResponseDTO markWelcomeSeen(Authentication authentication) {
+        return progressService.markWelcomeSeen(authentication);
+    }
 }

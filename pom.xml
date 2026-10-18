@@ -28,8 +28,8 @@
 		<url>https://github.com/Jennydev-25/escape-room-clara-backend</url>
 	</scm>
 	<properties>
-		<java.version>21</java.version>
-		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+		<java.version>25</java.version>
+		<jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
 		<jacoco.unit-tests.limit.instruction-ratio>100%</jacoco.unit-tests.limit.instruction-ratio>
 		<jacoco.unit-tests.limit.branch-ratio>100%</jacoco.unit-tests.limit.branch-ratio>
 		<jacoco.unit-tests.limit.class-complexity>80</jacoco.unit-tests.limit.class-complexity>

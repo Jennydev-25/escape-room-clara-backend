@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dev.jenny.clara.progress.InterfaceProgressService;
 import dev.jenny.clara.recaptcha.InterfaceRecaptchaService;
 import dev.jenny.clara.register.dtos.RegisterRequestDTO;
 import dev.jenny.clara.register.dtos.RegisterResponseDTO;
@@ -21,13 +22,16 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
     private final PasswordEncoder passwordEncoder;
     private final InterfaceRecaptchaService recaptchaService;
     private final InterfaceRoleService roleService;
+    private final InterfaceProgressService progressService;
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            InterfaceRecaptchaService recaptchaService, InterfaceRoleService roleService) {
+            InterfaceRecaptchaService recaptchaService, InterfaceRoleService roleService,
+            InterfaceProgressService progressService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.recaptchaService = recaptchaService;
         this.roleService = roleService;
+        this.progressService = progressService;
     }
 
     @Override
@@ -45,6 +49,7 @@ public class RegisterServiceImpl implements InterfaceRegisterService {
         UserEntity user = RegisterMapper.toEntity(request, hashedPassword, role);
 
         userRepository.save(user);
+        progressService.createDefaultProgress(user);
 
         return new RegisterResponseDTO(
                 "Tu cuenta se ha creado correctamente. Inserta tu nombre completo y escoge tu alias para la investigación.");

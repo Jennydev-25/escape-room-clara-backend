@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
@@ -167,6 +168,32 @@ class ProgressServiceImplTest {
     }
 
     @Test
+    void testMarkWelcomeSeen_ShouldSetWelcomeSeenOnExistingProgress() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(TEST_EMAIL);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+
+        ProgressEntity existingProgress = ProgressEntity.builder()
+                .user(user)
+                .currentChapter(TEST_CHAPTER)
+                .hudLetters(TEST_HUD)
+                .investigationSubmitted(false)
+                .timeSpentSeconds(TEST_SECONDS)
+                .freeNote(TEST_NOTE)
+                .updatedAt(TEST_UPDATED_AT)
+                .welcomeSeen(false)
+                .build();
+
+        when(progressRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.of(existingProgress));
+        when(progressRepository.save(any(ProgressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProgressResponseDTO result = service.markWelcomeSeen(authentication);
+
+        assertThat(result.welcomeSeen(), is(equalTo(true)));
+        verify(progressRepository).save(any(ProgressEntity.class));
+    }
+
+    @Test
     void testAdvanceChapter_ShouldUpdateCurrentChapter_WhenChapterIsNotInflectionPoint() {
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(TEST_EMAIL);
@@ -219,4 +246,20 @@ class ProgressServiceImplTest {
         assertThat(result.hudLetters(), is(equalTo(EXPECTED_HUD_AFTER_LETTER)));
         verify(progressRepository).save(any(ProgressEntity.class));
     }
+
+    @Test
+    void testCreateDefaultProgress_ShouldSaveDefaultProgress_ForTheGivenUser() {
+        service.createDefaultProgress(user);
+
+        ArgumentCaptor<ProgressEntity> progressCaptor = ArgumentCaptor.forClass(ProgressEntity.class);
+        verify(progressRepository).save(progressCaptor.capture());
+        ProgressEntity savedProgress = progressCaptor.getValue();
+
+        assertThat(savedProgress.getUser(), is(equalTo(user)));
+        assertThat(savedProgress.getCurrentChapter(), is(equalTo(DEFAULT_CHAPTER)));
+        assertThat(savedProgress.getHudLetters(), is(equalTo(DEFAULT_HUD)));
+        assertThat(savedProgress.getTimeSpentSeconds(), is(equalTo(DEFAULT_SECONDS)));
+        assertThat(savedProgress.isWelcomeSeen(), is(false));
+    }
+
 }

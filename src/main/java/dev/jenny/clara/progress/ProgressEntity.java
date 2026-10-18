@@ -39,6 +39,7 @@ public class ProgressEntity {
     private LocalDateTime updatedAt;
     private boolean investigationSubmitted;
     private Long timeSpentSeconds;
+    private boolean welcomeSeen;
 
     @Column(columnDefinition = "TEXT")
     private String freeNote;
