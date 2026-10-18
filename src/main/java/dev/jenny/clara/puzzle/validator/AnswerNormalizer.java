@@ -7,6 +7,6 @@ final class AnswerNormalizer {
     }
 
     static String normalize(String rawAnswer) {
-        return rawAnswer.trim().toUpperCase();
+        return rawAnswer.trim();
     }
 }
