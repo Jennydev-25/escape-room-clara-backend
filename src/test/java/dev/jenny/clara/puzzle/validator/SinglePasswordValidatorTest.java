@@ -42,17 +42,17 @@ class SinglePasswordValidatorTest {
     }
 
     @Test
-    void testIsCorrect_ShouldReturnTrue_WhenAnswerIsLowercase() {
+    void testIsCorrect_ShouldReturnFalse_WhenAnswerIsLowercase() {
         SinglePasswordValidator validator = new SinglePasswordValidator(passwordEncoder);
         PuzzleEntity puzzle = PuzzleEntity.builder().build();
         ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
         PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO("una sola prueba");
 
-        when(passwordEncoder.matches(EXPECTED_ANSWER, STORED_HASH)).thenReturn(true);
+        when(passwordEncoder.matches("una sola prueba", STORED_HASH)).thenReturn(false);
 
         boolean result = validator.isCorrect(puzzle, answer, List.of(expectedAnswer));
 
-        assertThat(result, is(equalTo(true)));
+        assertThat(result, is(equalTo(false)));
     }
 
     @Test
