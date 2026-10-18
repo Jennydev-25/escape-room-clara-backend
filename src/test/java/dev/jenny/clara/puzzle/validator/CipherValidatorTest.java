@@ -64,7 +64,7 @@ class CipherValidatorTest {
         CipherValidator validator = new CipherValidator(passwordEncoder);
         PuzzleEntity puzzle = PuzzleEntity.builder().build();
         ExpectedAnswerEntity expectedAnswer = ExpectedAnswerEntity.builder().answerHash(STORED_HASH).build();
-        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO("respuesta incorrecta");
+        PuzzleAnswerRequestDTO answer = new PuzzleAnswerRequestDTO("RESPUESTA INCORRECTA");
 
         when(passwordEncoder.matches("RESPUESTA INCORRECTA", STORED_HASH)).thenReturn(false);
 
